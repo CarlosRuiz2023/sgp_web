@@ -4,11 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 
 import { ObrasService } from '@products/services/products.service';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+import { ObraDetailsComponent } from './obra-details/obra-details.component';
 
 @Component({
   selector: 'app-product-admin-page',
-  imports: [ProductDetailsComponent],
+  imports: [ObraDetailsComponent],
   templateUrl: './product-admin-page.component.html',
 })
 export class ProductAdminPageComponent {

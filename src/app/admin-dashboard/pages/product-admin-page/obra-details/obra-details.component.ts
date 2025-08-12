@@ -25,7 +25,7 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './obra-details.component.html',
 })
-export class ProductDetailsComponent implements OnInit {
+export class ObraDetailsComponent implements OnInit {
   obra = input.required<Obra>();
 
   router = inject(Router);
@@ -37,13 +37,13 @@ export class ProductDetailsComponent implements OnInit {
   imageFileList: FileList | undefined = undefined;
   tempImages = signal<string[]>([]);
 
-  imagesToCarousel = computed(() => {
+  /* imagesToCarousel = computed(() => {
     const currentProductImages = [
       ...this.obra().calle,
       ...this.tempImages(),
     ];
     return currentProductImages;
-  });
+  }); */
 
   productForm = this.fb.group({
     title: ['', Validators.required],
