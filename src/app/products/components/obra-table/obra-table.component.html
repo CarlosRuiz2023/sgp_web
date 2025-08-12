@@ -1,0 +1,96 @@
+<div class="overflow-x-auto">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>Colonia</th>
+        <th>Calle</th>
+        <th>Tramo</th>
+        <th>Creacion</th>
+        <th>Modificacion</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      @for (obra of obras(); track obra.id_obra) {
+
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>
+          <!--div class="flex items-center gap-3">
+            <div class="avatar">
+              <div class="mask mask-squircle h-12 w-12">
+                <img
+                  [src]="obra.calle | productImage"
+                  [alt]="obra.calle"
+                />
+              </div>
+            </div>
+            <div>
+              <a
+                [routerLink]="['/admin/products', obra.id_obra]"
+                class="font-bold hover:text-accent transition-colors duration-300"
+                >{{ obra.calle }}</a
+              >
+
+              <div class="text-sm opacity-50">
+                //< obra.sizes.join(", ")>
+                {{ obra.calle }}
+              </div>
+            </div>
+          </div-->
+          {{ obra.calle }}
+        </td>
+        <td>
+          {{obra.colonia.colonia}}
+        </td>
+        <td>
+          <!--@if( obra.estatus ) {
+          <span class="badge badge-error">{{ obra.calle }}</span>
+          }
+          @else if ( obra.estatus == 2 ) {
+          <span class="badge badge-warning">{{ obra.calle }}</span>
+          }
+          @else {
+          <span class="badge badge-success">{{ obra.calle }}</span>
+        }-->
+          {{ obra.tramo }}
+        </td>
+        <th>
+          <!--a
+            [routerLink]="['/admin/products', obra.id_obra]"
+            class="btn btn-ghost text-accent btn-xs"
+          >
+            Detalles
+          </a-->
+          {{ obra.createdAt | date: 'dd/MM/yyyy hh:mm'   }}
+        </th>
+        <th>
+          {{ obra.updatedAt | date: 'dd/MM/yyyy hh:mm' }}
+        </th>
+        <th>
+          <div class="flex gap-2">
+            <button
+              class="btn btn-sm btn-primary"
+              [routerLink]="['/admin/products', obra.id_obra]"
+            >
+              Editar
+            </button>
+            <button class="btn btn-sm btn-error">Eliminar</button>
+          </div>
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

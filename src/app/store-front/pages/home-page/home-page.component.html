@@ -1,0 +1,74 @@
+<h1 class="text-3xl font-bold font-montserrat text-center mb-5">Obras en proceso</h1>
+<!-- <h2 class="text-xl mb-5">Para todos los gustos</h2> -->
+
+<!-- <div
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-3"
+>
+  @for (product of productsResource.value()?.products; track $index) {
+  <product-card [product]="product" />
+
+  }
+  <!-- Empty --!>
+  @empty {
+  <p>No hay productos</p>
+  }
+</div> -->
+
+<div class="divider"></div>
+
+<!-- <div class="flex w-full flex-col lg:flex-row lg:space-x-2">
+  <div class="lg:flex-grow mb-5 lg:mb-0">
+    <app-pagination [pages]="productsResource.value()?.pages ?? 0" [currentPage]="paginationService.currentPage()" class="w-full"/>
+  </div>
+  <div class="lg:w-auto">
+    <select class="select select-bordered join-item w-full" (change)="productsPerPage.set(+selectPerPage.value)" #selectPerPage>
+      <option selected value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</div> -->
+
+<div class="join">
+  <div>
+    <div>
+      <input class="input join-item" placeholder="Search" />
+    </div>
+  </div>
+  <select class="select join-item">
+    <option disabled selected>Filter</option>
+    <option>Sci-fi</option>
+    <option>Drama</option>
+    <option>Action</option>
+  </select>
+  <div class="indicator">
+    <span class="indicator-item badge badge-secondary">new</span>
+    <button class="btn join-item">Search</button>
+  </div>
+</div>
+
+<!-- Listado -->
+<product-table [obras]="obrasResource.value()?.data?.obras ?? []" />
+
+<div class="w-full h-10 flex justify-center items-center">
+  <div class="flex gap-2 items-center h-20">
+    <app-pagination
+      [pages]="obrasResource.value()?.data?.totalPaginas ?? 0"
+      [currentPage]="paginationService.currentPage()"
+    />
+
+    <select
+      class="select select-bordered w-32"
+      (change)="obrasPerPage.set(+selectPerPage.value)"
+      #selectPerPage
+    >
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</div>
+
+<br>

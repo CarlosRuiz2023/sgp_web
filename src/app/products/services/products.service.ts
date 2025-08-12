@@ -1,0 +1,164 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Usuario } from '@auth/interfaces/user.interface';
+import {
+  Obra,
+  Colonia,
+  ObrasResponse,
+} from '@products/interfaces/obra.interface';
+import {
+  delay,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  pipe,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { environment } from 'src/environments/environment';
+
+const baseUrl = environment.baseUrl;
+
+interface Options {
+  limit?: number;
+  offset?: number;
+  gender?: string;
+}
+
+const emptyObra: Obra = {
+  id_obra: 1,
+  id_colonia: 1,
+  calle: 'Manzanares',
+  traza_du: 'Traza DU',
+  tramo: 'De aqui pa aya',
+  finiquito: 0,
+  estatus: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  colonia: {
+    colonia: 'Jardines de San Juan',
+  }
+};
+
+@Injectable({ providedIn: 'root' })
+export class ObrasService {
+  private http = inject(HttpClient);
+
+  private obrasCache = new Map<string, ObrasResponse>();
+  private obraCache = new Map<string, Obra>();
+
+  getObras(options: Options): Observable<ObrasResponse> {
+    const { limit = 9, offset = 0 } = options;
+
+    const key = `${limit}-${offset}`; // 9-0-''
+    if (this.obrasCache.has(key)) {
+      return of(this.obrasCache.get(key)!);
+    }
+
+    return this.http
+      .get<ObrasResponse>(`${baseUrl}/obra`, {
+        params: {
+          limit,
+          offset,
+        },
+      })
+      .pipe(
+        tap((resp) => console.log(resp)),
+        tap((resp) => this.obrasCache.set(key, resp))
+      );
+  }
+
+  getProductByIdSlug(idSlug: string): Observable<Obra> {
+    if (this.obraCache.has(idSlug)) {
+      return of(this.obraCache.get(idSlug)!);
+    }
+
+    return this.http
+      .get<Obra>(`${baseUrl}/products/${idSlug}`)
+      .pipe(tap((product) => this.obraCache.set(idSlug, product)));
+  }
+
+  getProductById(id: string): Observable<Obra> {
+    if (id === 'new') {
+      return of(emptyObra);
+    }
+
+    if (this.obraCache.has(id)) {
+      return of(this.obraCache.get(id)!);
+    }
+
+    return this.http
+      .get<Obra>(`${baseUrl}/products/${id}`)
+      .pipe(tap((product) => this.obraCache.set(id, product)));
+  }
+
+  updateProduct(
+    id: string,
+    productLike: Partial<Obra>,
+    imageFileList?: FileList
+  ): Observable<Obra> {
+    const currentImages = productLike.calle ?? [];
+
+    return this.uploadImages(imageFileList).pipe(
+      map((imageNames) => ({
+        ...productLike,
+        images: [...currentImages, ...imageNames],
+      })),
+      switchMap((updatedProduct) =>
+        this.http.patch<Obra>(`${baseUrl}/products/${id}`, updatedProduct)
+      ),
+      tap((product) => this.updateProductCache(product))
+    );
+
+    // return this.http
+    //   .patch<Product>(`${baseUrl}/products/${id}`, productLike)
+    //   .pipe(tap((product) => this.updateProductCache(product)));
+  }
+
+  createProduct(
+    productLike: Partial<Obra>,
+    imageFileList?: FileList
+  ): Observable<Obra> {
+    return this.http
+      .post<Obra>(`${baseUrl}/products`, productLike)
+      .pipe(tap((product) => this.updateProductCache(product)));
+  }
+
+  updateProductCache(obra: Obra) {
+    const obraId = obra.id_obra;
+
+    this.obraCache.set(""+obraId, obra);
+
+    this.obrasCache.forEach((obrasResponse) => {
+      obrasResponse.data.obras = obrasResponse.data.obras.map(
+        (currentObra:any) =>
+          currentObra.id_obra === obraId ? obra : currentObra
+      );
+    });
+
+    console.log('Caché actualizado');
+  }
+
+  // Tome un FileList y lo suba
+  uploadImages(images?: FileList): Observable<string[]> {
+    if (!images) return of([]);
+
+    const uploadObservables = Array.from(images).map((imageFile) =>
+      this.uploadImage(imageFile)
+    );
+
+    return forkJoin(uploadObservables).pipe(
+      tap((imageNames) => console.log({ imageNames }))
+    );
+  }
+
+  uploadImage(imageFile: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+
+    return this.http
+      .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
+      .pipe(map((resp) => resp.fileName));
+  }
+}
