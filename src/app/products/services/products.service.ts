@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Usuario } from '@auth/interfaces/user.interface';
+import { ColoniasResponse } from '@products/interfaces/colonia.interface';
 import {
   Obra,
   Colonia,
@@ -69,6 +70,15 @@ export class ObrasService {
       );
   }
 
+  getColonias(): Observable<ColoniasResponse> {
+
+    return this.http
+      .get<ColoniasResponse>(`${baseUrl}/colonia`)
+      .pipe(
+        tap((resp) => console.log(resp)),
+      );
+  }
+
   getProductByIdSlug(idSlug: string): Observable<Obra> {
     if (this.obraCache.has(idSlug)) {
       return of(this.obraCache.get(idSlug)!);
@@ -117,11 +127,10 @@ export class ObrasService {
   }
 
   createProduct(
-    productLike: Partial<Obra>,
-    imageFileList?: FileList
+    productLike: Partial<Obra>
   ): Observable<Obra> {
     return this.http
-      .post<Obra>(`${baseUrl}/products`, productLike)
+      .post<Obra>(`${baseUrl}/obra`, productLike)
       .pipe(tap((product) => this.updateProductCache(product)));
   }
 

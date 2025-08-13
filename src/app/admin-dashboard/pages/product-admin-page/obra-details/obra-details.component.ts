@@ -16,6 +16,7 @@ import { ObrasService } from '@products/services/products.service';
 
 import { FormErrorLabelComponent } from '../../../../shared/components/form-error-label/form-error-label.component';
 import { Router } from '@angular/router';
+import { ColoniasResponse } from '@products/interfaces/colonia.interface';
 
 @Component({
   selector: 'product-details',
@@ -36,6 +37,7 @@ export class ObraDetailsComponent implements OnInit {
 
   imageFileList: FileList | undefined = undefined;
   tempImages = signal<string[]>([]);
+  colonias = signal<any[]>([]);
 
   /* imagesToCarousel = computed(() => {
     const currentProductImages = [
@@ -46,27 +48,21 @@ export class ObraDetailsComponent implements OnInit {
   }); */
 
   productForm = this.fb.group({
-    title: ['', Validators.required],
-    description: ['', Validators.required],
-    slug: [
-      '',
-      [Validators.required, Validators.pattern(FormUtils.slugPattern)],
-    ],
-    price: [0, [Validators.required, Validators.min(0)]],
-    stock: [0, [Validators.required, Validators.min(0)]],
-    sizes: [['']],
-    images: [[]],
-    tags: [''],
-    gender: [
-      'men',
-      [Validators.required, Validators.pattern(/men|women|kid|unisex/)],
-    ],
+    calle: ['', Validators.required],
+    colonia: ['', Validators.required],
+    tramo: ['', Validators.required],
   });
 
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   ngOnInit(): void {
     this.setFormValue(this.obra());
+    this.obrasService.getColonias().subscribe({
+      next: (resp: ColoniasResponse) => {
+        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   setFormValue(formLike: Partial<Obra>) {
@@ -75,7 +71,7 @@ export class ObraDetailsComponent implements OnInit {
     this.productForm.patchValue(formLike as any);
   }
 
-  onSizeClicked(size: string) {
+  /* onSizeClicked(size: string) {
     const currentSizes = this.productForm.value.sizes ?? [];
 
     if (currentSizes.includes(size)) {
@@ -85,7 +81,7 @@ export class ObraDetailsComponent implements OnInit {
     }
 
     this.productForm.patchValue({ sizes: currentSizes });
-  }
+  } */
 
   async onSubmit() {
     const isValid = this.productForm.valid;
@@ -96,17 +92,18 @@ export class ObraDetailsComponent implements OnInit {
 
     const productLike: Partial<Obra> = {
       ...(formValue as any),
-      tags:
+      /* tags:
         formValue.tags
           ?.toLowerCase()
           .split(',')
-          .map((tag) => tag.trim()) ?? [],
+          .map((tag) => tag.trim()) ?? [], */
     };
+    console.log(productLike);
 
     if (this.obra().calle === 'new') {
       // Crear producto
       const product = await firstValueFrom(
-        this.obrasService.createProduct(productLike, this.imageFileList)
+        this.obrasService.createProduct(productLike)
       );
 
       this.router.navigate(['/admin/products', product.id_obra]);
