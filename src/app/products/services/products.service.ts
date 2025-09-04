@@ -1,20 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Usuario } from '@auth/interfaces/user.interface';
 import { ColoniasResponse } from '@products/interfaces/colonia.interface';
 import {
   Obra,
-  Colonia,
   ObrasResponse,
 } from '@products/interfaces/obra.interface';
 import {
-  delay,
-  forkJoin,
   map,
   Observable,
   of,
-  pipe,
-  switchMap,
   tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -24,6 +18,8 @@ const baseUrl = environment.baseUrl;
 interface Options {
   limit?: number;
   offset?: number;
+  filtro?: string | null;
+  busqueda?: string | null;
   gender?: string;
 }
 
@@ -50,32 +46,47 @@ export class ObrasService {
   private obraCache = new Map<string, Obra>();
 
   getObras(options: Options): Observable<ObrasResponse> {
-    const { limit = 9, offset = 0 } = options;
+    const { limit = 9, offset = 0, filtro, busqueda } = options;
 
-    const key = `${limit}-${offset}`; // 9-0-''
+    const key = `${limit}-${offset}-${filtro ?? ''}-${busqueda ?? ''}`;
     if (this.obrasCache.has(key)) {
       return of(this.obrasCache.get(key)!);
     }
 
-    return this.http
+    if(filtro && busqueda){
+      return this.http
       .get<ObrasResponse>(`${baseUrl}/obra`, {
         params: {
           limit,
           offset,
+          filtro,
+          busqueda
         },
       })
       .pipe(
-        tap((resp) => console.log(resp)),
+        //tap((resp) => console.log(resp)),
         tap((resp) => this.obrasCache.set(key, resp))
       );
+    }else{
+      return this.http
+      .get<ObrasResponse>(`${baseUrl}/obra`, {
+        params: {
+          limit,
+          offset
+        },
+      })
+      .pipe(
+        //tap((resp) => console.log(resp)),
+        tap((resp) => this.obrasCache.set(key, resp))
+      );
+    }
   }
 
   getColonias(): Observable<ColoniasResponse> {
-
     return this.http
       .get<ColoniasResponse>(`${baseUrl}/colonia`)
       .pipe(
-        tap((resp) => console.log(resp)),
+        //tap((resp) => console.log(resp)),
       );
   }
 
@@ -99,49 +110,42 @@ export class ObrasService {
     }
 
     return this.http
-      .get<Obra>(`${baseUrl}/products/${id}`)
+      .get<Obra>(`${baseUrl}/obra/${id}`)
       .pipe(tap((product) => this.obraCache.set(id, product)));
   }
 
-  updateProduct(
-    id: string,
-    productLike: Partial<Obra>,
-    imageFileList?: FileList
-  ): Observable<Obra> {
-    const currentImages = productLike.calle ?? [];
-
-    return this.uploadImages(imageFileList).pipe(
-      map((imageNames) => ({
-        ...productLike,
-        images: [...currentImages, ...imageNames],
-      })),
-      switchMap((updatedProduct) =>
-        this.http.patch<Obra>(`${baseUrl}/products/${id}`, updatedProduct)
-      ),
-      tap((product) => this.updateProductCache(product))
+  updateObra(id: string, obra: Partial<Obra>): Observable<Obra> {
+    return this.http.put<Obra>(`${baseUrl}/obra/${id}`, obra).pipe(
+      tap((updatedObra) => this.updateObraCache(updatedObra))
     );
-
-    // return this.http
-    //   .patch<Product>(`${baseUrl}/products/${id}`, productLike)
-    //   .pipe(tap((product) => this.updateProductCache(product)));
   }
 
-  createProduct(
-    productLike: Partial<Obra>
+  createObra(
+    obraLike: Partial<Obra>
   ): Observable<Obra> {
     return this.http
-      .post<Obra>(`${baseUrl}/obra`, productLike)
-      .pipe(tap((product) => this.updateProductCache(product)));
+      .post<Obra>(`${baseUrl}/obra`, obraLike)
+      .pipe(tap((obra) => this.updateObraCache(obra)));
   }
 
-  updateProductCache(obra: Obra) {
+  // NUEVO MÉTODO PARA ELIMINAR OBRA
+  deleteObra(id: string): Observable<boolean> {
+    return this.http
+      .delete<any>(`${baseUrl}/obra/${id}`)
+      .pipe(
+        map(() => true),
+        tap(() => this.removeObraFromCache(id))
+      );
+  }
+
+  updateObraCache(obra: Obra) {
     const obraId = obra.id_obra;
 
-    this.obraCache.set(""+obraId, obra);
+    this.obraCache.set("" + obraId, obra);
 
     this.obrasCache.forEach((obrasResponse) => {
       obrasResponse.data.obras = obrasResponse.data.obras.map(
-        (currentObra:any) =>
+        (currentObra: any) =>
           currentObra.id_obra === obraId ? obra : currentObra
       );
     });
@@ -149,6 +153,24 @@ export class ObrasService {
     console.log('Caché actualizado');
   }
 
+  // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
+  removeObraFromCache(id: string) {
+    // Remover de caché individual
+    this.obraCache.delete(id);
+
+    // Remover de caché de listas
+    this.obrasCache.forEach((obrasResponse, key) => {
+      obrasResponse.data.obras = obrasResponse.data.obras.filter(
+        (currentObra: any) => currentObra.id_obra.toString() !== id
+      );
+
+      // Actualizar el total
+      obrasResponse.data.total = obrasResponse.data.obras.length;
+    });
+
+    console.log('Obra eliminada del caché');
+  }
+/* 
   // Tome un FileList y lo suba
   uploadImages(images?: FileList): Observable<string[]> {
     if (!images) return of([]);
@@ -169,5 +191,5 @@ export class ObrasService {
     return this.http
       .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
       .pipe(map((resp) => resp.fileName));
-  }
+  } */
 }

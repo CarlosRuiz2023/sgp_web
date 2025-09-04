@@ -100,7 +100,7 @@ export class ObraDetailsComponent implements OnInit {
     };
     console.log(productLike);
 
-    if (this.obra().calle === 'new') {
+    /* if (this.obra().calle === 'new') {
       // Crear producto
       const product = await firstValueFrom(
         this.obrasService.createProduct(productLike)
@@ -109,13 +109,13 @@ export class ObraDetailsComponent implements OnInit {
       this.router.navigate(['/admin/products', product.id_obra]);
     } else {
       await firstValueFrom(
-        this.obrasService.updateProduct(
+        this.obrasService.updateObra(
           this.obra().calle,
           productLike,
           this.imageFileList
         )
       );
-    }
+    } */
 
     this.wasSaved.set(true);
     setTimeout(() => {

@@ -8,18 +8,16 @@
             <input type="checkbox" class="checkbox" />
           </label>
         </th>
-        <th>Colonia</th>
         <th>Calle</th>
+        <th>Colonia</th>
         <th>Tramo</th>
-        <th>Creacion</th>
-        <th>Modificacion</th>
+        <th>Creación</th>
+        <th>Modificación</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <!-- row 1 -->
       @for (obra of obras(); track obra.id_obra) {
-
       <tr>
         <th>
           <label>
@@ -27,66 +25,78 @@
           </label>
         </th>
         <td>
-          <!--div class="flex items-center gap-3">
-            <div class="avatar">
-              <div class="mask mask-squircle h-12 w-12">
-                <img
-                  [src]="obra.calle | productImage"
-                  [alt]="obra.calle"
-                />
-              </div>
-            </div>
-            <div>
-              <a
-                [routerLink]="['/admin/products', obra.id_obra]"
-                class="font-bold hover:text-accent transition-colors duration-300"
-                >{{ obra.calle }}</a
-              >
-
-              <div class="text-sm opacity-50">
-                //< obra.sizes.join(", ")>
-                {{ obra.calle }}
-              </div>
-            </div>
-          </div-->
           {{ obra.calle }}
         </td>
         <td>
-          {{obra.colonia.colonia}}
+          {{ obra.colonia.colonia }}
         </td>
         <td>
-          <!--@if( obra.estatus ) {
-          <span class="badge badge-error">{{ obra.calle }}</span>
-          }
-          @else if ( obra.estatus == 2 ) {
-          <span class="badge badge-warning">{{ obra.calle }}</span>
-          }
-          @else {
-          <span class="badge badge-success">{{ obra.calle }}</span>
-        }-->
           {{ obra.tramo }}
         </td>
         <th>
-          <!--a
-            [routerLink]="['/admin/products', obra.id_obra]"
-            class="btn btn-ghost text-accent btn-xs"
-          >
-            Detalles
-          </a-->
-          {{ obra.createdAt | date: 'dd/MM/yyyy hh:mm'   }}
+          {{ obra.createdAt | date: 'dd/MM/yyyy HH:mm' }}
         </th>
         <th>
-          {{ obra.updatedAt | date: 'dd/MM/yyyy hh:mm' }}
+          {{ obra.updatedAt | date: 'dd/MM/yyyy HH:mm' }}
         </th>
         <th>
           <div class="flex gap-2">
-            <button
-              class="btn btn-sm btn-primary"
-              [routerLink]="['/admin/products', obra.id_obra]"
-            >
+            <button class="btn btn-sm btn-primary" (click)="openEditModal(obra)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 
+          112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
               Editar
             </button>
-            <button class="btn btn-sm btn-error">Eliminar</button>
+
+            <!-- Modal -->
+            <dialog id="my_modal_2" class="modal">
+              <div class="modal-box w-11/12 max-w-2xl">
+                <h3 class="text-lg font-bold">Editar Obra</h3>
+                <p class="py-4">Actualiza la información necesaria</p>
+
+                <!-- Formulario real -->
+                <form [formGroup]="obraForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+                  <!-- Calle -->
+                  <input type="text" placeholder="Calle" class="input input-bordered w-full" formControlName="calle" />
+                  <form-error-label [control]="obraForm.get('calle')!" />
+
+                  <!-- Colonia -->
+                  <select formControlName="id_colonia" class="select select-bordered w-full">
+                    <option value="">Seleccione una colonia</option>
+                    @for (colonia of colonias(); track colonia.id_colonia) {
+                    <option [value]="colonia.id_colonia">{{ colonia.colonia }}</option>
+                    }
+                  </select>
+                  <form-error-label [control]="obraForm.get('id_colonia')!" />
+
+                  <!-- Tramo -->
+                  <input type="text" placeholder="Tramo" class="input input-bordered w-full" formControlName="tramo" />
+                  <form-error-label [control]="obraForm.get('tramo')!" />
+
+                  <!-- Botones -->
+                  <div class="modal-action">
+                    <button type="submit" class="btn btn-secondary">Actualizar</button>
+                    <button type="button" class="btn" onclick="my_modal_2.close()">Cancelar</button>
+                  </div>
+                </form>
+              </div>
+            </dialog>
+            <button class="btn btn-sm btn-error" (click)="deleteObra(obra.id_obra, obra.calle)"
+              [disabled]="isDeleting(obra.id_obra)">
+              @if (isDeleting(obra.id_obra)) {
+              <span class="loading loading-spinner loading-xs"></span>
+              Eliminando...
+              } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Eliminar
+              }
+            </button>
           </div>
         </th>
       </tr>
