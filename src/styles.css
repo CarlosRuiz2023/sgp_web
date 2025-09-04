@@ -26,5 +26,5 @@
 }
 
 @plugin "daisyui" {
-  themes: caramellatte --default, dark --prefersdark;
+  themes: acid --default, dark --prefersdark;
 }

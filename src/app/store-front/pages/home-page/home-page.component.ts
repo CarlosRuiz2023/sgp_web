@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,19 +30,17 @@ export class HomePageComponent {
   wasSaved = signal(false);
   imageFileList: FileList | undefined = undefined;
   router = inject(Router);
-
-  /* imagesToCarousel = computed(() => {
-    const currentProductImages = [
-      ...this.obra().calle,
-      ...this.tempImages(),
-    ];
-    return currentProductImages;
-  }); */
+  filters = signal<{ filtro?: string | null; busqueda?: string | null }>({});
 
   obraForm = this.fb.group({
     calle: ['', Validators.required],
     id_colonia: ['', Validators.required],
     tramo: ['', Validators.required],
+  });
+
+  searchForm = this.fb.group({
+    filtro: ['', Validators.required],
+    busqueda: ['', Validators.required],
   });
 
   ngOnInit(): void {
@@ -53,27 +51,27 @@ export class HomePageComponent {
       error: (err) => console.error(err)
     });
 
-    this.obrasService.getObras({ limit: 10, offset: 0 })
-      .subscribe({
-        next: (resp) => {
-          this.obras.set(resp.data.obras); // << actualiza el signal
-          this.totalPaginas.set(resp.data.totalPaginas); // << actualiza el total
-        },
-        error: (err) => console.error('Error en búsqueda:', err)
-      });
+    // carga inicial de obras si quieres
+    //this.loadObras(0, this.obrasPerPage());
   }
 
-  activatedRoute = inject(ActivatedRoute);
+  paginationEffect = effect(() => {
+    const page = this.paginationService.currentPage(); // signal del PaginationService
+    const offset = (page - 1) * this.obrasPerPage();
+    this.loadObras(offset, this.obrasPerPage());
+  });
 
-  currentPage = toSignal(
-    this.activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('page') ? +params.get('page')! : 1)),
-      map((page) => (isNaN(page) ? 1 : page))
-    ),
-    {
-      initialValue: 1,
-    }
-  );
+  loadObras(offset: number = 0, limit: number = 10) {
+    const { filtro, busqueda } = this.searchForm.value;
+    console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
+    this.obrasService.getObras({ limit, offset, filtro, busqueda }).subscribe({
+      next: (resp) => {
+        this.obras.set(resp.data.obras);
+        this.totalPaginas.set(resp.data.totalPaginas);
+      },
+      error: (err) => console.error('Error al cargar obras:', err),
+    });
+  }
 
   async onSubmit() {
     const isValid = this.obraForm.valid;
@@ -87,38 +85,26 @@ export class HomePageComponent {
     };
 
     try {
-      const nuevaObra:any = await firstValueFrom(this.obrasService.createObra(obraLike));
-      this.obras.update((prev) => [...prev, nuevaObra.data]); // agrega la nueva obra
-      //await firstValueFrom(this.obrasService.createObra(obraLike));
-      this.obraForm.reset();
-      this.obraForm.markAsUntouched();
-      this.wasSaved.set(true);
+      await firstValueFrom(this.obrasService.createObra(obraLike));
       // cerrar modal
       (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
-      alert("Se3 registro la Obra de forma exitosa");
+      window.location.href = '/?page=1'; // recargar la página
+      alert("Se registro la Obra de forma exitosa");
     } catch (error) {
       console.error("Error al guardar obra:", error);
     }
 
   }
 
-  searchForm = this.fb.group({
-    filtro: ['', Validators.required],
-    busqueda: ['', Validators.required],
-  });
-
   async onSearch() {
-    if (this.searchForm.invalid) return;
+    if (this.searchForm.invalid) {
+      alert("Por favor, complete los campos de búsqueda.");
+      return;
+    };
 
     const { filtro, busqueda } = this.searchForm.value;
-    this.obrasService.getObras({ limit: 10, offset: 0, filtro, busqueda })
-      .subscribe({
-        next: (resp) => {
-          this.obras.set(resp.data.obras); // << actualiza el signal
-          this.totalPaginas.set(resp.data.totalPaginas); // << actualiza el total
-        },
-        error: (err) => console.error('Error en búsqueda:', err)
-      });
+    this.filters.set({ filtro, busqueda });
+    this.loadObras(0, this.obrasPerPage());
   }
 
 }

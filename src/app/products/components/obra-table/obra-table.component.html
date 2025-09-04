@@ -83,6 +83,16 @@
                 </form>
               </div>
             </dialog>
+            <!-- Botón Subir PDF -->
+            <label class="btn btn-sm btn-accent cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Subir PDF
+              <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, obra.id_obra)" />
+            </label>
+            <!-- Botón Borrar Obra -->
             <button class="btn btn-sm btn-error" (click)="deleteObra(obra.id_obra, obra.calle)"
               [disabled]="isDeleting(obra.id_obra)">
               @if (isDeleting(obra.id_obra)) {
