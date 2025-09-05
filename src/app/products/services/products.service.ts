@@ -53,32 +53,32 @@ export class ObrasService {
       return of(this.obrasCache.get(key)!);
     }
 
-    if(filtro && busqueda){
+    if (filtro && busqueda) {
       return this.http
-      .get<ObrasResponse>(`${baseUrl}/obra`, {
-        params: {
-          limit,
-          offset,
-          filtro,
-          busqueda
-        },
-      })
-      .pipe(
-        //tap((resp) => console.log(resp)),
-        tap((resp) => this.obrasCache.set(key, resp))
-      );
-    }else{
+        .get<ObrasResponse>(`${baseUrl}/obra`, {
+          params: {
+            limit,
+            offset,
+            filtro,
+            busqueda
+          },
+        })
+        .pipe(
+          //tap((resp) => console.log(resp)),
+          tap((resp) => this.obrasCache.set(key, resp))
+        );
+    } else {
       return this.http
-      .get<ObrasResponse>(`${baseUrl}/obra`, {
-        params: {
-          limit,
-          offset
-        },
-      })
-      .pipe(
-        //tap((resp) => console.log(resp)),
-        tap((resp) => this.obrasCache.set(key, resp))
-      );
+        .get<ObrasResponse>(`${baseUrl}/obra`, {
+          params: {
+            limit,
+            offset
+          },
+        })
+        .pipe(
+          //tap((resp) => console.log(resp)),
+          tap((resp) => this.obrasCache.set(key, resp))
+        );
     }
   }
 
@@ -86,8 +86,8 @@ export class ObrasService {
     return this.http
       .get<ColoniasResponse>(`${baseUrl}/colonia`)
       .pipe(
-        //tap((resp) => console.log(resp)),
-      );
+      //tap((resp) => console.log(resp)),
+    );
   }
 
   getProductByIdSlug(idSlug: string): Observable<Obra> {
@@ -118,6 +118,21 @@ export class ObrasService {
     return this.http.put<Obra>(`${baseUrl}/obra/${id}`, obra).pipe(
       tap((updatedObra) => this.updateObraCache(updatedObra))
     );
+  }
+
+  uploadPdf(id: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('archivo', file); // 👈 clave 'archivo'
+
+    return this.http.post<any>(`${baseUrl}/upload/obras/${id}`, formData).pipe(
+      tap((updatedObra) => this.updateObraCache(updatedObra))
+    );
+  }
+
+  getPdf(id: number): Observable<Blob> {
+    return this.http.get(`${baseUrl}/upload/obras/${id}`, {
+      responseType: 'blob' // 👈 importante para recibir el archivo
+    });
   }
 
   createObra(
@@ -170,26 +185,26 @@ export class ObrasService {
 
     console.log('Obra eliminada del caché');
   }
-/* 
-  // Tome un FileList y lo suba
-  uploadImages(images?: FileList): Observable<string[]> {
-    if (!images) return of([]);
-
-    const uploadObservables = Array.from(images).map((imageFile) =>
-      this.uploadImage(imageFile)
-    );
-
-    return forkJoin(uploadObservables).pipe(
-      tap((imageNames) => console.log({ imageNames }))
-    );
-  }
-
-  uploadImage(imageFile: File): Observable<string> {
-    const formData = new FormData();
-    formData.append('file', imageFile);
-
-    return this.http
-      .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-      .pipe(map((resp) => resp.fileName));
-  } */
+  /* 
+    // Tome un FileList y lo suba
+    uploadImages(images?: FileList): Observable<string[]> {
+      if (!images) return of([]);
+  
+      const uploadObservables = Array.from(images).map((imageFile) =>
+        this.uploadImage(imageFile)
+      );
+  
+      return forkJoin(uploadObservables).pipe(
+        tap((imageNames) => console.log({ imageNames }))
+      );
+    }
+  
+    uploadImage(imageFile: File): Observable<string> {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+  
+      return this.http
+        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
+        .pipe(map((resp) => resp.fileName));
+    } */
 }

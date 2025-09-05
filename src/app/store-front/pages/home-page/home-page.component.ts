@@ -12,6 +12,7 @@ import { FormErrorLabelComponent } from '@shared/components/form-error-label/for
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 import { firstValueFrom, map } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home-page',
@@ -88,8 +89,17 @@ export class HomePageComponent {
       await firstValueFrom(this.obrasService.createObra(obraLike));
       // cerrar modal
       (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
-      window.location.href = '/?page=1'; // recargar la página
-      alert("Se registro la Obra de forma exitosa");
+      // alerta bonita con SweetAlert2
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'La Obra se registró de forma exitosa',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
+      }).then(() => {
+        // recargar la página después de cerrar el alert
+        window.location.href = '/?page=1';
+      });
     } catch (error) {
       console.error("Error al guardar obra:", error);
     }
