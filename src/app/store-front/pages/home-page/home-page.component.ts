@@ -2,6 +2,7 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 //import { ProductCardComponent } from '@products/components/product-card/product-card.component';
 import { ObraTableComponent } from '@products/components/obra-table/obra-table.component';
 import { ColoniasResponse } from '@products/interfaces/colonia.interface';
@@ -32,6 +33,7 @@ export class HomePageComponent {
   imageFileList: FileList | undefined = undefined;
   router = inject(Router);
   filters = signal<{ filtro?: string | null; busqueda?: string | null }>({});
+  authService = inject(AuthService);
 
   obraForm = this.fb.group({
     calle: ['', Validators.required],
@@ -40,7 +42,7 @@ export class HomePageComponent {
   });
 
   searchForm = this.fb.group({
-    filtro: ['', Validators.required],
+    filtro: ['id_obra', Validators.required],
     busqueda: ['', Validators.required],
   });
 

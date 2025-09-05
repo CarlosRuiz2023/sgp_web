@@ -8,6 +8,7 @@
             <input type="checkbox" class="checkbox" />
           </label>
         </th> -->
+        <th>Id</th>
         <th>Calle</th>
         <th>Colonia</th>
         <th>Tramo</th>
@@ -24,6 +25,9 @@
             <input type="checkbox" class="checkbox" />
           </label>
         </th> -->
+        <td>
+          {{ obra.id_obra }}
+        </td>
         <td>
           {{ obra.calle }}
         </td>
@@ -88,7 +92,7 @@
                   <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, obra.id_obra)" />
                 </label>
               </li>
-              <li>
+              <li *ngIf ="obra.estatus">
                 <button class="btn btn-sm btn-error" (click)="deleteObra(obra.id_obra, obra.calle)"
                   [disabled]="isDeleting(obra.id_obra)">
                   @if (isDeleting(obra.id_obra)) {
@@ -101,6 +105,22 @@
                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                   Eliminar
+                  }
+                </button>
+              </li>
+              <li *ngIf ="obra.estatus">
+                <button class="btn btn-sm btn-info" (click)="reactivarObra(obra.id_obra, obra.calle)"
+                  [disabled]="isDeleting(obra.id_obra)">
+                  @if (isDeleting(obra.id_obra)) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Reactivando...
+                  } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Reactivar
                   }
                 </button>
               </li>

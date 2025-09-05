@@ -92,6 +92,9 @@ export class ObraTableComponent {
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true
+              }).then(() => {
+                // recargar la página después de cerrar el alert
+                window.location.href = '/?page=1';
               });
             }
           },
@@ -106,6 +109,57 @@ export class ObraTableComponent {
           },
           complete: () => {
             this.deletingIds.delete(id);
+          }
+        });
+      }
+    });
+  }
+
+  reactivarObra(obraId: number, obraNombre: string) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Se reactivara la obra "${obraNombre}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, reactivar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const id = obraId.toString();
+        this.deletingIds.add(id);
+
+        this.obrasService.reactivarObra(id).subscribe({
+          next: (success) => {
+            if (success) {
+              this.onObraDeleted.emit(id);
+
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Obra reactivada correctamente',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+              }).then(() => {
+                // recargar la página después de cerrar el alert
+                window.location.href = '/?page=1';
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error al reactivar la obra:', error);
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo reactivar la obra. Intenta de nuevo.'
+            });
+          },
+          complete: () => {
+            //this.deletingIdsup.delete(id);
           }
         });
       }
@@ -134,7 +188,16 @@ export class ObraTableComponent {
       // cerrar modal
       (document.getElementById("my_modal_2") as HTMLDialogElement)?.close();
 
-      window.location.reload();
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'La Obra se actualizo de forma exitosa',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
+      }).then(() => {
+        // recargar la página después de cerrar el alert
+        //window.location.href = '/?page=1';
+      });
     } catch (error) {
       console.error("Error al guardar obra:", error);
     }

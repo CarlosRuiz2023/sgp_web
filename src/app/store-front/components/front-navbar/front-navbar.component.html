@@ -2,49 +2,23 @@
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h8m-8 6h16"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
         </svg>
       </div>
-      <ul
-        tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-      >
+      <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
         <li>
-          <a
-            routerLink="/gender/men"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/gender/men" class="btn btn-ghost" routerLinkActive="text-secondary">
             Hombres
           </a>
         </li>
         <li>
-          <a
-            routerLink="/gender/women"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/gender/women" class="btn btn-ghost" routerLinkActive="text-secondary">
             Mujeres
           </a>
         </li>
         <li>
-          <a
-            routerLink="/gender/kid"
-            class="btn btn-ghost"
-            routerLinkActive="text-secondary"
-          >
+          <a routerLink="/gender/kid" class="btn btn-ghost" routerLinkActive="text-secondary">
             Kids
           </a>
         </li>
@@ -58,29 +32,17 @@
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
       <li>
-        <a
-          routerLink="/gender/men"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/gender/men" class="btn btn-ghost" routerLinkActive="text-secondary">
           Hombres
         </a>
       </li>
       <li>
-        <a
-          routerLink="/gender/women"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/gender/women" class="btn btn-ghost" routerLinkActive="text-secondary">
           Mujeres
         </a>
       </li>
       <li>
-        <a
-          routerLink="/gender/kid"
-          class="btn btn-ghost"
-          routerLinkActive="text-secondary"
-        >
+        <a routerLink="/gender/kid" class="btn btn-ghost" routerLinkActive="text-secondary">
           Kids
         </a>
       </li>
@@ -94,10 +56,14 @@
 
     @if ( authService.authStatus() === 'authenticated' ) {
     <button class="btn btn-ghost">
-      {{ authService.user()?.apellido_materno }} {{ authService.user()?.apellido_paterno }} {{ authService.user()?.nombres }}
+      {{ authService.user()?.apellido_materno }} {{ authService.user()?.apellido_paterno }} {{
+      authService.user()?.nombres }}
     </button>
-    <button class="btn btn-sm btn-error" (click)="authService.logout()">
-      Salir
+    <button class="btn btn-sm btn-error flex items-center gap-2" (click)="authService.logout()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+      </svg>
     </button>
     }
     <!--  -->

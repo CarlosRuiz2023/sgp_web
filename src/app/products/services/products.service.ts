@@ -153,6 +153,15 @@ export class ObrasService {
       );
   }
 
+  // NUEVO MÉTODO PARA ELIMINAR OBRA
+  reactivarObra(id: string): Observable<boolean> {
+    return this.http
+      .put<any>(`${baseUrl}/obra/activar/${id}`,{})
+      .pipe(
+        map(() => true),
+      );
+  }
+
   updateObraCache(obra: Obra) {
     const obraId = obra.id_obra;
 
