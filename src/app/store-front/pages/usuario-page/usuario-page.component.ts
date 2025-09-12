@@ -1,33 +1,33 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { Usuario } from '@auth/interfaces/user.interface';
 import { AuthService } from '@auth/services/auth.service';
-//import { ProductCardComponent } from '@products/components/product-card/product-card.component';
-import { ObraTableComponent } from '@products/components/obra-table/obra-table.component';
-import { ColoniasResponse } from '@products/interfaces/colonia.interface';
-import { Obra } from '@products/interfaces/obra.interface';
-import { ObrasService } from '@products/services/products.service';
+import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
+import { Obra } from '@obras/interfaces/obra.interface';
+import { ObrasService as UsuariosService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
+import { UsuarioTableComponent } from "@usuarios/components/usuario-table/usuario-table.component";
 
 @Component({
-  selector: 'app-home-page',
-  imports: [PaginationComponent, ObraTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
-  templateUrl: './home-page.component.html',
+  selector: 'obra-page',
+  imports: [PaginationComponent, UsuarioTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  templateUrl: './usuario-page.component.html',
 })
-export class HomePageComponent {
-  obra = input.required<Obra>();
-  obrasService = inject(ObrasService);
+export class UsuarioPageComponent {
+  usuario = input.required<Usuario>();
+  usuariosService = inject(UsuariosService);
   totalPaginas = signal(0);
-  obras = signal<Obra[]>([]);
+  usuarios = signal<Usuario[]>([]);
   paginationService = inject(PaginationService);
-  obrasPerPage = signal(10);
-  colonias = signal<any[]>([]);
+  usuariosPerPage = signal(10);
+  roles = signal<any[]>([]);
+  empresas = signal<any[]>([]);
   fb = inject(FormBuilder);
   wasSaved = signal(false);
   imageFileList: FileList | undefined = undefined;
@@ -35,7 +35,7 @@ export class HomePageComponent {
   filters = signal<{ filtro?: string | null; busqueda?: string | null }>({});
   authService = inject(AuthService);
 
-  obraForm = this.fb.group({
+  usuarioForm = this.fb.group({
     calle: ['', Validators.required],
     id_colonia: ['', Validators.required],
     tramo: ['', Validators.required],
@@ -47,9 +47,9 @@ export class HomePageComponent {
   });
 
   ngOnInit(): void {
-    this.obrasService.getColonias().subscribe({
+    this.usuariosService.getColonias().subscribe({
       next: (resp: ColoniasResponse) => {
-        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+        this.roles.set(resp.data.colonias.rows); // ajusta según tu estructura
       },
       error: (err) => console.error(err)
     });
@@ -60,16 +60,16 @@ export class HomePageComponent {
 
   paginationEffect = effect(() => {
     const page = this.paginationService.currentPage(); // signal del PaginationService
-    const offset = (page - 1) * this.obrasPerPage();
-    this.loadObras(offset, this.obrasPerPage());
+    const offset = (page - 1) * this.usuariosPerPage();
+    this.loadObras(offset, this.usuariosPerPage());
   });
 
   loadObras(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
     console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
-    this.obrasService.getObras({ limit, offset, filtro, busqueda }).subscribe({
+    this.usuariosService.getObras({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.obras.set(resp.data.obras);
+        this.usuarios.set(resp.data.obras);
         this.totalPaginas.set(resp.data.totalPaginas);
       },
       error: (err) => console.error('Error al cargar obras:', err),
@@ -77,18 +77,18 @@ export class HomePageComponent {
   }
 
   async onSubmit() {
-    const isValid = this.obraForm.valid;
-    this.obraForm.markAllAsTouched();
+    const isValid = this.usuarioForm.valid;
+    this.usuarioForm.markAllAsTouched();
 
     if (!isValid) return;
-    const formValue = this.obraForm.value;
+    const formValue = this.usuarioForm.value;
 
     const obraLike: Partial<Obra> = {
       ...(formValue as any),
     };
 
     try {
-      await firstValueFrom(this.obrasService.createObra(obraLike));
+      await firstValueFrom(this.usuariosService.createObra(obraLike));
       // cerrar modal
       (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
@@ -116,7 +116,7 @@ export class HomePageComponent {
 
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
-    this.loadObras(0, this.obrasPerPage());
+    this.loadObras(0, this.usuariosPerPage());
   }
 
 }

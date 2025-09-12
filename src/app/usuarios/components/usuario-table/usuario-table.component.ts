@@ -2,41 +2,50 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ColoniasResponse } from '@products/interfaces/colonia.interface';
-import { Obra } from '@products/interfaces/obra.interface';
-import { ProductImagePipe } from '@products/pipes/product-image.pipe';
-import { ObrasService } from '@products/services/products.service';
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
+import { UsuariosService } from '@usuarios/services/usuarios.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
+import { RolResponse } from '@usuarios/interfaces/rol.interface';
 
 @Component({
-  selector: 'product-table',
+  selector: 'usuario-table',
   imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
-  templateUrl: './obra-table.component.html',
+  templateUrl: './usuario-table.component.html',
 })
-export class ObraTableComponent {
-  private obrasService = inject(ObrasService);
+export class UsuarioTableComponent {
+  private usuariosService = inject(UsuariosService);
   private router = inject(Router);
   fb = inject(FormBuilder);
-  colonias = signal<any[]>([]);
+  roles = signal<any[]>([]);
+  empresas = signal<any[]>([]);
 
-  obras = input.required<Obra[]>();
+  usuarios = input.required<Usuario[]>();
 
-  obraForm = this.fb.group({
-    calle: ['', Validators.required],
-    id_colonia: [0, Validators.required],
-    tramo: ['', Validators.required],
+  usuarioForm = this.fb.group({
+    nombres: ['', Validators.required],
+    apellido_paterno: ['', Validators.required],
+    apellido_materno: ['', Validators.required],
+    id_rol: [0, Validators.required],
+    id_empresa: [0, Validators.required],
+    correo: ['', Validators.required],
+    contrasenia: ['', Validators.required],
   });
-  id_obra = 0;
+  id_usuario = 0;
 
-  openEditModal(obra: Obra) {
-    this.id_obra = obra.id_obra;
+  openEditModal(usuario: Usuario) {
+    this.id_usuario = usuario.id_usuario;
     // Poblamos el formulario con los valores de la obra
-    this.obraForm.patchValue({
-      calle: obra.calle,
-      id_colonia: obra.id_colonia, // asegúrate de que tu interface tenga este campo
-      tramo: obra.tramo,
+    this.usuarioForm.patchValue({
+      nombres: usuario.nombres,
+      apellido_paterno: usuario.apellido_paterno,
+      apellido_materno: usuario.apellido_materno,
+      id_rol: usuario.id_rol,
+      id_empresa: usuario.id_empresa,
+      correo: usuario.correo,
+      contrasenia: usuario.contrasenia
     });
 
     // Abrimos el modal con JS nativo
@@ -45,29 +54,29 @@ export class ObraTableComponent {
   }
 
   ngOnInit(): void {
-    this.obrasService.getColonias().subscribe({
-      next: (resp: ColoniasResponse) => {
-        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+    this.usuariosService.getRoles().subscribe({
+      next: (resp: RolResponse) => {
+        this.roles.set(resp.data.roles.rows); // ajusta según tu estructura
       },
       error: (err) => console.error(err)
     });
   }
 
   // Output para notificar al componente padre sobre cambios
-  onObraDeleted = output<string>();
-  onObraUpdated = output<Obra>();
+  onUsuarioDeleted = output<string>();
+  onUsuarioUpdated = output<Usuario>();
 
   // Estado para manejar operaciones en progreso
   deletingIds = new Set<string>();
 
-  editObra(obraId: number) {
-    this.router.navigate(['/admin/products', obraId]);
-  }
+  /* editObra(usuarioId: number) {
+    this.router.navigate(['/admin/products', usuarioId]);
+  } */
 
-  deleteObra(obraId: number, obraNombre: string) {
+  deleteUsuario(usuarioId: number, usuarioNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se eliminará la obra "${obraNombre}". Esta acción no se puede deshacer.`,
+      text: `Se eliminará el usuario "${usuarioNombre}". Esta acción no se puede deshacer.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -76,19 +85,19 @@ export class ObraTableComponent {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const id = obraId.toString();
+        const id = usuarioId.toString();
         this.deletingIds.add(id);
 
-        this.obrasService.deleteObra(id).subscribe({
+        this.usuariosService.deleteObra(id).subscribe({
           next: (success) => {
             if (success) {
-              this.onObraDeleted.emit(id);
+              this.onUsuarioDeleted.emit(id);
 
               Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Obra eliminada correctamente',
+                title: 'Usuario eliminado correctamente',
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true
@@ -99,12 +108,11 @@ export class ObraTableComponent {
             }
           },
           error: (error) => {
-            console.error('Error al eliminar la obra:', error);
-
+            console.error('Error al eliminar al usuario:', error);
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'No se pudo eliminar la obra. Intenta de nuevo.'
+              text: 'No se pudo eliminar al usuario. Intenta de nuevo.'
             });
           },
           complete: () => {
@@ -115,10 +123,10 @@ export class ObraTableComponent {
     });
   }
 
-  reactivarObra(obraId: number, obraNombre: string) {
+  reactivarUsuario(usuarioId: number, usuarioNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se reactivara la obra "${obraNombre}".`,
+      text: `Se reactivara al usuario "${usuarioNombre}".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -127,13 +135,13 @@ export class ObraTableComponent {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const id = obraId.toString();
+        const id = usuarioId.toString();
         this.deletingIds.add(id);
 
-        this.obrasService.reactivarObra(id).subscribe({
+        this.usuariosService.reactivarUsuario(id).subscribe({
           next: (success) => {
             if (success) {
-              this.onObraDeleted.emit(id);
+              this.onUsuarioDeleted.emit(id);
 
               Swal.fire({
                 toast: true,
@@ -157,9 +165,6 @@ export class ObraTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar la obra. Intenta de nuevo.'
             });
-          },
-          complete: () => {
-            //this.deletingIdsup.delete(id);
           }
         });
       }
@@ -172,18 +177,18 @@ export class ObraTableComponent {
   }
 
   async onSubmit() {
-    const isValid = this.obraForm.valid;
-    this.obraForm.markAllAsTouched();
+    const isValid = this.usuarioForm.valid;
+    this.usuarioForm.markAllAsTouched();
 
     if (!isValid) return;
-    const formValue = this.obraForm.value;
+    const formValue = this.usuarioForm.value;
 
-    const obraLike: Partial<Obra> = {
+    const usuarioLike: Partial<Usuario> = {
       ...(formValue as any),
     };
 
     try {
-      await firstValueFrom(this.obrasService.updateObra("" + this.id_obra, obraLike));
+      await firstValueFrom(this.usuariosService.updateUsuario("" + this.id_usuario, usuarioLike));
 
       // cerrar modal
       (document.getElementById("my_modal_2") as HTMLDialogElement)?.close();
@@ -196,46 +201,32 @@ export class ObraTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        //window.location.href = '/?page=1';
+        window.location.href = '/?page=1';
       });
     } catch (error) {
-      console.error("Error al guardar obra:", error);
-    }
-
-  }
-
-  onPdfSelected(event: Event, id_obra: number) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      if (file.type !== 'application/pdf') {
-        alert('Por favor selecciona un archivo PDF válido.');
-        return;
-      }
-
-      // Aquí puedes subir el archivo al servidor
-      console.log('PDF seleccionado para obra', id_obra, file);
-
-      // Llamamos al servicio
-      this.obrasService.uploadPdf(id_obra, file).subscribe({
-        next: (res) => {
-          console.log('PDF subido correctamente', res);
-        },
-        error: (err) => {
-          console.error('Error al subir PDF', err);
-        }
+      console.error('Error al actualizar la obra:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar la obra. Intenta de nuevo.'
       });
     }
+
   }
 
-  verPdf(id_obra: number) {
-    this.obrasService.getPdf(id_obra).subscribe({
+  verPdf(id_usuario: number) {
+    this.usuariosService.getPdf(id_usuario).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank'); // abre el PDF en una nueva pestaña
       },
       error: (err) => {
-        console.error('Error al obtener PDF', err);
+        console.error('Error al obtener elPDF', err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo obtener el PDF. Intenta de nuevo.'
+            });
       }
     });
   }

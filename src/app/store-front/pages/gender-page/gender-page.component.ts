@@ -3,8 +3,8 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map, of } from 'rxjs';
 
-import { ProductCardComponent } from '@products/components/product-card/product-card.component';
-import { ObrasService } from '@products/services/products.service';
+import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
+import { ObrasService } from '@obras/services/obras.service';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 

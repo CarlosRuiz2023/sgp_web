@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ObrasService } from '@products/services/products.service';
+import { ObrasService } from '@obras/services/obras.service';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 
-import { ObraTableComponent } from '../../../products/components/obra-table/obra-table.component';
+import { ObraTableComponent } from '@obras/components/obra-table/obra-table.component';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { RouterLink } from '@angular/router';
 

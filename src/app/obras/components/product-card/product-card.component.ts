@@ -1,8 +1,8 @@
 import { Component, computed, input } from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Obra } from '@products/interfaces/obra.interface';
-import { ProductImagePipe } from '@products/pipes/product-image.pipe';
+import { Obra } from '@obras/interfaces/obra.interface';
+import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 
 @Component({
   selector: 'product-card',

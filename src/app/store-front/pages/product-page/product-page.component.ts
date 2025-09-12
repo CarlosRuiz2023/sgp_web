@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { ObrasService } from '@products/services/products.service';
-import { ProductCarouselComponent } from '../../../products/components/product-carousel/product-carousel.component';
+import { ObrasService } from '@obras/services/obras.service';
+import { ProductCarouselComponent } from '@obras/components/product-carousel/product-carousel.component';
 
 @Component({
   selector: 'app-product-page',
@@ -18,6 +18,6 @@ export class ProductPageComponent {
   productResource = rxResource({
     request: () => ({ idSlug: this.productIdSlug }),
     loader: ({ request }) =>
-      this.productService.getProductByIdSlug(request.idSlug),
+      this.productService.getObraByIdSlug(request.idSlug),
   });
 }

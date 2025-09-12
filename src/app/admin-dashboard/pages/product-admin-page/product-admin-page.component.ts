@@ -3,7 +3,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 
-import { ObrasService } from '@products/services/products.service';
+import { ObrasService } from '@obras/services/obras.service';
 import { ObraDetailsComponent } from './obra-details/obra-details.component';
 
 @Component({

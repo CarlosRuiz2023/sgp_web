@@ -7,16 +7,16 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-//import { ProductCarouselComponent } from '@products/components/product-carousel/product-carousel.component';
+//import { ProductCarouselComponent } from '@obras/components/product-carousel/product-carousel.component';
 import { firstValueFrom } from 'rxjs';
 
-import { Obra } from '@products/interfaces/obra.interface';
+import { Obra } from '@obras/interfaces/obra.interface';
 import { FormUtils } from '@utils/form-utils';
-import { ObrasService } from '@products/services/products.service';
+import { ObrasService } from '@obras/services/obras.service';
 
 import { FormErrorLabelComponent } from '../../../../shared/components/form-error-label/form-error-label.component';
 import { Router } from '@angular/router';
-import { ColoniasResponse } from '@products/interfaces/colonia.interface';
+import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 
 @Component({
   selector: 'product-details',

@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ColoniasResponse } from '@products/interfaces/colonia.interface';
+import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
   Obra,
   ObrasResponse,
-} from '@products/interfaces/obra.interface';
+} from '@obras/interfaces/obra.interface';
 import {
   map,
   Observable,
@@ -90,7 +90,7 @@ export class ObrasService {
     );
   }
 
-  getProductByIdSlug(idSlug: string): Observable<Obra> {
+   getObraByIdSlug(idSlug: string): Observable<Obra> {
     if (this.obraCache.has(idSlug)) {
       return of(this.obraCache.get(idSlug)!);
     }
