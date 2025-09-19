@@ -2,13 +2,14 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Usuario } from '@usuarios/interfaces/usuario.interface';
 import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { UsuariosService } from '@usuarios/services/usuarios.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { RolResponse } from '@usuarios/interfaces/rol.interface';
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { EmpresaResponse } from '@usuarios/interfaces/empresa.interface';
 
 @Component({
   selector: 'usuario-table',
@@ -60,6 +61,12 @@ export class UsuarioTableComponent {
       },
       error: (err) => console.error(err)
     });
+    this.usuariosService.getEmpresas().subscribe({
+      next: (resp: EmpresaResponse) => {
+        this.empresas.set(resp.data.empresas.rows); // ajusta según tu estructura
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   // Output para notificar al componente padre sobre cambios
@@ -88,7 +95,7 @@ export class UsuarioTableComponent {
         const id = usuarioId.toString();
         this.deletingIds.add(id);
 
-        this.usuariosService.deleteObra(id).subscribe({
+        this.usuariosService.deleteUsuario(id).subscribe({
           next: (success) => {
             if (success) {
               this.onUsuarioDeleted.emit(id);
@@ -103,7 +110,7 @@ export class UsuarioTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                window.location.href = '/usuarios?page=1';
               });
             }
           },
@@ -153,17 +160,17 @@ export class UsuarioTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                window.location.href = '/usuarios?page=1';
               });
             }
           },
           error: (error) => {
-            console.error('Error al reactivar la obra:', error);
+            console.error('Error al reactivar el usuario:', error);
 
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'No se pudo reactivar la obra. Intenta de nuevo.'
+              text: 'No se pudo reactivar la usuario. Intenta de nuevo.'
             });
           }
         });

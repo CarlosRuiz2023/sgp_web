@@ -116,18 +116,18 @@ export class UsuariosService {
     });
   }
 
-  createObra(
+  createUsuario(
     obraLike: Partial<Usuario>
   ): Observable<Usuario> {
     return this.http
-      .post<Usuario>(`${baseUrl}/obra`, obraLike)
-      .pipe(tap((obra) => this.updateUsuarioCache(obra)));
+      .post<Usuario>(`${baseUrl}/usuario`, obraLike)
+      .pipe(tap((usuario) => this.updateUsuarioCache(usuario)));
   }
 
   // NUEVO MÉTODO PARA ELIMINAR OBRA
-  deleteObra(id: string): Observable<boolean> {
+  deleteUsuario(id: string): Observable<boolean> {
     return this.http
-      .delete<any>(`${baseUrl}/obra/${id}`)
+      .delete<any>(`${baseUrl}/usuarios/${id}`)
       .pipe(
         map(() => true),
         tap(() => this.removeUsuarioFromCache(id))
@@ -137,7 +137,7 @@ export class UsuariosService {
   // NUEVO MÉTODO PARA ELIMINAR OBRA
   reactivarUsuario(id: string): Observable<boolean> {
     return this.http
-      .put<any>(`${baseUrl}/obra/activar/${id}`,{})
+      .put<any>(`${baseUrl}/usuario/activar/${id}`,{})
       .pipe(
         map(() => true),
       );

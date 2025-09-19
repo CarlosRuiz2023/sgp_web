@@ -104,34 +104,104 @@
 </div>
 
 <!-- Modal -->
+<!-- Modal Editar Usuario -->
 <dialog id="my_modal_2" class="modal">
-  <div class="modal-box w-11/12 max-w-2xl">
-    <h3 class="text-lg font-bold">Editar Obra</h3>
-    <p class="py-4">Actualiza la información necesaria</p>
+  <div class="modal-box w-11/12 max-w-3xl">
+    <h3 class="text-xl font-bold mb-2">Editar Usuario</h3>
+    <p class="mb-6 text-gray-600">Actualiza la información necesaria</p>
 
-    <!-- Formulario real -->
-    <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
-      <!-- Calle -->
-      <input type="text" placeholder="Calle" class="input input-bordered w-full" formControlName="calle" />
-      <form-error-label [control]="usuarioForm.get('calle')!" />
+    <form
+      [formGroup]="usuarioForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
+      <!-- Grid de dos columnas en md+ -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Apellido Paterno -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Apellido Paterno</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="apellido_paterno"
+          />
+          <form-error-label [control]="usuarioForm.get('apellido_paterno')!" />
+        </div>
 
-      <!-- Colonia -->
-      <!-- <select formControlName="id_colonia" class="select select-bordered w-full">
-        <option value="">Seleccione una colonia</option>
-        @for (colonia of colonias(); track colonia.id_colonia) {
-        <option [value]="colonia.id_colonia">{{ colonia.colonia }}</option>
-        }
-      </select> -->
-      <form-error-label [control]="usuarioForm.get('id_colonia')!" />
+        <!-- Apellido Materno -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Apellido Materno</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="apellido_materno"
+          />
+          <form-error-label [control]="usuarioForm.get('apellido_materno')!" />
+        </div>
 
-      <!-- Tramo -->
-      <input type="text" placeholder="Tramo" class="input input-bordered w-full" formControlName="tramo" />
-      <form-error-label [control]="usuarioForm.get('tramo')!" />
+        <!-- Nombres -->
+        <div class="form-control md:col-span-2">
+          <label class="label">
+            <span class="label-text font-medium">Nombres</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="nombres"
+          />
+          <form-error-label [control]="usuarioForm.get('nombres')!" />
+        </div>
+
+        <!-- Rol -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Rol</span>
+          </label>
+          <select formControlName="id_rol" class="select select-bordered w-full">
+            <option value="">Seleccione un rol</option>
+            @for (rol of roles(); track rol.id_rol) {
+              <option [value]="rol.id_rol">{{ rol.rol }}</option>
+            }
+          </select>
+          <form-error-label [control]="usuarioForm.get('id_rol')!" />
+        </div>
+
+        <!-- Empresa -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Empresa</span>
+          </label>
+          <select formControlName="id_empresa" class="select select-bordered w-full">
+            <option value="">Seleccione una empresa</option>
+            @for (empresa of empresas(); track empresa.id_empresa) {
+              <option [value]="empresa.id_empresa">{{ empresa.empresa }}</option>
+            }
+          </select>
+          <form-error-label [control]="usuarioForm.get('id_empresa')!" />
+        </div>
+      </div>
+
+      <!-- Correo -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Correo</span>
+        </label>
+        <input
+          type="email"
+          class="input input-bordered w-full"
+          formControlName="correo"
+        />
+        <form-error-label [control]="usuarioForm.get('correo')!" />
+      </div>
 
       <!-- Botones -->
-      <div class="modal-action">
+      <div class="modal-action mt-8 flex justify-end gap-4">
         <button type="submit" class="btn btn-secondary">Actualizar</button>
-        <button type="button" class="btn" onclick="my_modal_2.close()">Cancelar</button>
+        <button type="button" class="btn btn-outline" onclick="my_modal_2.close()">Cancelar</button>
       </div>
     </form>
   </div>

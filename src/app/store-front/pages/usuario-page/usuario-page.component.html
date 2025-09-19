@@ -15,9 +15,11 @@
 
     <!-- Select de filtro -->
     <select class="select join-item w-32 rounded-none" formControlName="filtro">
-      <option value="id_obra" selected>ID</option>
-      <option value="calle">Calle</option>
-      <option value="id_colonia">Colonia</option>
+      <option value="id_usuario" selected>ID</option>
+      <option value="nombre">Nombre</option>
+      <option value="correo">Correo</option>
+      <option value="id_rol">Rol</option>
+      <option value="id_empresa">Empresa</option>
     </select>
 
     <!-- Botón -->
@@ -58,43 +60,115 @@
 <br>
 <!-- Modal -->
 <dialog id="my_modal_1" class="modal">
-  <div class="modal-box w-11/12 max-w-2xl">
-    <h3 class="text-lg font-bold">Agregar Obra</h3>
-    <p class="py-4">Ingresa la información requerida</p>
+  <div class="modal-box w-11/12 max-w-3xl">
+    <h3 class="text-xl font-bold mb-2">Agregar Usuario</h3>
+    <p class="mb-6 text-gray-600">Ingresa la información requerida</p>
 
-    <!-- Formulario real -->
-    <form [formGroup]="obraForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
-      <!-- Calle -->
-      <input
-        type="text"
-        placeholder="Calle"
-        class="input input-bordered w-full"
-        formControlName="calle"
-      />
-      <form-error-label [control]="obraForm.get('calle')!" />
+    <form
+      [formGroup]="usuarioForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
+      <!-- Grid de dos columnas en md+ -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Apellido Paterno -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Apellido Paterno</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="apellido_paterno"
+          />
+          <form-error-label [control]="usuarioForm.get('apellido_paterno')!" />
+        </div>
 
-      <!-- Colonia -->
-      <select formControlName="id_colonia" class="select select-bordered w-full">
-        <option value="">Seleccione una colonia</option>
-        @for (colonia of colonias(); track colonia.id_colonia) {
-          <option [value]="colonia.id_colonia">{{ colonia.colonia }}</option>
-        }
-      </select>
-      <form-error-label [control]="obraForm.get('id_colonia')!" />
+        <!-- Apellido Materno -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Apellido Materno</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="apellido_materno"
+          />
+          <form-error-label [control]="usuarioForm.get('apellido_materno')!" />
+        </div>
 
-      <!-- Tramo -->
-      <input
-        type="text"
-        placeholder="Tramo"
-        class="input input-bordered w-full"
-        formControlName="tramo"
-      />
-      <form-error-label [control]="obraForm.get('tramo')!" />
+        <!-- Nombres -->
+        <div class="form-control md:col-span-2">
+          <label class="label">
+            <span class="label-text font-medium">Nombres</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            formControlName="nombres"
+          />
+          <form-error-label [control]="usuarioForm.get('nombres')!" />
+        </div>
+
+        <!-- Rol -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Rol</span>
+          </label>
+          <select formControlName="id_rol" class="select select-bordered w-full">
+            <option value="">Seleccione un rol</option>
+            @for (rol of roles(); track rol.id_rol) {
+              <option [value]="rol.id_rol">{{ rol.rol }}</option>
+            }
+          </select>
+          <form-error-label [control]="usuarioForm.get('id_rol')!" />
+        </div>
+
+        <!-- Empresa -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Empresa</span>
+          </label>
+          <select formControlName="id_empresa" class="select select-bordered w-full">
+            <option value="">Seleccione una empresa</option>
+            @for (empresa of empresas(); track empresa.id_empresa) {
+              <option [value]="empresa.id_empresa">{{ empresa.empresa }}</option>
+            }
+          </select>
+          <form-error-label [control]="usuarioForm.get('id_empresa')!" />
+        </div>
+      </div>
+
+      <!-- Correo -->
+        <div class="form-control md:col-span-2">
+          <label class="label">
+            <span class="label-text font-medium">Correo</span>
+          </label>
+          <input
+            type="email"
+            class="input input-bordered w-full"
+            formControlName="correo"
+          />
+          <form-error-label [control]="usuarioForm.get('correo')!" />
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-control md:col-span-2">
+          <label class="label">
+            <span class="label-text font-medium">Contraseña</span>
+          </label>
+          <input
+            type="password"
+            class="input input-bordered w-full"
+            formControlName="contrasenia"
+          />
+          <form-error-label [control]="usuarioForm.get('contrasenia')!" />
+        </div>
 
       <!-- Botones -->
-      <div class="modal-action">
+      <div class="modal-action mt-8 flex justify-end gap-4">
         <button type="submit" class="btn btn-secondary">Guardar</button>
-        <button type="button" class="btn" onclick="my_modal_1.close()">Cancelar</button>
+        <button type="button" class="btn btn-outline" onclick="my_modal_1.close()">Cancelar</button>
       </div>
     </form>
   </div>

@@ -1,11 +1,9 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Usuario } from '@auth/interfaces/user.interface';
 import { AuthService } from '@auth/services/auth.service';
 import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import { Obra } from '@obras/interfaces/obra.interface';
-import { ObrasService as UsuariosService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
@@ -13,6 +11,10 @@ import { PaginationService } from '@shared/components/pagination/pagination.serv
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { UsuarioTableComponent } from "@usuarios/components/usuario-table/usuario-table.component";
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { UsuariosService } from '@usuarios/services/usuarios.service';
+import { RolResponse } from '@usuarios/interfaces/rol.interface';
+import { EmpresaResponse } from '@usuarios/interfaces/empresa.interface';
 
 @Component({
   selector: 'obra-page',
@@ -36,9 +38,13 @@ export class UsuarioPageComponent {
   authService = inject(AuthService);
 
   usuarioForm = this.fb.group({
-    calle: ['', Validators.required],
-    id_colonia: ['', Validators.required],
-    tramo: ['', Validators.required],
+    apellido_paterno: ['', Validators.required],
+    apellido_materno: ['', Validators.required],
+    nombres: ['', Validators.required],
+    correo: ['', Validators.required],
+    contrasenia: ['', Validators.required],
+    id_rol: ['', Validators.required],
+    id_empresa: ['', Validators.required],
   });
 
   searchForm = this.fb.group({
@@ -47,9 +53,16 @@ export class UsuarioPageComponent {
   });
 
   ngOnInit(): void {
-    this.usuariosService.getColonias().subscribe({
-      next: (resp: ColoniasResponse) => {
-        this.roles.set(resp.data.colonias.rows); // ajusta según tu estructura
+    this.usuariosService.getRoles().subscribe({
+      next: (resp: RolResponse) => {
+        this.roles.set(resp.data.roles.rows); // ajusta según tu estructura
+      },
+      error: (err) => console.error(err)
+    });
+
+    this.usuariosService.getEmpresas().subscribe({
+      next: (resp: EmpresaResponse) => {
+        this.empresas.set(resp.data.empresas.rows); // ajusta según tu estructura
       },
       error: (err) => console.error(err)
     });
@@ -61,15 +74,15 @@ export class UsuarioPageComponent {
   paginationEffect = effect(() => {
     const page = this.paginationService.currentPage(); // signal del PaginationService
     const offset = (page - 1) * this.usuariosPerPage();
-    this.loadObras(offset, this.usuariosPerPage());
+    this.loadUsuarios(offset, this.usuariosPerPage());
   });
 
-  loadObras(offset: number = 0, limit: number = 10) {
+  loadUsuarios(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
     console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
-    this.usuariosService.getObras({ limit, offset, filtro, busqueda }).subscribe({
-      next: (resp) => {
-        this.usuarios.set(resp.data.obras);
+    this.usuariosService.getUsuarios({ limit, offset, filtro, busqueda }).subscribe({
+      next: (resp:any) => {
+        this.usuarios.set(resp.data.usuarios);
         this.totalPaginas.set(resp.data.totalPaginas);
       },
       error: (err) => console.error('Error al cargar obras:', err),
@@ -83,27 +96,27 @@ export class UsuarioPageComponent {
     if (!isValid) return;
     const formValue = this.usuarioForm.value;
 
-    const obraLike: Partial<Obra> = {
+    const usuarioLike: Partial<Usuario> = {
       ...(formValue as any),
     };
 
     try {
-      await firstValueFrom(this.usuariosService.createObra(obraLike));
+      await firstValueFrom(this.usuariosService.createUsuario(usuarioLike));
       // cerrar modal
       (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
       Swal.fire({
         title: '¡Éxito!',
-        text: 'La Obra se registró de forma exitosa',
+        text: 'El Usuario se registró de forma exitosa',
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/?page=1';
+        window.location.href = '/usuarios?page=1';
       });
     } catch (error) {
-      console.error("Error al guardar obra:", error);
+      console.error("Error al guardar usuario:", error);
     }
 
   }
@@ -116,7 +129,7 @@ export class UsuarioPageComponent {
 
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
-    this.loadObras(0, this.usuariosPerPage());
+    this.loadUsuarios(0, this.usuariosPerPage());
   }
 
 }
