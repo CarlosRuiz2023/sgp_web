@@ -36,7 +36,7 @@ export class LoginPageComponent {
     this.authService.login(email!, password!).subscribe((isAuthenticated) => {
       console.log(isAuthenticated);
       if (isAuthenticated) {
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/obras');
         return;
       }
 

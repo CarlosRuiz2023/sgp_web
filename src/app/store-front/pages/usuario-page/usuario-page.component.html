@@ -33,7 +33,7 @@
 <!-- Botón flotante para abrir modal -->
 <button
   class="btn btn-primary btn-circle fixed bottom-6 right-6 shadow-lg"
-  onclick="my_modal_1.showModal()"
+  onclick="agregar_usuario_modal.showModal()"
 >
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -59,7 +59,7 @@
 
 <br>
 <!-- Modal -->
-<dialog id="my_modal_1" class="modal">
+<dialog id="agregar_usuario_modal" class="modal">
   <div class="modal-box w-11/12 max-w-3xl">
     <h3 class="text-xl font-bold mb-2">Agregar Usuario</h3>
     <p class="mb-6 text-gray-600">Ingresa la información requerida</p>
@@ -168,7 +168,7 @@
       <!-- Botones -->
       <div class="modal-action mt-8 flex justify-end gap-4">
         <button type="submit" class="btn btn-secondary">Guardar</button>
-        <button type="button" class="btn btn-outline" onclick="my_modal_1.close()">Cancelar</button>
+        <button type="button" class="btn btn-outline" onclick="agregar_usuario_modal.close()">Cancelar</button>
       </div>
     </form>
   </div>

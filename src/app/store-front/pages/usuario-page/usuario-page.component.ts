@@ -48,7 +48,7 @@ export class UsuarioPageComponent {
   });
 
   searchForm = this.fb.group({
-    filtro: ['id_obra', Validators.required],
+    filtro: ['id_usuario', Validators.required],
     busqueda: ['', Validators.required],
   });
 
@@ -103,7 +103,7 @@ export class UsuarioPageComponent {
     try {
       await firstValueFrom(this.usuariosService.createUsuario(usuarioLike));
       // cerrar modal
-      (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
+      (document.getElementById("agregar_usuario_modal") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
       Swal.fire({
         title: '¡Éxito!',

@@ -31,7 +31,7 @@
 <!-- Botón flotante para abrir modal -->
 <button
   class="btn btn-primary btn-circle fixed bottom-6 right-6 shadow-lg"
-  onclick="my_modal_1.showModal()"
+  onclick="agregar_obra_modal.showModal()"
 >
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -57,7 +57,7 @@
 
 <br>
 <!-- Modal -->
-<dialog id="my_modal_1" class="modal">
+<dialog id="agregar_obra_modal" class="modal">
   <div class="modal-box w-11/12 max-w-2xl">
     <h3 class="text-lg font-bold">Agregar Obra</h3>
     <p class="py-4">Ingresa la información requerida</p>
@@ -94,7 +94,7 @@
       <!-- Botones -->
       <div class="modal-action">
         <button type="submit" class="btn btn-secondary">Guardar</button>
-        <button type="button" class="btn" onclick="my_modal_1.close()">Cancelar</button>
+        <button type="button" class="btn" onclick="agregar_obra_modal.close()">Cancelar</button>
       </div>
     </form>
   </div>

@@ -34,7 +34,12 @@ export class UsuarioTableComponent {
     correo: ['', Validators.required],
     contrasenia: ['', Validators.required],
   });
+
+  usuarioFormPassword = this.fb.group({
+    contrasenia: ['', Validators.required],
+  });
   id_usuario = 0;
+  nombre_usuario = 'SIN NOMBRE';
 
   openEditModal(usuario: Usuario) {
     this.id_usuario = usuario.id_usuario;
@@ -50,7 +55,16 @@ export class UsuarioTableComponent {
     });
 
     // Abrimos el modal con JS nativo
-    const modal = document.getElementById('my_modal_2') as HTMLDialogElement;
+    const modal = document.getElementById('editar_usuario_modal') as HTMLDialogElement;
+    modal?.showModal();
+  }
+
+  openCambiarContrasenia(usuario: Usuario) {
+    this.id_usuario = usuario.id_usuario;
+    this.nombre_usuario = usuario.nombres + " " + usuario.apellido_paterno + " " + usuario.apellido_materno;
+
+    // Abrimos el modal con JS nativo
+    const modal = document.getElementById('cambiar_contrasenia_modal') as HTMLDialogElement;
     modal?.showModal();
   }
 
@@ -178,6 +192,54 @@ export class UsuarioTableComponent {
     });
   }
 
+  desloguearUsuario(usuarioId: number, usuarioNombre: string) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Se deslogueara al usuario "${usuarioNombre}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, desloguear',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const id = usuarioId.toString();
+        this.deletingIds.add(id);
+
+        this.usuariosService.desloguearUsuario(id).subscribe({
+          next: (success) => {
+            if (success) {
+              this.onUsuarioDeleted.emit(id);
+
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Usuario deslogueado correctamente',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+              }).then(() => {
+                // recargar la página después de cerrar el alert
+                window.location.href = '/usuarios?page=1';
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error al desloguear el usuario:', error);
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo desloguear al usuario. Intenta de nuevo.'
+            });
+          }
+        });
+      }
+    });
+  }
+
 
   isDeleting(obraId: number): boolean {
     return this.deletingIds.has(obraId.toString());
@@ -198,7 +260,7 @@ export class UsuarioTableComponent {
       await firstValueFrom(this.usuariosService.updateUsuario("" + this.id_usuario, usuarioLike));
 
       // cerrar modal
-      (document.getElementById("my_modal_2") as HTMLDialogElement)?.close();
+      (document.getElementById("editar_usuario_modal") as HTMLDialogElement)?.close();
 
       Swal.fire({
         title: '¡Éxito!',
@@ -216,6 +278,45 @@ export class UsuarioTableComponent {
         icon: 'error',
         title: 'Error',
         text: 'No se pudo actualizar la obra. Intenta de nuevo.'
+      });
+    }
+
+  }
+
+  async onSubmitUpdatePassword() {
+    const isValid = this.usuarioFormPassword.valid;
+    this.usuarioForm.markAllAsTouched();
+
+    console.log(isValid);
+    if (!isValid) return;
+    const formValue = this.usuarioFormPassword.value;
+
+    const usuarioLike: Partial<Usuario> = {
+      ...(formValue as any),
+    };
+
+    try {
+      await firstValueFrom(this.usuariosService.updatePassword("" + this.id_usuario, usuarioLike));
+
+      // cerrar modal
+      (document.getElementById("cambiar_contrasenia_modal") as HTMLDialogElement)?.close();
+
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'El usuario se actualizo de forma exitosa',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
+      }).then(() => {
+        // recargar la página después de cerrar el alert
+        window.location.href = '/usuarios?page=1';
+      });
+    } catch (error) {
+      console.error('Error al actualizar al usuario:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar al usuario. Intenta de nuevo.'
       });
     }
 

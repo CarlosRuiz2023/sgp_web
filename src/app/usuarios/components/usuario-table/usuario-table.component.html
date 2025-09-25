@@ -62,7 +62,17 @@
                   Editar
                 </button>
               </li>
-              <li *ngIf ="usuario.estatus">
+              <li>
+                <button class="btn btn-sm btn-secondary" (click)="openCambiarContrasenia(usuario)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 
+          112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Cambiar Contraseña
+                </button>
+              </li>
+              <li *ngIf="usuario.estatus">
                 <button class="btn btn-sm btn-error" (click)="deleteUsuario(usuario.id_usuario, usuario.nombres)"
                   [disabled]="isDeleting(usuario.id_usuario)">
                   @if (isDeleting(usuario.id_usuario)) {
@@ -78,7 +88,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf ="!usuario.estatus">
+              <li *ngIf="!usuario.estatus">
                 <button class="btn btn-sm btn-info" (click)="reactivarUsuario(usuario.id_usuario, usuario.nombres)"
                   [disabled]="isDeleting(usuario.id_usuario)">
                   @if (isDeleting(usuario.id_usuario)) {
@@ -94,6 +104,24 @@
                   }
                 </button>
               </li>
+              <li *ngIf="usuario.token">
+                <button class="btn btn-sm btn-info" (click)="desloguearUsuario(usuario.id_usuario, usuario.nombres)"
+                  [disabled]="isDeleting(usuario.id_usuario)">
+                  @if (isDeleting(usuario.id_usuario)) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Deslogueando...
+                  } @else {
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 12L2 12M2 12L5.5 9M2 12L5.5 15" stroke="#1C274C" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                      d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.3531 21.8897 19.1752 21.9862 17 21.9983M9.00195 17C9.01406 19.175 9.11051 20.3529 9.87889 21.1213C10.5202 21.7626 11.4467 21.9359 13 21.9827"
+                      stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
+                  </svg>
+                  Desloguear
+                  }
+                </button>
+              </li>
             </ul>
           </div>
         </th>
@@ -105,16 +133,12 @@
 
 <!-- Modal -->
 <!-- Modal Editar Usuario -->
-<dialog id="my_modal_2" class="modal">
+<dialog id="editar_usuario_modal" class="modal">
   <div class="modal-box w-11/12 max-w-3xl">
     <h3 class="text-xl font-bold mb-2">Editar Usuario</h3>
     <p class="mb-6 text-gray-600">Actualiza la información necesaria</p>
 
-    <form
-      [formGroup]="usuarioForm"
-      (ngSubmit)="onSubmit()"
-      class="space-y-6"
-    >
+    <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <!-- Grid de dos columnas en md+ -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Apellido Paterno -->
@@ -122,11 +146,7 @@
           <label class="label">
             <span class="label-text font-medium">Apellido Paterno</span>
           </label>
-          <input
-            type="text"
-            class="input input-bordered w-full"
-            formControlName="apellido_paterno"
-          />
+          <input type="text" class="input input-bordered w-full" formControlName="apellido_paterno" />
           <form-error-label [control]="usuarioForm.get('apellido_paterno')!" />
         </div>
 
@@ -135,11 +155,7 @@
           <label class="label">
             <span class="label-text font-medium">Apellido Materno</span>
           </label>
-          <input
-            type="text"
-            class="input input-bordered w-full"
-            formControlName="apellido_materno"
-          />
+          <input type="text" class="input input-bordered w-full" formControlName="apellido_materno" />
           <form-error-label [control]="usuarioForm.get('apellido_materno')!" />
         </div>
 
@@ -148,11 +164,7 @@
           <label class="label">
             <span class="label-text font-medium">Nombres</span>
           </label>
-          <input
-            type="text"
-            class="input input-bordered w-full"
-            formControlName="nombres"
-          />
+          <input type="text" class="input input-bordered w-full" formControlName="nombres" />
           <form-error-label [control]="usuarioForm.get('nombres')!" />
         </div>
 
@@ -164,7 +176,7 @@
           <select formControlName="id_rol" class="select select-bordered w-full">
             <option value="">Seleccione un rol</option>
             @for (rol of roles(); track rol.id_rol) {
-              <option [value]="rol.id_rol">{{ rol.rol }}</option>
+            <option [value]="rol.id_rol">{{ rol.rol }}</option>
             }
           </select>
           <form-error-label [control]="usuarioForm.get('id_rol')!" />
@@ -178,7 +190,7 @@
           <select formControlName="id_empresa" class="select select-bordered w-full">
             <option value="">Seleccione una empresa</option>
             @for (empresa of empresas(); track empresa.id_empresa) {
-              <option [value]="empresa.id_empresa">{{ empresa.empresa }}</option>
+            <option [value]="empresa.id_empresa">{{ empresa.empresa }}</option>
             }
           </select>
           <form-error-label [control]="usuarioForm.get('id_empresa')!" />
@@ -190,18 +202,42 @@
         <label class="label">
           <span class="label-text font-medium">Correo</span>
         </label>
-        <input
-          type="email"
-          class="input input-bordered w-full"
-          formControlName="correo"
-        />
+        <input type="email" class="input input-bordered w-full" formControlName="correo" />
         <form-error-label [control]="usuarioForm.get('correo')!" />
       </div>
 
       <!-- Botones -->
       <div class="modal-action mt-8 flex justify-end gap-4">
         <button type="submit" class="btn btn-secondary">Actualizar</button>
-        <button type="button" class="btn btn-outline" onclick="my_modal_2.close()">Cancelar</button>
+        <button type="button" class="btn btn-outline" onclick="editar_usuario_modal.close()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+<!-- Modal -->
+<!-- Modal Cambiar Contraseña -->
+<dialog id="cambiar_contrasenia_modal" class="modal">
+  <div class="modal-box w-11/12 max-w-3xl">
+    <h3 class="text-xl font-bold mb-2">Editar Usuario</h3>
+    <p class="mb-6 text-gray-600">Actualiza la contraseña del usuario {{nombre_usuario}}</p>
+
+    <form [formGroup]="usuarioFormPassword" (ngSubmit)="onSubmitUpdatePassword()" class="space-y-6">
+      <!-- Grid de dos columnas en md+ -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Contraseña -->
+        <div class="form-control md:col-span-2">
+          <label class="label">
+            <span class="label-text font-medium">Nueva contraseña</span>
+          </label>
+          <input type="password" class="input input-bordered w-full" formControlName="contrasenia" />
+          <form-error-label [control]="usuarioFormPassword.get('contrasenia')!" />
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-action mt-8 flex justify-end gap-4">
+        <button type="submit" class="btn btn-secondary">Cambiar contraseña</button>
+        <button type="button" class="btn btn-outline" onclick="cambiar_contrasenia_modal.close()">Cancelar</button>
       </div>
     </form>
   </div>

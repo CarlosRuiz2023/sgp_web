@@ -97,7 +97,13 @@ export class UsuariosService {
 
   updateUsuario(id: string, usuario: Partial<Usuario>): Observable<Usuario> {
     return this.http.put<Usuario>(`${baseUrl}/usuario/${id}`, usuario).pipe(
-      tap((updatedObra) => this.updateUsuarioCache(updatedObra))
+      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
+    );
+  }
+
+  updatePassword(id: string, usuario: Partial<Usuario>): Observable<Usuario> {
+    return this.http.put<Usuario>(`${baseUrl}/usuario/actualizarContrasenia/${id}`, usuario).pipe(
+      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
     );
   }
 
@@ -106,7 +112,7 @@ export class UsuariosService {
     formData.append('archivo', file); // 👈 clave 'archivo'
 
     return this.http.post<any>(`${baseUrl}/upload/obras/${id}`, formData).pipe(
-      tap((updatedObra) => this.updateUsuarioCache(updatedObra))
+      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
     );
   }
 
@@ -124,20 +130,29 @@ export class UsuariosService {
       .pipe(tap((usuario) => this.updateUsuarioCache(usuario)));
   }
 
-  // NUEVO MÉTODO PARA ELIMINAR OBRA
+  // NUEVO MÉTODO PARA ELIMINAR USUARIO
   deleteUsuario(id: string): Observable<boolean> {
     return this.http
-      .delete<any>(`${baseUrl}/usuarios/${id}`)
+      .delete<any>(`${baseUrl}/usuario/${id}`)
       .pipe(
         map(() => true),
         tap(() => this.removeUsuarioFromCache(id))
       );
   }
 
-  // NUEVO MÉTODO PARA ELIMINAR OBRA
+  // NUEVO MÉTODO PARA REACTIVAR USUARIO
   reactivarUsuario(id: string): Observable<boolean> {
     return this.http
       .put<any>(`${baseUrl}/usuario/activar/${id}`,{})
+      .pipe(
+        map(() => true),
+      );
+  }
+
+  // NUEVO MÉTODO PARA DESLOGUEAR USUARIO
+  desloguearUsuario(id: string): Observable<boolean> {
+    return this.http
+      .put<any>(`${baseUrl}/auth/${id}`,{})
       .pipe(
         map(() => true),
       );

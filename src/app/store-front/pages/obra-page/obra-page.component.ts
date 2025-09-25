@@ -89,7 +89,7 @@ export class ObraPageComponent {
     try {
       await firstValueFrom(this.obrasService.createObra(obraLike));
       // cerrar modal
-      (document.getElementById("my_modal_1") as HTMLDialogElement)?.close();
+      (document.getElementById("agregar_obra_modal") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
       Swal.fire({
         title: '¡Éxito!',

@@ -40,7 +40,7 @@ export class ObraTableComponent {
     });
 
     // Abrimos el modal con JS nativo
-    const modal = document.getElementById('my_modal_2') as HTMLDialogElement;
+    const modal = document.getElementById('editar_obra_model') as HTMLDialogElement;
     modal?.showModal();
   }
 
@@ -182,7 +182,7 @@ export class ObraTableComponent {
       await firstValueFrom(this.obrasService.updateObra("" + this.id_obra, obraLike));
 
       // cerrar modal
-      (document.getElementById("my_modal_2") as HTMLDialogElement)?.close();
+      (document.getElementById("editar_obra_model") as HTMLDialogElement)?.close();
 
       Swal.fire({
         title: '¡Éxito!',
