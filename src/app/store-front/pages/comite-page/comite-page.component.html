@@ -1,0 +1,110 @@
+<h1 class="text-3xl font-bold font-montserrat text-center mb-5">Obras en proceso</h1>
+<h2 class="text-xl mb-5">UwU</h2>
+
+<div class="divider"></div>
+
+<div class="join w-full">
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="join w-full flex">
+    <!-- Campo de búsqueda -->
+    <div class="flex-grow">
+      <input 
+        class="input join-item w-full" 
+        placeholder="Buscar..." 
+        formControlName="busqueda" />
+    </div>
+
+    <!-- Select de filtro -->
+    <select class="select join-item w-32 rounded-none" formControlName="filtro">
+      <option value="id_comite" selected>ID</option>
+      <option value="id_obra">Obra</option>
+    </select>
+
+    <!-- Botón -->
+    <div class="indicator">
+      <button type="submit" class="btn join-item">Buscar</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- Botón flotante para abrir modal -->
+<button
+  class="btn btn-primary btn-circle fixed bottom-6 right-6 shadow-lg"
+  onclick="agregar_comite_modal.showModal()"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+  </svg>
+</button>
+
+<!-- Listado -->
+<product-table [comites]="comites() ?? []" />
+
+<div class="w-full h-10 flex justify-center items-center">
+  <div class="flex gap-2 items-center h-20">
+    <app-pagination [pages]="totalPaginas() ?? 0"
+      [currentPage]="paginationService.currentPage()" />
+
+    <select class="select select-bordered w-32" (change)="comitesPerPage.set(+selectPerPage.value)" #selectPerPage>
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</div>
+
+<br>
+<!-- Modal -->
+<dialog id="agregar_comite_modal" class="modal">
+  <div class="modal-box w-11/12 max-w-2xl">
+    <h3 class="text-lg font-bold">Agregar Comite</h3>
+    <p class="py-4">Ingresa la información requerida</p>
+
+    <!-- Formulario real -->
+    <form [formGroup]="comiteForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+
+      <!-- Obra -->
+      <select formControlName="id_obra" class="select select-bordered w-full">
+        <option value="">Seleccione una obra</option>
+        @for (obra of obras(); track obra.id_obra) {
+          <option [value]="obra.id_obra">{{ obra.calle }}</option>
+        }
+      </select>
+      <form-error-label [control]="comiteForm.get('id_obra')!" />
+
+      <!-- Tipo -->
+      <input
+        type="number"
+        placeholder="Tipo"
+        class="input input-bordered w-full"
+        formControlName="tipo"
+      />
+      <form-error-label [control]="comiteForm.get('tipo')!" />
+
+      <!-- Punto -->
+      <input
+        type="number"
+        placeholder="Punto"
+        class="input input-bordered w-full"
+        formControlName="punto"
+      />
+      <form-error-label [control]="comiteForm.get('punto')!" />
+
+      <!-- Costo -->
+      <input
+        type="number"
+        placeholder="Costo"
+        class="input input-bordered w-full"
+        formControlName="costo"
+      />
+      <form-error-label [control]="comiteForm.get('costo')!" />
+
+      <!-- Botones -->
+      <div class="modal-action">
+        <button type="submit" class="btn btn-secondary">Guardar</button>
+        <button type="button" class="btn" onclick="agregar_comite_modal.close()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</dialog>

@@ -13,6 +13,7 @@
       "@shared/*": ["./src/app/shared/*"],
       "@store-front/*": ["./src/app/store-front/*"],
       "@utils/*": ["./src/app/utils/*"],
+      "@comites/*": ["./src/app/comites/*"],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
