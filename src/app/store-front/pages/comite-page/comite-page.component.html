@@ -38,7 +38,7 @@
 </button>
 
 <!-- Listado -->
-<product-table [comites]="comites() ?? []" />
+<comit-table [comites]="comites() ?? []" />
 
 <div class="w-full h-10 flex justify-center items-center">
   <div class="flex gap-2 items-center h-20">
@@ -68,7 +68,7 @@
       <select formControlName="id_obra" class="select select-bordered w-full">
         <option value="">Seleccione una obra</option>
         @for (obra of obras(); track obra.id_obra) {
-          <option [value]="obra.id_obra">{{ obra.calle }}</option>
+          <option [value]="obra.id_obra">{{ obra.estatus }}</option>
         }
       </select>
       <form-error-label [control]="comiteForm.get('id_obra')!" />

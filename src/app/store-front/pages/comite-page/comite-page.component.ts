@@ -2,10 +2,11 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
+import { ComiteTableComponent } from '@comites/components/comite-table/comite-table.component';
+import { ComitesService } from '@comites/services/comite.service';
 //import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
-import { ObraTableComponent } from '@obras/components/obra-table/obra-table.component';
 import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { Obra } from '@obras/interfaces/obra.interface';
+import { Comite, ComiteResponse } from '@comites/interfaces/comite.interface';
 import { ObrasService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
@@ -16,17 +17,17 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'obra-page',
-  imports: [PaginationComponent, ObraTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
-  templateUrl: './obra-page.component.html',
+  imports: [PaginationComponent, ComiteTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
+  templateUrl: './comite-page.component.html',
 })
-export class ObraPageComponent {
-  obra = input.required<Obra>();
-  obrasService = inject(ObrasService);
+export class ComitePageComponent {
+  comite = input.required<Comite>();
+  comitesService = inject(ComitesService);
   totalPaginas = signal(0);
-  obras = signal<Obra[]>([]);
+  comites = signal<Comite[]>([]);
+  obras = signal<Comite[]>([]);
   paginationService = inject(PaginationService);
-  obrasPerPage = signal(10);
-  colonias = signal<any[]>([]);
+  comitesPerPage = signal(10);
   fb = inject(FormBuilder);
   wasSaved = signal(false);
   imageFileList: FileList | undefined = undefined;
@@ -34,21 +35,22 @@ export class ObraPageComponent {
   filters = signal<{ filtro?: string | null; busqueda?: string | null }>({});
   authService = inject(AuthService);
 
-  obraForm = this.fb.group({
-    calle: ['', Validators.required],
-    id_colonia: ['', Validators.required],
-    tramo: ['', Validators.required],
+  comiteForm = this.fb.group({
+    id_obra: ['', Validators.required],
+    tipo: [1, Validators.required],
+    punto: [1, Validators.required],
+    costo: [1.1, Validators.required],
   });
 
   searchForm = this.fb.group({
-    filtro: ['id_obra', Validators.required],
+    filtro: ['id_comite', Validators.required],
     busqueda: ['', Validators.required],
   });
 
   ngOnInit(): void {
-    this.obrasService.getColonias().subscribe({
-      next: (resp: ColoniasResponse) => {
-        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+    this.comitesService.getComites({}).subscribe({
+      next: (resp: ComiteResponse) => {
+        this.comites.set(resp.data.comites); // ajusta según tu estructura
       },
       error: (err) => console.error(err)
     });
@@ -59,16 +61,16 @@ export class ObraPageComponent {
 
   paginationEffect = effect(() => {
     const page = this.paginationService.currentPage(); // signal del PaginationService
-    const offset = (page - 1) * this.obrasPerPage();
-    this.loadObras(offset, this.obrasPerPage());
+    const offset = (page - 1) * this.comitesPerPage();
+    this.loadComites(offset, this.comitesPerPage());
   });
 
-  loadObras(offset: number = 0, limit: number = 10) {
+  loadComites(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
     console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
-    this.obrasService.getObras({ limit, offset, filtro, busqueda }).subscribe({
+    this.comitesService.getComites({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.obras.set(resp.data.obras);
+        this.comites.set(resp.data.comites);
         this.totalPaginas.set(resp.data.totalPaginas);
       },
       error: (err) => console.error('Error al cargar obras:', err),
@@ -76,18 +78,18 @@ export class ObraPageComponent {
   }
 
   async onSubmit() {
-    const isValid = this.obraForm.valid;
-    this.obraForm.markAllAsTouched();
+    const isValid = this.comiteForm.valid;
+    this.comiteForm.markAllAsTouched();
 
     if (!isValid) return;
-    const formValue = this.obraForm.value;
+    const formValue = this.comiteForm.value;
 
-    const obraLike: Partial<Obra> = {
+    const obraLike: Partial<Comite> = {
       ...(formValue as any),
     };
 
     try {
-      await firstValueFrom(this.obrasService.createObra(obraLike));
+      await firstValueFrom(this.comitesService.createComite(obraLike));
       // cerrar modal
       (document.getElementById("agregar_obra_modal") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
@@ -115,7 +117,7 @@ export class ObraPageComponent {
 
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
-    this.loadObras(0, this.obrasPerPage());
+    this.loadComites(0, this.comitesPerPage());
   }
 
 }

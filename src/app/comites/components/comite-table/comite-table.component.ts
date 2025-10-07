@@ -2,28 +2,28 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Comite, ComiteResponse } from '@comites/interfaces/comite.interface';
+import { ComitesService } from '@comites/services/comite.service';
 import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { Obra } from '@obras/interfaces/obra.interface';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
-import { ObrasService } from '@obras/services/obras.service';
+import { Obra, ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'product-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
-  templateUrl: './obra-table.component.html',
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  templateUrl: './comite-table.component.html',
 })
-export class ObraTableComponent {
-  private obrasService = inject(ObrasService);
+export class ComiteTableComponent {
+  private ComitesService = inject(ComitesService);
   private router = inject(Router);
   fb = inject(FormBuilder);
-  colonias = signal<any[]>([]);
+  obras = signal<any[]>([]);
 
-  obras = input.required<Obra[]>();
+  comites = input.required<Comite[]>();
 
-  obraForm = this.fb.group({
+  comiteForm = this.fb.group({
     calle: ['', Validators.required],
     id_colonia: [0, Validators.required],
     tramo: ['', Validators.required],
@@ -33,7 +33,7 @@ export class ObraTableComponent {
   openEditModal(obra: Obra) {
     this.id_obra = obra.id_obra;
     // Poblamos el formulario con los valores de la obra
-    this.obraForm.patchValue({
+    this.comiteForm.patchValue({
       calle: obra.calle,
       id_colonia: obra.id_colonia, // asegúrate de que tu interface tenga este campo
       tramo: obra.tramo,
@@ -45,9 +45,9 @@ export class ObraTableComponent {
   }
 
   ngOnInit(): void {
-    this.obrasService.getColonias().subscribe({
-      next: (resp: ColoniasResponse) => {
-        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+    this.ComitesService.getObras().subscribe({
+      next: (resp: ObrasResponse) => {
+        this.obras.set(resp.data.obras); // ajusta según tu estructura
       },
       error: (err) => console.error(err)
     });
@@ -79,7 +79,7 @@ export class ObraTableComponent {
         const id = obraId.toString();
         this.deletingIds.add(id);
 
-        this.obrasService.deleteObra(id).subscribe({
+        this.ComitesService.deleteComite(id).subscribe({
           next: (success) => {
             if (success) {
               this.onObraDeleted.emit(id);
@@ -129,7 +129,7 @@ export class ObraTableComponent {
         const id = obraId.toString();
         this.deletingIds.add(id);
 
-        this.obrasService.reactivarObra(id).subscribe({
+        this.ComitesService.reactivarComite(id).subscribe({
           next: (success) => {
             if (success) {
               this.onObraDeleted.emit(id);
@@ -165,99 +165,6 @@ export class ObraTableComponent {
 
   isDeleting(obraId: number): boolean {
     return this.deletingIds.has(obraId.toString());
-  }
-
-  async onSubmit() {
-    const isValid = this.obraForm.valid;
-    this.obraForm.markAllAsTouched();
-
-    if (!isValid) return;
-    const formValue = this.obraForm.value;
-
-    const obraLike: Partial<Obra> = {
-      ...(formValue as any),
-    };
-
-    try {
-      await firstValueFrom(this.obrasService.updateObra("" + this.id_obra, obraLike));
-
-      // cerrar modal
-      (document.getElementById("editar_obra_model") as HTMLDialogElement)?.close();
-
-      Swal.fire({
-        title: '¡Éxito!',
-        text: 'La Obra se actualizo de forma exitosa',
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
-      }).then(() => {
-        // recargar la página después de cerrar el alert
-        window.location.href = '/?page=1';
-      });
-    } catch (error) {
-      console.error('Error al actualizar la obra:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo actualizar la obra. Intenta de nuevo.'
-      });
-    }
-
-  }
-
-  onPdfSelected(event: Event, id_obra: number) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      if (file.type !== 'application/pdf') {
-        alert('Por favor selecciona un archivo PDF válido.');
-        return;
-      }
-
-      // Aquí puedes subir el archivo al servidor
-      console.log('PDF seleccionado para obra', id_obra, file);
-
-      // Llamamos al servicio
-      this.obrasService.uploadPdf(id_obra, file).subscribe({
-        next: (res) => {
-          Swal.fire({
-            title: '¡Éxito!',
-            text: 'Se ha agregado el PDF de forma exitosa',
-            icon: 'success',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
-          }).then(() => {
-            // recargar la página después de cerrar el alert
-            window.location.href = '/?page=1';
-          });
-        },
-        error: (err) => {
-          console.error('Error al subir el PDF ', err);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo subir el PDF. Intenta de nuevo.'
-          });
-        }
-      });
-    }
-  }
-
-  verPdf(id_obra: number) {
-    this.obrasService.getPdf(id_obra).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank'); // abre el PDF en una nueva pestaña
-      },
-      error: (err) => {
-        console.error('Error al obtener elPDF', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo obtener el PDF. Intenta de nuevo.'
-            });
-      }
-    });
   }
 
 }
