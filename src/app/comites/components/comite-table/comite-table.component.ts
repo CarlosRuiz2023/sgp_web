@@ -11,7 +11,7 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'product-table',
+  selector: 'comite-table',
   imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './comite-table.component.html',
 })
@@ -94,7 +94,7 @@ export class ComiteTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                window.location.href = '/comites?page=1';
               });
             }
           },
@@ -144,7 +144,7 @@ export class ComiteTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                window.location.href = '/comites?page=1';
               });
             }
           },

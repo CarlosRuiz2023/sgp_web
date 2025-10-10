@@ -14,6 +14,8 @@
       "@store-front/*": ["./src/app/store-front/*"],
       "@utils/*": ["./src/app/utils/*"],
       "@comites/*": ["./src/app/comites/*"],
+      "@estimaciones/*": ["./src/app/estimaciones/*"],
+      "@contratos/*": ["./src/app/contratos/*"],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

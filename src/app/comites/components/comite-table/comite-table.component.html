@@ -39,6 +39,9 @@
         <td>
           {{ comite.sesion }}
         </td>
+        <td>
+          {{ comite.tipo }}
+        </td>
         <th>
           {{ comite.punto }}
         </th>
@@ -49,7 +52,7 @@
           {{ comite.fecha_creacion }}
         </th>
         <th>
-          <!-- <div class="dropdown dropdown-hover dropdown-left">
+          <div class="dropdown dropdown-hover dropdown-left">
             <div class="btn btn-info btn-sm rounded-lg shadow-sm hover:scale-105 transition m-1"><svg
                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -57,50 +60,10 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
-                <button class="btn btn-sm btn-primary" (click)="openEditModal(comite)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 
-          112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Editar
-                </button>
-              </li>
-              <li *ngIf="!comite.traza_du">
-                <label class="btn btn-sm btn-accent cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Subir PDF
-                  <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, comite.id_obra)" />
-                </label>
-              </li>
-              <li *ngIf="comite.traza_du">
-                <button class="btn btn-sm btn-secondary" (click)="verPdf(comite.id_obra)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
-                  </svg>
-                  Ver PDF
-                </button>
-              </li>
-              <li *ngIf="comite.traza_du">
-                <label class="btn btn-sm btn-accent cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Reemplazar PDF
-                  <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, comite.id_obra)" />
-                </label>
-              </li>
               <li *ngIf ="comite.estatus">
-                <button class="btn btn-sm btn-error" (click)="deleteObra(comite.id_obra, comite.calle)"
-                  [disabled]="isDeleting(comite.id_obra)">
-                  @if (isDeleting(comite.id_obra)) {
+                <button class="btn btn-sm btn-error" (click)="deleteObra(comite.id_comite, comite.obra.calle)"
+                  [disabled]="isDeleting(comite.id_comite)">
+                  @if (isDeleting(comite.id_comite)) {
                   <span class="loading loading-spinner loading-xs"></span>
                   Eliminando...
                   } @else {
@@ -114,9 +77,9 @@
                 </button>
               </li>
               <li *ngIf ="!comite.estatus">
-                <button class="btn btn-sm btn-info" (click)="reactivarObra(comite.id_obra, comite.calle)"
-                  [disabled]="isDeleting(comite.id_obra)">
-                  @if (isDeleting(comite.id_obra)) {
+                <button class="btn btn-sm btn-info" (click)="reactivarObra(comite.id_comite, comite.obra.calle)"
+                  [disabled]="isDeleting(comite.id_comite)">
+                  @if (isDeleting(comite.id_comite)) {
                   <span class="loading loading-spinner loading-xs"></span>
                   Reactivando...
                   } @else {
@@ -130,7 +93,7 @@
                 </button>
               </li>
             </ul>
-          </div> -->
+          </div>
         </th>
       </tr>
       }

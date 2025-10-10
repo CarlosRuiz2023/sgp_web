@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
@@ -37,7 +37,7 @@ const emptyComite: Comite = {
   obra: {
     calle: 'Calle Falsa 123',
   },
-  usuario:{
+  usuario: {
     nombres: 'Pedro',
     apellido_paterno: 'Vargas',
     apellido_materno: 'Hernandez',
@@ -123,9 +123,17 @@ export class ComitesService {
   createComite(
     comiteLike: Partial<Comite>
   ): Observable<Comite> {
+    const token = localStorage.getItem('token'); // O el nombre que uses para guardar el token
+    console.log(token);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
     return this.http
-      .post<Comite>(`${baseUrl}/comite`, comiteLike)
-      .pipe(tap((comite) => this.updateComiteCache(comite)));
+      .post<Comite>(`${baseUrl}/comite`, comiteLike, { headers })
+      .pipe(
+        tap((comite) => this.updateComiteCache(comite))
+      );
   }
 
   // NUEVO MÉTODO PARA ELIMINAR OBRA

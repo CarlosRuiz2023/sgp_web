@@ -1,4 +1,4 @@
-<h1 class="text-3xl font-bold font-montserrat text-center mb-5">Obras en proceso</h1>
+<h1 class="text-3xl font-bold font-montserrat text-center mb-5">Comites en existencia</h1>
 <h2 class="text-xl mb-5">UwU</h2>
 
 <div class="divider"></div>
@@ -38,7 +38,7 @@
 </button>
 
 <!-- Listado -->
-<comit-table [comites]="comites() ?? []" />
+<comite-table [comites]="comites() ?? []" />
 
 <div class="w-full h-10 flex justify-center items-center">
   <div class="flex gap-2 items-center h-20">
@@ -68,7 +68,7 @@
       <select formControlName="id_obra" class="select select-bordered w-full">
         <option value="">Seleccione una obra</option>
         @for (obra of obras(); track obra.id_obra) {
-          <option [value]="obra.id_obra">{{ obra.estatus }}</option>
+          <option [value]="obra.id_obra">{{ obra.calle }}</option>
         }
       </select>
       <form-error-label [control]="comiteForm.get('id_obra')!" />

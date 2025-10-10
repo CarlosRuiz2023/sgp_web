@@ -2,33 +2,31 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
-import { ComiteTableComponent } from '@comites/components/comite-table/comite-table.component';
-import { ComitesService } from '@comites/services/comite.service';
 //import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { Comite, ComiteResponse } from '@comites/interfaces/comite.interface';
-import { ObrasService } from '@obras/services/obras.service';
+import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 import { firstValueFrom } from 'rxjs';
+import { EstimacionTableComponent } from 'src/app/estimaciones/components/estimacion-table/estimacion-table.component';
+import { Estimacion } from 'src/app/estimaciones/interfaces/estimacion.interface';
+import { EstimacionesService } from 'src/app/estimaciones/services/estimaciones.service';
 import Swal from 'sweetalert2';
-import { Obra, ObrasResponse } from '@obras/interfaces/obra.interface';
 
 @Component({
-  selector: 'obra-page',
-  imports: [PaginationComponent, ComiteTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
-  templateUrl: './comite-page.component.html',
+  selector: 'estimacion-page',
+  imports: [PaginationComponent, EstimacionTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  templateUrl: './estimacion-page.component.html',
 })
-export class ComitePageComponent {
-  comite = input.required<Comite>();
-  comitesService = inject(ComitesService);
+export class EstimacionPageComponent {
+  estimacion = input.required<Estimacion>();
+  estimacionesService = inject(EstimacionesService);
   totalPaginas = signal(0);
-  comites = signal<Comite[]>([]);
-  obras = signal<Obra[]>([]);
+  estimaciones = signal<Estimacion[]>([]);
   paginationService = inject(PaginationService);
-  comitesPerPage = signal(10);
+  estimacionesPerPage = signal(10);
+  obras = signal<any[]>([]);
   fb = inject(FormBuilder);
   wasSaved = signal(false);
   imageFileList: FileList | undefined = undefined;
@@ -36,20 +34,22 @@ export class ComitePageComponent {
   filters = signal<{ filtro?: string | null; busqueda?: string | null }>({});
   authService = inject(AuthService);
 
-  comiteForm = this.fb.group({
+  estimacionForm = this.fb.group({
     id_obra: ['', Validators.required],
-    tipo: ['', Validators.required],
-    punto: ['', Validators.required],
-    costo: ['', Validators.required],
+    finiquito: [false, Validators.required],
+    avance_fisico: [0, Validators.required],
+    avance_financiero: [0, Validators.required],
+    actual: [0, Validators.required],
+    anterior: [0, Validators.required],
   });
 
   searchForm = this.fb.group({
-    filtro: ['id_comite', Validators.required],
+    filtro: ['id_estimacion', Validators.required],
     busqueda: ['', Validators.required],
   });
 
   ngOnInit(): void {
-    this.comitesService.getObras().subscribe({
+    this.estimacionesService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
         this.obras.set(resp.data.obras); // ajusta según tu estructura
       },
@@ -62,16 +62,15 @@ export class ComitePageComponent {
 
   paginationEffect = effect(() => {
     const page = this.paginationService.currentPage(); // signal del PaginationService
-    const offset = (page - 1) * this.comitesPerPage();
-    this.loadComites(offset, this.comitesPerPage());
+    const offset = (page - 1) * this.estimacionesPerPage();
+    this.loadEstimaciones(offset, this.estimacionesPerPage());
   });
 
-  loadComites(offset: number = 0, limit: number = 10) {
+  loadEstimaciones(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
-    console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
-    this.comitesService.getComites({ limit, offset, filtro, busqueda }).subscribe({
+    this.estimacionesService.getEstimaciones({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.comites.set(resp.data.comites);
+        this.estimaciones.set(resp.data.estimaciones);
         this.totalPaginas.set(resp.data.totalPaginas);
       },
       error: (err) => console.error('Error al cargar obras:', err),
@@ -79,33 +78,33 @@ export class ComitePageComponent {
   }
 
   async onSubmit() {
-    const isValid = this.comiteForm.valid;
-    this.comiteForm.markAllAsTouched();
+    const isValid = this.estimacionForm.valid;
+    this.estimacionForm.markAllAsTouched();
 
     if (!isValid) return;
-    const formValue = this.comiteForm.value;
+    const formValue = this.estimacionForm.value;
 
-    const comiteLike: Partial<Comite> = {
+    const estimacionLike: Partial<Estimacion> = {
       ...(formValue as any),
     };
 
     try {
-      await firstValueFrom(this.comitesService.createComite(comiteLike));
+      await firstValueFrom(this.estimacionesService.createEstimacion(estimacionLike));
       // cerrar modal
-      (document.getElementById("agregar_comite_modal") as HTMLDialogElement)?.close();
+      (document.getElementById("agregar_estimacion_modal") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
       Swal.fire({
         title: '¡Éxito!',
-        text: 'El comite se registró de forma exitosa',
+        text: 'La Estimacion se registró de forma exitosa',
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/comites?page=1';
+        window.location.href = '/estimaciones?page=1';
       });
     } catch (error) {
-      console.error("Error al guardar comite:", error);
+      console.error("Error al guardar estimacion:", error);
     }
 
   }
@@ -118,7 +117,7 @@ export class ComitePageComponent {
 
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
-    this.loadComites(0, this.comitesPerPage());
+    this.loadEstimaciones(0, this.estimacionesPerPage());
   }
 
 }

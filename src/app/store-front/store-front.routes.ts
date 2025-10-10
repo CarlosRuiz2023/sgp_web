@@ -1,10 +1,11 @@
 import { Routes } from "@angular/router";
 import { StoreFrontLayoutComponent } from "./layouts/store-front-layout/store-front-layout.component";
 import { ObraPageComponent } from "./pages/obra-page/obra-page.component";
-import { GenderPageComponent } from "./pages/gender-page/gender-page.component";
 import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
 import { UsuarioPageComponent } from "./pages/usuario-page/usuario-page.component";
 import { ComitePageComponent } from "./pages/comite-page/comite-page.component";
+import { EstimacionPageComponent } from "./pages/estimacion-page/estimacion-page.component";
+import { ContratoPageComponent } from "./pages/contrato-page/contrato-page.component";
 
 export const storeFrontRoutes: Routes = [
     {
@@ -24,8 +25,12 @@ export const storeFrontRoutes: Routes = [
                 component:ComitePageComponent
             },
             {
-                path:'product/:idSlug',
-                component: ProductPageComponent
+                path:'estimaciones',
+                component: EstimacionPageComponent
+            },
+            {
+                path:'contratos',
+                component: ContratoPageComponent
             },
             {
                 path:'**',
