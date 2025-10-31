@@ -6,6 +6,7 @@ import { UsuarioPageComponent } from "./pages/usuario-page/usuario-page.componen
 import { ComitePageComponent } from "./pages/comite-page/comite-page.component";
 import { EstimacionPageComponent } from "./pages/estimacion-page/estimacion-page.component";
 import { ContratoPageComponent } from "./pages/contrato-page/contrato-page.component";
+import { SolicitudPageComponent } from "./pages/solicitud-page/solicitud-page.component";
 
 export const storeFrontRoutes: Routes = [
     {
@@ -31,6 +32,10 @@ export const storeFrontRoutes: Routes = [
             {
                 path:'contratos',
                 component: ContratoPageComponent
+            },
+            {
+                path:'solicitudes',
+                component: SolicitudPageComponent
             },
             {
                 path:'**',
