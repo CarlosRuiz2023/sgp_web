@@ -11,15 +11,12 @@
         <th>Id</th>
         <th>Obra</th>
         <th>Solicitante</th>
-        <th>Laboratorio</th>
-        <th>Mecanico_de_suelos</th>
-        <th>Fecha_solicitud</th>
-        <th>Fecha_laboratorio</th>
-        <th>Fecha_ms</th>
+        <th>Sapalista</th>
+        <th>Fecha de Entrega</th>
       </tr>
     </thead>
     <tbody>
-      @for (solicitud of solicitudes(); track solicitud.id_solicitud) {
+      @for (oficioSapal of oficiosSapal(); track oficioSapal.id_oficio_sapal) {
       <tr>
         <!-- <th>
           <label>
@@ -27,31 +24,21 @@
           </label>
         </th> -->
         <td>
-          {{ solicitud.id_solicitud }}
+          {{ oficioSapal.id_oficio_sapal }}
         </td>
         <td>
-          {{ solicitud.obra.calle }}
+          {{ oficioSapal.obra.calle }}
         </td>
         <td>
-          {{ solicitud.solicitante.nombres }} {{ solicitud.solicitante.apellido_paterno }} {{
-          solicitud.solicitante.apellido_materno }}
+          {{ oficioSapal.usuario.nombres }} {{ oficioSapal.usuario.apellido_paterno }} {{
+          oficioSapal.usuario.apellido_materno }}
         </td>
         <td>
-          {{ solicitud.laboratorista.nombres }} {{ solicitud.laboratorista.apellido_paterno }} {{
-          solicitud.laboratorista.apellido_materno }}
-        </td>
-        <td>
-          {{ solicitud.mecanico_de_suelos.nombres }} {{ solicitud.mecanico_de_suelos.apellido_paterno }} {{
-          solicitud.mecanico_de_suelos.apellido_materno }}
-        </td>
-        <td>
-          {{ solicitud.fecha_solicitud | date: 'dd/MM/yyyy HH:mm' }}
+          {{ oficioSapal.empleado_sapal.nombres }} {{ oficioSapal.empleado_sapal.apellido_paterno }} {{
+          oficioSapal.empleado_sapal.apellido_materno }}
         </td>
         <th>
-          {{ solicitud.fecha_laboratorio | date: 'dd/MM/yyyy HH:mm' }}
-        </th>
-        <th>
-          {{ solicitud.fecha_ms | date: 'dd/MM/yyyy HH:mm' }}
+          {{ oficioSapal.fecha_de_entrega | date: 'dd/MM/yyyy HH:mm' }}
         </th>
         <th>
           <div class="dropdown dropdown-hover dropdown-left">
@@ -63,7 +50,7 @@
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
               <li>
-                <button class="btn btn-sm btn-primary" (click)="openEditModal(solicitud)">
+                <button class="btn btn-sm btn-primary" (click)="openEditModal(oficioSapal)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 
@@ -72,96 +59,64 @@
                   Editar
                 </button>
               </li>
-              <li *ngIf="!solicitud.laboratorio">
-                <label class="btn btn-sm btn-accent cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Subir Resultado Laboratorio
-                  <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelectedLaboratorio($event, solicitud.id_solicitud)" />
-                </label>
-              </li>
-              <li *ngIf="solicitud.solicitud">
-                <button class="btn btn-sm btn-secondary" (click)="verPdfSolicitud(solicitud.id_solicitud)">
+              <li *ngIf="oficioSapal.oficio_de_recibido">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfRecibido(oficioSapal.id_oficio_sapal)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M15 12H9m12-6H3m12 12H9m12-6H3" />
                   </svg>
-                  Ver Solicitud
+                  Ver Oficio de Recibido
                 </button>
               </li>
-              <li *ngIf="solicitud.solicitud">
+              <li *ngIf="oficioSapal.oficio_de_recibido">
                 <label class="btn btn-sm btn-accent cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                   </svg>
-                  Reemplazar Solicitud
+                  Reemplazar Oficio de Recibido
                   <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelectedLaboratorio($event, solicitud.id_solicitud)" />
+                    (change)="onPdfSelectedRecibido($event, oficioSapal.id_oficio_sapal)" />
                 </label>
               </li>
-              <li *ngIf="solicitud.laboratorio">
-                <button class="btn btn-sm btn-secondary" (click)="verPdfLaboratorio(solicitud.id_solicitud)">
+              <li *ngIf="!oficioSapal.oficio_de_revision">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Subir Oficio de Revisado
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedRevisado($event, oficioSapal.id_oficio_sapal)" />
+                </label>
+              </li>
+              <li *ngIf="oficioSapal.oficio_de_revision">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfRevisado(oficioSapal.id_oficio_sapal)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M15 12H9m12-6H3m12 12H9m12-6H3" />
                   </svg>
-                  Ver Laboratorio
+                  Ver Revision
                 </button>
               </li>
-              <li *ngIf="solicitud.laboratorio">
+              <li *ngIf="oficioSapal.oficio_de_revision">
                 <label class="btn btn-sm btn-accent cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                   </svg>
-                  Reemplazar Laboratorio
+                  Reemplazar Oficio de Revision
                   <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelectedLaboratorio($event, solicitud.id_solicitud)" />
+                    (change)="onPdfSelectedRevisado($event, oficioSapal.id_oficio_sapal)" />
                 </label>
               </li>
-              <li *ngIf="!solicitud.mecanica_de_suelos">
-                <label class="btn btn-sm btn-accent cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Subir Resultado Mecanica de suelos
-                  <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelectedMecanicaDeSuelos($event, solicitud.id_solicitud)" />
-                </label>
-              </li>
-              <li *ngIf="solicitud.mecanica_de_suelos">
-                <button class="btn btn-sm btn-secondary" (click)="verPdfMecanicaDeSuelos(solicitud.id_solicitud)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
-                  </svg>
-                  Ver Mecanica de suelos
-                </button>
-              </li>
-              <li *ngIf="solicitud.mecanica_de_suelos">
-                <label class="btn btn-sm btn-accent cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Reemplazar Mecanica de suelos
-                  <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelectedMecanicaDeSuelos($event, solicitud.id_solicitud)" />
-                </label>
-              </li>
-              <li *ngIf="solicitud.estatus">
+              <li *ngIf="oficioSapal.estatus">
                 <button class="btn btn-sm btn-error"
-                  (click)="deleteSolicitud(solicitud.id_solicitud, solicitud.obra.calle)"
-                  [disabled]="isDeleting(solicitud.id_solicitud)">
-                  @if (isDeleting(solicitud.id_solicitud)) {
+                  (click)="deleteOficioSapal(oficioSapal.id_oficio_sapal, oficioSapal.obra.calle)"
+                  [disabled]="isDeleting(oficioSapal.id_oficio_sapal)">
+                  @if (isDeleting(oficioSapal.id_oficio_sapal)) {
                   <span class="loading loading-spinner loading-xs"></span>
                   Eliminando...
                   } @else {
@@ -174,11 +129,11 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!solicitud.estatus">
+              <li *ngIf="!oficioSapal.estatus">
                 <button class="btn btn-sm btn-info"
-                  (click)="reactivarSolicitud(solicitud.id_solicitud, solicitud.obra.calle)"
-                  [disabled]="isDeleting(solicitud.id_solicitud)">
-                  @if (isDeleting(solicitud.id_solicitud)) {
+                  (click)="reactivarOficioSapal(oficioSapal.id_oficio_sapal, oficioSapal.obra.calle)"
+                  [disabled]="isDeleting(oficioSapal.id_oficio_sapal)">
+                  @if (isDeleting(oficioSapal.id_oficio_sapal)) {
                   <span class="loading loading-spinner loading-xs"></span>
                   Reactivando...
                   } @else {
@@ -201,13 +156,13 @@
 </div>
 
 <!-- Modal -->
-<dialog id="editar_solicitud_model" class="modal">
+<dialog id="editar_oficio_sapal_model" class="modal">
   <div class="modal-box w-11/12 max-w-2xl">
-    <h3 class="text-lg font-bold">Editar Solicitud</h3>
+    <h3 class="text-lg font-bold">Editar Oficio Sapal</h3>
     <p class="py-4">Actualiza la información necesaria</p>
 
     <!-- Formulario real -->
-    <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+    <form [formGroup]="oficioSapalForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
       <!-- Obra -->
       <label class="cursor-pointer label">
         <span class="label-text">Obra</span>
@@ -218,38 +173,25 @@
           }
         </select>
       </label>
-      <form-error-label [control]="solicitudForm.get('id_obra')!" />
+      <form-error-label [control]="oficioSapalForm.get('id_obra')!" />
 
-      <!-- Laboratorista -->
+      <!-- Sapalista -->
       <label class="cursor-pointer label">
-        <span class="label-text">Laboratorista</span>
-        <select formControlName="id_usuario_laboratorio" class="select select-bordered w-full">
+        <span class="label-text">Sapalista</span>
+        <select formControlName="id_usuario_sapal" class="select select-bordered w-full">
           <option value="">Seleccione un laboratorista</option>
-          @for (laboratorista of laboratoristas(); track laboratorista.id_usuario) {
-          <option [value]="laboratorista.id_usuario">{{ laboratorista.apellido_paterno }} {{
-            laboratorista.apellido_materno }} {{ laboratorista.nombres }}</option>
+          @for (sapalista of sapaleros(); track sapalista.id_usuario) {
+          <option [value]="sapalista.id_usuario">{{ sapalista.apellido_paterno }} {{
+            sapalista.apellido_materno }} {{ sapalista.nombres }}</option>
           }
         </select>
       </label>
-      <form-error-label [control]="solicitudForm.get('id_usuario_laboratorio')!" />
-
-      <!-- Mecanico de Suelos -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Mecanico de Suelos</span>
-        <select formControlName="id_usuario_ms" class="select select-bordered w-full">
-          <option value="">Seleccione un mecanico de suelos</option>
-          @for (mecanicoDeSuelos of mecanicosDeSuelos(); track mecanicoDeSuelos.id_usuario) {
-          <option [value]="mecanicoDeSuelos.id_usuario">{{ mecanicoDeSuelos.apellido_paterno}} {{
-            mecanicoDeSuelos.apellido_materno}} {{ mecanicoDeSuelos.nombres}}</option>
-          }
-        </select>
-      </label>
-      <form-error-label [control]="solicitudForm.get('id_usuario_ms')!" />
+      <form-error-label [control]="oficioSapalForm.get('id_usuario_sapal')!" />
 
       <!-- Botones -->
       <div class="modal-action">
         <button type="submit" class="btn btn-secondary">Actualizar</button>
-        <button type="button" class="btn" onclick="editar_solicitud_model.close()">Cancelar</button>
+        <button type="button" class="btn" onclick="editar_oficio_sapal_model.close()">Cancelar</button>
       </div>
     </form>
   </div>

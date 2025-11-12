@@ -34,7 +34,6 @@ export class LoginPageComponent {
     const { email = '', password = '' } = this.loginForm.value;
 
     this.authService.login(email!, password!).subscribe((isAuthenticated) => {
-      console.log(isAuthenticated);
       if (isAuthenticated) {
         this.router.navigateByUrl('/obras');
         return;

@@ -7,6 +7,7 @@ import { ComitePageComponent } from "./pages/comite-page/comite-page.component";
 import { EstimacionPageComponent } from "./pages/estimacion-page/estimacion-page.component";
 import { ContratoPageComponent } from "./pages/contrato-page/contrato-page.component";
 import { SolicitudPageComponent } from "./pages/solicitud-page/solicitud-page.component";
+import { OficioSapalPageComponent } from "./pages/oficio-sapal-page/oficio-sapal-page.component";
 
 export const storeFrontRoutes: Routes = [
     {
@@ -36,6 +37,10 @@ export const storeFrontRoutes: Routes = [
             {
                 path:'solicitudes',
                 component: SolicitudPageComponent
+            },
+            {
+                path:'oficios-sapal',
+                component: OficioSapalPageComponent
             },
             {
                 path:'**',

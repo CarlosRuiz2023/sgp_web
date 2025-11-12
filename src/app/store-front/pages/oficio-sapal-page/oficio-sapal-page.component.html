@@ -1,0 +1,107 @@
+<h1 class="text-3xl font-bold font-montserrat text-center mb-5">Oficios Sapal en existencia</h1>
+<h2 class="text-xl mb-5">UwU</h2>
+
+<div class="divider"></div>
+
+<div class="join w-full">
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="join w-full flex">
+    <!-- Campo de búsqueda -->
+    <div class="flex-grow">
+      <input class="input join-item w-full" placeholder="Buscar..." formControlName="busqueda" />
+    </div>
+
+    <!-- Select de filtro -->
+    <select class="select join-item w-32 rounded-none" formControlName="filtro">
+      <option value="id_oficio_sapal" selected>ID</option>
+      <option value="id_obra">Obra</option>
+      <option value="id_usuario">Usuario</option>
+    </select>
+
+    <!-- Botón -->
+    <div class="indicator">
+      <button type="submit" class="btn join-item">Buscar</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- Botón flotante para abrir modal -->
+<button class="btn btn-primary btn-circle fixed bottom-6 right-6 shadow-lg"
+  onclick="agregar_oficio_sapal_modal.showModal()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+  </svg>
+</button>
+
+<!-- Listado -->
+<oficio-sapal-table [oficiosSapal]="oficiosSapal() ?? []" [sapaleros]="sapaleros() ?? []" />
+
+<div class="w-full h-10 flex justify-center items-center">
+  <div class="flex gap-2 items-center h-20">
+    <app-pagination [pages]="totalPaginas() ?? 0" [currentPage]="paginationService.currentPage()" />
+
+    <select class="select select-bordered w-32" (change)="oficiosSapalPerPage.set(+selectPerPage.value)" #selectPerPage>
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</div>
+
+<br>
+<!-- Modal -->
+<dialog id="agregar_oficio_sapal_modal" class="modal">
+  <div class="modal-box w-11/12 max-w-2xl">
+    <h3 class="text-lg font-bold">Agregar Oficio Sapal</h3>
+    <p class="py-4">Ingresa la información requerida</p>
+
+    <!-- Formulario real -->
+    <form [formGroup]="oficioSapalForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+
+      <!-- Obra -->
+      <label class="cursor-pointer label">
+        <span class="label-text">Obra</span>
+        <select formControlName="id_obra" class="select select-bordered w-full">
+          <option value="">Seleccione una obra</option>
+          @for (obra of obras(); track obra.id_obra) {
+          <option [value]="obra.id_obra">{{ obra.calle }}</option>
+          }
+        </select>
+      </label>
+      <form-error-label [control]="oficioSapalForm.get('id_obra')!" />
+
+      <!-- Sapalistas -->
+      <label class="cursor-pointer label">
+        <span class="label-text">Laboratorista</span>
+        <select formControlName="id_usuario_sapal" class="select select-bordered w-full">
+          <option value="">Seleccione un laboratorista</option>
+          @for (sapalero of sapaleros(); track sapalero.id_usuario) {
+          <option [value]="sapalero.id_usuario">{{ sapalero.apellido_paterno }} {{
+            sapalero.apellido_materno }} {{ sapalero.nombres }}</option>
+          }
+        </select>
+      </label>
+      <form-error-label [control]="oficioSapalForm.get('id_usuario_sapal')!" />
+
+      <label class="cursor-pointer label">
+        <span class="label-text">Solicitud</span>
+        <input type="file" accept="application/pdf" class="file-input file-input-bordered w-full"
+          (change)="onPdfSelected($event)">
+      </label>
+
+      <!-- anterior -->
+      <!-- <label class="cursor-pointer label">
+        <span class="label-text">Anterior</span>
+        <input type="number" placeholder="Anterior" class="input input-bordered w-full" formControlName="anterior" />
+      </label>
+      <form-error-label [control]="estimacionForm.get('anterior')!" /> -->
+
+      <!-- Botones -->
+      <div class="modal-action">
+        <button type="submit" class="btn btn-secondary">Guardar</button>
+        <button type="button" class="btn" onclick="agregar_oficio_sapal_modal.close()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</dialog>
