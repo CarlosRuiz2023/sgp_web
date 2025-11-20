@@ -2,7 +2,6 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -13,7 +12,7 @@ import { Entrega } from '../../interfaces/entrega.interface';
 
 @Component({
   selector: 'entrega-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './entrega-table.component.html',
 })
 export class EntregaTableComponent {

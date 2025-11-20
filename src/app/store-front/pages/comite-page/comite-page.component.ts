@@ -4,10 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
 import { ComiteTableComponent } from '@comites/components/comite-table/comite-table.component';
 import { ComitesService } from '@comites/services/comite.service';
-//import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { Comite, ComiteResponse } from '@comites/interfaces/comite.interface';
-import { ObrasService } from '@obras/services/obras.service';
+import { Comite } from '@comites/interfaces/comite.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';

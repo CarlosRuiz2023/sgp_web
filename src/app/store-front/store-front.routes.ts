@@ -8,7 +8,6 @@ import { EstimacionPageComponent } from "./pages/estimacion-page/estimacion-page
 import { ContratoPageComponent } from "./pages/contrato-page/contrato-page.component";
 import { SolicitudPageComponent } from "./pages/solicitud-page/solicitud-page.component";
 import { OficioSapalPageComponent } from "./pages/oficio-sapal-page/oficio-sapal-page.component";
-import { LoginPageComponent } from "@auth/pages/login-page/login-page.component";
 import { EntregaPageComponent } from "./pages/entrega-page/entrega-page.component";
 import { FirmaPageComponent } from "./pages/firma-page/firma-page.component";
 

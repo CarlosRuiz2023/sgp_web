@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Usuario } from '@usuarios/interfaces/usuario.interface';
-import { RolResponse } from '@usuarios/interfaces/rol.interface';
-import { UsuariosResponse } from '@obras/interfaces/usuario.interface';
-import { EmpresaResponse } from '@usuarios/interfaces/empresa.interface';
+import { EmpresaResponse } from '@shared/interfaces/empresa.interface';
+import { RolResponse } from '@shared/interfaces/rol.interface';
+import { Usuario, UsuariosResponse } from '@usuarios/interfaces/usuario.interface';
 import {
   map,
   Observable,
@@ -20,20 +19,6 @@ interface Options {
   filtro?: string | null;
   busqueda?: string | null;
 }
-
-const emptyUsuario: any = {
-  id_usuario: 1,
-  id_rol: 1,
-  id_empresa: 1,
-  nombres: 'Juanito Cumbias',
-  apellido_paterno: 'Dominguez',
-  apellido_materno: 'Ramos',
-  correo: 'charlyxbox360nuevo@gmail.com',
-  contrasenia: 'sbcjbcjksb<cvjkbc',
-  contrasenia_visible: '123456',
-  token: 'asdasdasdasdasdasdasd',
-  estatus: 1
-};
 
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {

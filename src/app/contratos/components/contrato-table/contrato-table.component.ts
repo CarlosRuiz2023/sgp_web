@@ -1,11 +1,10 @@
 import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Contrato } from '@contratos/interfaces/contrato.interface';
 import { ContratoService } from '@contratos/services/contrato.service';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { UsuariosResponse } from '@usuarios/interfaces/usuario.interface';
 import { firstValueFrom } from 'rxjs';
@@ -13,13 +12,12 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'contrato-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './contrato-table.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA] // 👈 IMPORTANTE
 })
 export class ContratoTableComponent {
   private ContratoService = inject(ContratoService);
-  private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
   supervisores = signal<any[]>([]);

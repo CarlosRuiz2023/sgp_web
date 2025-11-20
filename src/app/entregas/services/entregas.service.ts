@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
   ObrasResponse,
@@ -7,7 +7,6 @@ import {
   map,
   Observable,
   of,
-  switchMap,
   tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -23,33 +22,6 @@ interface Options {
   busqueda?: string | null;
   gender?: string;
 }
-
-const emptyEntrega: Entrega = {
-  id_entrega: 3,
-  id_obra: 2,
-  id_usuario_fisico: 3,
-  id_usuario_administrativo: 6,
-  oficio_fisica: 'prueba 1',
-  oficio_administrativa: 'prueba 2',
-  acta_fisica: 'prueba 3',
-  acta_administrativa: 'prueba 4',
-  fecha_fisica: new Date(),
-  fecha_administrativa: new Date(),
-  estatus: 1,
-  fisico: {
-    "nombres": "Juan Carlos 2",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  administrativo: {
-    "nombres": "Contratista 1",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  obra: {
-    "calle": "LINARES"
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class EntregasService {

@@ -2,17 +2,16 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import { Obra } from '@obras/interfaces/obra.interface';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { ObrasService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { ColoniasResponse } from '@shared/interfaces/colonia.interface';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'product-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './obra-table.component.html',
 })
 export class ObraTableComponent {

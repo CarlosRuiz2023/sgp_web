@@ -2,25 +2,21 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
-import { Estimacion } from '@estimaciones/interfaces/estimacion.interface';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
-import { SolicitudesService } from '../../services/solicitudes.service';
-import { Laboratorista, Solicitud } from '../../interfaces/solicitud.interface';
 import { Usuario } from '@auth/interfaces/user.interface';
+import { SolicitudesService } from '@solicitudes/services/solicitudes.service';
+import { Solicitud } from '@solicitudes/interfaces/solicitud.interface';
 
 @Component({
   selector: 'solicitud-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './solicitud-table.component.html',
 })
 export class SolicitudTableComponent {
   private solicitudesService = inject(SolicitudesService);
-  private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
 

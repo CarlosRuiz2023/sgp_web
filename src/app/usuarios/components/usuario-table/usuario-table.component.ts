@@ -2,23 +2,21 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ProductImagePipe } from '@obras/pipes/product-image.pipe';
 import { UsuariosService } from '@usuarios/services/usuarios.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
-import { RolResponse } from '@usuarios/interfaces/rol.interface';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
-import { EmpresaResponse } from '@usuarios/interfaces/empresa.interface';
+import { RolResponse } from '@shared/interfaces/rol.interface';
+import { EmpresaResponse } from '@shared/interfaces/empresa.interface';
 
 @Component({
   selector: 'usuario-table',
-  imports: [ProductImagePipe, RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './usuario-table.component.html',
 })
 export class UsuarioTableComponent {
   private usuariosService = inject(UsuariosService);
-  private router = inject(Router);
   fb = inject(FormBuilder);
   roles = signal<any[]>([]);
   empresas = signal<any[]>([]);

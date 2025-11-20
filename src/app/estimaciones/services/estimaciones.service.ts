@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
   ObrasResponse,
 } from '@obras/interfaces/obra.interface';
@@ -20,30 +19,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyEstimacion: Estimacion = {
-  id_estimacion: 0,
-  id_obra: 1,
-  id_usuario: 1,
-  estimacion: 'comosea.pdf',
-  finiquito: false,
-  avance_fisico: 17.5,
-  avance_financiero: 10.2,
-  actual: 15000.12,
-  anterior: 14000.12,
-  fecha_creacion: new Date(),
-  estatus: 1,
-  obra: {
-    calle: 'Obra de ejemplo'
-  },
-  usuario: {
-    nombres: 'Juan',
-    apellido_paterno: 'Pérez',
-    apellido_materno: 'López'
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class EstimacionesService {
@@ -105,20 +81,6 @@ export class EstimacionesService {
     return this.http
       .get<Estimacion>(`${baseUrl}/estimacion/${idSlug}`)
       .pipe(tap((comite) => this.estimacionCache.set(idSlug, comite)));
-  }
-
-  getComiteById(id: string): Observable<Estimacion> {
-    if (id === 'new') {
-      return of(emptyEstimacion);
-    }
-
-    if (this.estimacionCache.has(id)) {
-      return of(this.estimacionCache.get(id)!);
-    }
-
-    return this.http
-      .get<Estimacion>(`${baseUrl}/estimacion/${id}`)
-      .pipe(tap((estimacion) => this.estimacionCache.set(id, estimacion)));
   }
 
   updateEstimacion(id: string, estimacion: Partial<Estimacion>): Observable<Estimacion> {

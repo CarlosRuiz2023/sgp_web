@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
 //import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
 import { ObraTableComponent } from '@obras/components/obra-table/obra-table.component';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import { Obra } from '@obras/interfaces/obra.interface';
 import { ObrasService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
+import { ColoniasResponse } from '@shared/interfaces/colonia.interface';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 

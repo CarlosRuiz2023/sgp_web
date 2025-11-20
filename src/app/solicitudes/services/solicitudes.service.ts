@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
   ObrasResponse,
 } from '@obras/interfaces/obra.interface';
@@ -22,41 +21,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptySolicitud: Solicitud = {
-  id_solicitud: 3,
-  id_obra: 2,
-  id_usuario_solicitud: 3,
-  id_usuario_laboratorio: 6,
-  id_usuario_ms: 7,
-  solicitud: 'prueba 1',
-  laboratorio: 'prueba 2',
-  mecanica_de_suelos: null,
-  fecha_solicitud: new Date(),
-  fecha_laboratorio: null,
-  fecha_ms: null,
-  estatus: 1,
-  solicitante: {
-    "nombres": "Juan Carlos 2",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  laboratorista: {
-    "nombres": "Contratista 1",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  mecanico_de_suelos: {
-    "nombres": "Supervisor 1",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  obra: {
-    "calle": "LINARES"
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudesService {

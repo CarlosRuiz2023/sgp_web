@@ -5,7 +5,6 @@ import { AuthService } from '@auth/services/auth.service';
 import { ContratoTableComponent } from '@contratos/components/contrato-table/contrato-table.component';
 import { Contrato } from '@contratos/interfaces/contrato.interface';
 import { ContratoService } from '@contratos/services/contrato.service';
-//import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 

@@ -2,8 +2,6 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
-import { Obra } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
@@ -13,8 +11,8 @@ import Swal from 'sweetalert2';
 import { UsuarioTableComponent } from "@usuarios/components/usuario-table/usuario-table.component";
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
 import { UsuariosService } from '@usuarios/services/usuarios.service';
-import { RolResponse } from '@usuarios/interfaces/rol.interface';
-import { EmpresaResponse } from '@usuarios/interfaces/empresa.interface';
+import { RolResponse } from '@shared/interfaces/rol.interface';
+import { EmpresaResponse } from '@shared/interfaces/empresa.interface';
 
 @Component({
   selector: 'obra-page',

@@ -21,33 +21,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyOficioSapal: OficiosSapal = {
-  id_oficio_sapal: 3,
-  id_obra: 2,
-  id_usuario: 3,
-  id_usuario_sapal: 6,
-  oficio_de_recibido: '',
-  observaciones: '',
-  oficio_de_revision: '',
-  fecha_de_entrega: new Date(),
-  estatus: 1,
-  usuario: {
-    "nombres": "Juan Carlos 2",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  empleado_sapal: {
-    "nombres": "Contratista 1",
-    "apellido_paterno": "Ruiz",
-    "apellido_materno": "Gomez"
-  },
-  obra: {
-    "calle": "LINARES"
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class OficioSapalService {

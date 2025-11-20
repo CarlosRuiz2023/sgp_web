@@ -18,38 +18,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyContrato: Contrato = {
-  id_contrato: 1,
-  id_usuario: 1,
-  id_usuario_contratista: 1,
-  id_usuario_supervisor: 1,
-  id_obra: 1,
-  costo_real: 0,
-  fecha_inicio: new Date(),
-  fecha_termino: new Date(),
-  usuario: {
-    nombres: 'Usuario',
-    apellido_paterno: 'NA',
-    apellido_materno: 'NA'
-  },
-  supervisor: {
-    nombres: 'Supervisor',
-    apellido_paterno: 'NA',
-    apellido_materno: 'NA'
-  },
-  contratista: {
-    nombres: 'Contratista',
-    apellido_paterno: 'NA',
-    apellido_materno: 'NA'
-  },
-  estatus: 1,
-  obra: {
-    calle: 'Calle Falsa 123'
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class ContratoService {

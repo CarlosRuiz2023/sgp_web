@@ -2,7 +2,6 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
-//import { ProductCardComponent } from '@obras/components/product-card/product-card.component';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 

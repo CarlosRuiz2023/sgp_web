@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
   Obra,
   ObrasResponse,
 } from '@obras/interfaces/obra.interface';
+import { ColoniasResponse } from '@shared/interfaces/colonia.interface';
 import {
   map,
   Observable,
@@ -20,23 +20,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyObra: Obra = {
-  id_obra: 1,
-  id_colonia: 1,
-  calle: 'Manzanares',
-  traza_du: 'Traza DU',
-  tramo: 'De aqui pa aya',
-  finiquito: 0,
-  estatus: 0,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  colonia: {
-    colonia: 'Jardines de San Juan',
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class ObrasService {
@@ -98,20 +82,6 @@ export class ObrasService {
     return this.http
       .get<Obra>(`${baseUrl}/products/${idSlug}`)
       .pipe(tap((product) => this.obraCache.set(idSlug, product)));
-  }
-
-  getProductById(id: string): Observable<Obra> {
-    if (id === 'new') {
-      return of(emptyObra);
-    }
-
-    if (this.obraCache.has(id)) {
-      return of(this.obraCache.get(id)!);
-    }
-
-    return this.http
-      .get<Obra>(`${baseUrl}/obra/${id}`)
-      .pipe(tap((product) => this.obraCache.set(id, product)));
   }
 
   updateObra(id: string, obra: Partial<Obra>): Observable<Obra> {

@@ -2,12 +2,10 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Comite, ComiteResponse } from '@comites/interfaces/comite.interface';
+import { Comite } from '@comites/interfaces/comite.interface';
 import { ComitesService } from '@comites/services/comite.service';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import { Obra, ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
-import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({

@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ColoniasResponse } from '@obras/interfaces/colonia.interface';
 import {
   Comite,
   ComiteResponse,
@@ -21,28 +20,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyComite: Comite = {
-  id_comite: 1,
-  id_obra: 1,
-  id_usuario: 1,
-  sesion: 1,
-  tipo: 1,
-  punto: 1,
-  costo: 0.0,
-  fecha_creacion: new Date(),
-  estatus: 1,
-  obra: {
-    calle: 'Calle Falsa 123',
-  },
-  usuario: {
-    nombres: 'Pedro',
-    apellido_paterno: 'Vargas',
-    apellido_materno: 'Hernandez',
-  },
-};
 
 @Injectable({ providedIn: 'root' })
 export class ComitesService {
@@ -104,20 +82,6 @@ export class ComitesService {
     return this.http
       .get<Comite>(`${baseUrl}/comite/${idSlug}`)
       .pipe(tap((comite) => this.comiteCache.set(idSlug, comite)));
-  }
-
-  getComiteById(id: string): Observable<Comite> {
-    if (id === 'new') {
-      return of(emptyComite);
-    }
-
-    if (this.comiteCache.has(id)) {
-      return of(this.comiteCache.get(id)!);
-    }
-
-    return this.http
-      .get<Comite>(`${baseUrl}/comite/${id}`)
-      .pipe(tap((comite) => this.comiteCache.set(id, comite)));
   }
 
   createComite(

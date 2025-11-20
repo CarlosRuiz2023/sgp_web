@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
   ObrasResponse,
@@ -20,25 +20,7 @@ interface Options {
   offset?: number;
   filtro?: string | null;
   busqueda?: string | null;
-  gender?: string;
 }
-
-const emptyFirma: Firma = {
-  id_firma: 0,
-  id_obra: 1,
-  id_usuario: 1,
-  plano: 'comosea.pdf',
-  fecha_de_firma: new Date(),
-  estatus: 1,
-  obra: {
-    calle: 'Obra de ejemplo'
-  },
-  firmador: {
-    nombres: 'Juan',
-    apellido_paterno: 'Pérez',
-    apellido_materno: 'López'
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class FirmasService {
