@@ -1,0 +1,290 @@
+<div class="overflow-x-auto">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <!-- <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th> -->
+        <th>Id</th>
+        <th>Obra</th>
+        <th>Fisico</th>
+        <th>Administrativo</th>
+        <th>Fecha Fisica</th>
+        <th>Fecha Administrativa</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (entrega of entregas(); track entrega.id_entrega) {
+      <tr>
+        <!-- <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th> -->
+        <td>
+          {{ entrega.id_entrega }}
+        </td>
+        <td>
+          {{ entrega.obra.calle }}
+        </td>
+        <td>
+          {{ entrega.fisico.nombres }} {{ entrega.fisico.apellido_paterno }} {{
+          entrega.fisico.apellido_materno }}
+        </td>
+        <td>
+          {{ entrega.administrativo.nombres }} {{ entrega.administrativo.apellido_paterno }} {{
+          entrega.administrativo.apellido_materno }}
+        </td>
+        <td>
+          {{ entrega.fecha_fisica | date: 'dd/MM/yyyy HH:mm' }}
+        </td>
+        <th>
+          {{ entrega.fecha_administrativa | date: 'dd/MM/yyyy HH:mm' }}
+        </th>
+        <th>
+          <div class="dropdown dropdown-hover dropdown-left">
+            <div class="btn btn-info btn-sm rounded-lg shadow-sm hover:scale-105 transition m-1"><svg
+                xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
+              <li>
+                <button class="btn btn-sm btn-primary" (click)="openEditModal(entrega)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 
+          112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Editar
+                </button>
+              </li>
+              <li *ngIf="!entrega.oficio_fisica">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Subir Oficio Fisico
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedOficioFisico($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="entrega.oficio_fisica">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfOficioFisico(entrega.id_entrega)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
+                  </svg>
+                  Ver Oficio Fisico
+                </button>
+              </li>
+              <li *ngIf="entrega.oficio_fisica">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Reemplazar Oficio Fisico
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedOficioFisico($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="!entrega.oficio_administrativa">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Subir Oficio Administrativo
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedOficioAdministrativo($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="entrega.oficio_administrativa">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfOficioAdministrativo(entrega.id_entrega)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
+                  </svg>
+                  Ver Oficio Administrativo
+                </button>
+              </li>
+              <li *ngIf="entrega.oficio_administrativa">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Reemplazar Oficio Administrativo
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedOficioAdministrativo($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="!entrega.acta_fisica">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Subir Acta Fisica
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedActaFisica($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="entrega.acta_fisica">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfActaFisica(entrega.id_entrega)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
+                  </svg>
+                  Ver Acta Fisica
+                </button>
+              </li>
+              <li *ngIf="entrega.acta_fisica">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Reemplazar Acta Fisica
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedActaFisica($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="!entrega.acta_administrativa">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Subir Acta Administrativa
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedActaAdministrativa($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="entrega.acta_administrativa">
+                <button class="btn btn-sm btn-secondary" (click)="verPdfActaAdministrativa(entrega.id_entrega)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12H9m12-6H3m12 12H9m12-6H3" />
+                  </svg>
+                  Ver Acta Administrativa
+                </button>
+              </li>
+              <li *ngIf="entrega.acta_administrativa">
+                <label class="btn btn-sm btn-accent cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Reemplazar Acta Administrativa
+                  <input type="file" accept=".pdf" class="hidden"
+                    (change)="onPdfSelectedActaAdministrativa($event, entrega.id_entrega)" />
+                </label>
+              </li>
+              <li *ngIf="entrega.estatus">
+                <button class="btn btn-sm btn-error"
+                  (click)="deleteEntrega(entrega.id_entrega, entrega.obra.calle)"
+                  [disabled]="isDeleting(entrega.id_entrega)">
+                  @if (isDeleting(entrega.id_entrega)) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Eliminando...
+                  } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Eliminar
+                  }
+                </button>
+              </li>
+              <li *ngIf="!entrega.estatus">
+                <button class="btn btn-sm btn-info"
+                  (click)="reactivarEntrega(entrega.id_entrega, entrega.obra.calle)"
+                  [disabled]="isDeleting(entrega.id_entrega)">
+                  @if (isDeleting(entrega.id_entrega)) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Reactivando...
+                  } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Reactivar
+                  }
+                </button>
+              </li>
+            </ul>
+          </div>
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<dialog id="editar_entrega_model" class="modal">
+  <div class="modal-box w-11/12 max-w-2xl">
+    <h3 class="text-lg font-bold">Editar Entrega</h3>
+    <p class="py-4">Actualiza la información necesaria</p>
+
+    <!-- Formulario real -->
+    <form [formGroup]="entregaForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+      <!-- Obra -->
+      <label class="cursor-pointer label">
+        <span class="label-text">Obra</span>
+        <select formControlName="id_obra" class="select select-bordered w-full">
+          <option value="">Seleccione una obra</option>
+          @for (obra of obras(); track obra.id_obra) {
+          <option [value]="obra.id_obra">{{ obra.calle }}</option>
+          }
+        </select>
+      </label>
+      <form-error-label [control]="entregaForm.get('id_obra')!" />
+
+      <!-- Fisico -->
+      <label class="cursor-pointer label">
+        <span class="label-text">Fisico</span>
+        <select formControlName="id_usuario_fisico" class="select select-bordered w-full">
+          <option value="">Seleccione un Fisico</option>
+          @for (fisico of fisicos(); track fisico.id_usuario) {
+          <option [value]="fisico.id_usuario">{{ fisico.apellido_paterno }} {{
+            fisico.apellido_materno }} {{ fisico.nombres }}</option>
+          }
+        </select>
+      </label>
+      <form-error-label [control]="entregaForm.get('id_usuario_fisico')!" />
+
+      <!-- Administrativo -->
+      <label class="cursor-pointer label">
+        <span class="label-text">Administrativo</span>
+        <select formControlName="id_usuario_administrativo" class="select select-bordered w-full">
+          <option value="">Seleccione un mecanico de suelos</option>
+          @for (administrativo of administrativos(); track administrativo.id_usuario) {
+          <option [value]="administrativo.id_usuario">{{ administrativo.apellido_paterno}} {{
+            administrativo.apellido_materno}} {{ administrativo.nombres}}</option>
+          }
+        </select>
+      </label>
+      <form-error-label [control]="entregaForm.get('id_usuario_administrativo')!" />
+
+      <!-- Botones -->
+      <div class="modal-action">
+        <button type="submit" class="btn btn-secondary">Actualizar</button>
+        <button type="button" class="btn" onclick="editar_entrega_model.close()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</dialog>

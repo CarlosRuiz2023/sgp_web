@@ -38,6 +38,13 @@ app.use(
 );
 
 /**
+ * Redirect root path to /auth
+ */
+app.get('/', (req, res) => {
+  res.redirect('/auth');
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use('/**', (req, res, next) => {

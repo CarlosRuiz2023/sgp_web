@@ -8,49 +8,64 @@ import { EstimacionPageComponent } from "./pages/estimacion-page/estimacion-page
 import { ContratoPageComponent } from "./pages/contrato-page/contrato-page.component";
 import { SolicitudPageComponent } from "./pages/solicitud-page/solicitud-page.component";
 import { OficioSapalPageComponent } from "./pages/oficio-sapal-page/oficio-sapal-page.component";
+import { LoginPageComponent } from "@auth/pages/login-page/login-page.component";
+import { EntregaPageComponent } from "./pages/entrega-page/entrega-page.component";
+import { FirmaPageComponent } from "./pages/firma-page/firma-page.component";
 
 export const storeFrontRoutes: Routes = [
     {
         path: '',
-        component:StoreFrontLayoutComponent,
-        children:[
+        component: StoreFrontLayoutComponent,
+        children: [
             {
-                path:'obras',
-                component:ObraPageComponent
+                path: '',
+                component: ObraPageComponent
+            },
+            {
+                path: 'obras',
+                component: ObraPageComponent
             },
             {
                 path: 'usuarios',
                 component: UsuarioPageComponent
             },
             {
-                path:'comites',
-                component:ComitePageComponent
+                path: 'comites',
+                component: ComitePageComponent
             },
             {
-                path:'estimaciones',
+                path: 'estimaciones',
                 component: EstimacionPageComponent
             },
             {
-                path:'contratos',
+                path: 'contratos',
                 component: ContratoPageComponent
             },
             {
-                path:'solicitudes',
+                path: 'solicitudes',
                 component: SolicitudPageComponent
             },
             {
-                path:'oficios-sapal',
+                path: 'oficios-sapal',
                 component: OficioSapalPageComponent
             },
             {
-                path:'**',
-                component:NotFoundPageComponent
+                path: 'entregas',
+                component: EntregaPageComponent
+            },
+            {
+                path: 'firmas',
+                component: FirmaPageComponent
+            },
+            {
+                path: '**',
+                component: NotFoundPageComponent
             }
         ]
     },
     {
-        path:'**',
-        redirectTo:''
+        path: '**',
+        redirectTo: ''
     }
 ]
 export default storeFrontRoutes;
