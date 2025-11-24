@@ -77,7 +77,7 @@ export class EntregasService {
 
   getUsuariosFisicos(): Observable<UsuariosResponse> {
     return this.http
-      .get<UsuariosResponse>(`${baseUrl}/usuario`, { params: { filtro: 'id_rol', busqueda: 'Fisico' } })
+      .get<UsuariosResponse>(`${baseUrl}/usuario`, { params: { filtro: 'id_rol', busqueda: 'Obra Publica' } })
       .pipe(
         tap((resp) => console.log("Fisicos " + resp)),
       );
@@ -85,7 +85,7 @@ export class EntregasService {
 
   getUsuariosAdministrativos(): Observable<UsuariosResponse> {
     return this.http
-      .get<UsuariosResponse>(`${baseUrl}/usuario`, { params: { filtro: 'id_rol', busqueda: 'Administrativo' } })
+      .get<UsuariosResponse>(`${baseUrl}/usuario`, { params: { filtro: 'id_rol', busqueda: 'Obra Publica' } })
       .pipe(
         tap((resp) => console.log("Administrativos " + resp)),
       );

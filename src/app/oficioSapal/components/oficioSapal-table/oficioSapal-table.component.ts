@@ -7,8 +7,8 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { OficioSapalService } from '../../services/oficioSapal.service';
-import { Usuario } from '@auth/interfaces/user.interface';
 import { OficiosSapal } from '../../interfaces/oficioSapal.interface';
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
 
 @Component({
   selector: 'oficio-sapal-table',

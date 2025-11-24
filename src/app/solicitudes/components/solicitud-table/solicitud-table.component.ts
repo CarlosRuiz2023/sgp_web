@@ -6,9 +6,9 @@ import { FormErrorLabelComponent } from '@shared/components/form-error-label/for
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
-import { Usuario } from '@auth/interfaces/user.interface';
 import { SolicitudesService } from '@solicitudes/services/solicitudes.service';
 import { Solicitud } from '@solicitudes/interfaces/solicitud.interface';
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
 
 @Component({
   selector: 'solicitud-table',

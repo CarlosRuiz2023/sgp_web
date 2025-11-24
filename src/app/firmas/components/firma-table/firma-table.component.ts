@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FirmasService } from '../../services/firmas.service';
 import { Firma } from '../../interfaces/firma.interface';
-import { Usuario } from '@auth/interfaces/user.interface';
+import { Usuario } from '@usuarios/interfaces/usuario.interface';
 
 @Component({
   selector: 'firma-table',

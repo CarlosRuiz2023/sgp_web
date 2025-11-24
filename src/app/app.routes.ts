@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthenticatedGuard } from '@auth/guards/authenticated.guard';
 import { NotAuthenticatedGuard } from '@auth/guards/not-authenticated.guard';
 
 export const routes: Routes = [
@@ -16,5 +17,10 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./store-front/store-front.routes'),
+    canMatch: [AuthenticatedGuard],  // 🔥 protege TODO lo privado
+  },
+  {
+    path: '**',
+    redirectTo: '',
   },
 ];

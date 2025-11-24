@@ -88,7 +88,6 @@ export class ComitesService {
     comiteLike: Partial<Comite>
   ): Observable<Comite> {
     const token = localStorage.getItem('token'); // O el nombre que uses para guardar el token
-    console.log(token);
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

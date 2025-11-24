@@ -8,18 +8,48 @@
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
         <li>
-          <a routerLink="/gender/men" class="btn btn-ghost" routerLinkActive="text-secondary">
-            Hombres
+          <a routerLink="/obras" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Obras
           </a>
         </li>
         <li>
-          <a routerLink="/gender/women" class="btn btn-ghost" routerLinkActive="text-secondary">
-            Mujeres
+          <a routerLink="/usuarios" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Usuarios
           </a>
         </li>
         <li>
-          <a routerLink="/gender/kid" class="btn btn-ghost" routerLinkActive="text-secondary">
-            Kids
+          <a routerLink="/comites" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Comites
+          </a>
+        </li>
+        <li>
+          <a routerLink="/estimaciones" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Estimaciones
+          </a>
+        </li>
+        <li>
+          <a routerLink="/contratos" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Contratos
+          </a>
+        </li>
+        <li>
+          <a routerLink="/solicitudes" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Solicitudes
+          </a>
+        </li>
+        <li>
+          <a routerLink="/oficios-sapal" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Oficios->Sapal
+          </a>
+        </li>
+        <li>
+          <a routerLink="/entregas" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Entregas
+          </a>
+        </li>
+        <li>
+          <a routerLink="/firmas" class="btn btn-ghost" routerLinkActive="text-secondary">
+            Firmas
           </a>
         </li>
       </ul>
@@ -79,30 +109,19 @@
     </ul>
   </div>
   <div class="navbar-end gap-4">
-    <!-- @if (authService.isAdmin()) {
-    } -->
-    <a routerLink="/admin" class="btn text-accent">Admin Panel</a>
-    <!--  -->
-
-    @if ( authService.authStatus() === 'authenticated' ) {
-    <button class="btn btn-ghost">
-      {{ authService.user()?.apellido_materno }} {{ authService.user()?.apellido_paterno }} {{
-      authService.user()?.nombres }}
-    </button>
-    <button class="btn btn-sm btn-error flex items-center gap-2" (click)="authService.logout()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
-      </svg>
-    </button>
-    }
-    <!--  -->
-    @else if ( authService.authStatus() === 'not-authenticated' ) {
-    <a routerLink="/auth/login" class="btn btn-secondary">Login</a>
-    }
-    <!--  -->
-    @else {
-    <a class="btn btn-ghost">...</a>
-    }
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn m-1">{{ authService.user()?.apellido_materno }} {{
+        authService.user()?.apellido_paterno }} {{
+        authService.user()?.nombres }}</div>
+      <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+        <li><button class="btn btn-sm btn-error flex items-center gap-2" (click)="authService.logout()">Cerrar sesion
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+            </svg>
+          </button></li>
+      </ul>
+    </div>
   </div>
 </div>

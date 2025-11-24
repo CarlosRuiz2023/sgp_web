@@ -4,8 +4,9 @@ import { environment } from 'src/environments/environment';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
-import { AuthResponse } from '@auth/interfaces/auth-response.interface';
-import { Usuario } from '@auth/interfaces/user.interface';
+import { AuthResponse, Usuario } from '@auth/interfaces/auth-response.interface';
+import { LogoutResponse } from '@auth/interfaces/logout-response.interface';
+import { Router } from '@angular/router';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 const baseUrl = environment.baseUrl;
@@ -16,6 +17,7 @@ export class AuthService {
   private _user = signal<Usuario | null>(null);
   private _token = signal<string | null>(localStorage.getItem('token'));
   private _errorMessage = signal<string | null>(null);
+  private router: Router = inject(Router);
   errorMessage = computed(() => this._errorMessage());
 
   private http = inject(HttpClient);
@@ -59,9 +61,9 @@ export class AuthService {
 
     return this.http
       .get<AuthResponse>(`${baseUrl}/auth/check-status`, {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .pipe(
         map((resp) => this.handleAuthSuccess(resp)),
@@ -70,27 +72,43 @@ export class AuthService {
   }
 
   logout() {
-    this._user.set(null);
-    this._token.set(null);
-    this._authStatus.set('not-authenticated');
-
-    localStorage.removeItem('token');
+    const token = localStorage.getItem('token');
+    this.http
+      .post<LogoutResponse>(`${baseUrl}/auth/logout`, null,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .pipe(
+        tap(() => {
+          // limpieza opcional
+          this._user.set(null);
+          this._token.set(null);
+          this._authStatus.set('not-authenticated');
+          localStorage.removeItem('token');
+          this.router.navigate(['/auth/login']);
+        }),
+        catchError((error) => {
+          return of(null);
+        })
+      ).subscribe();
   }
 
   private handleAuthSuccess({ data, success }: AuthResponse) {
     const { token } = data;
-    this._user.set(data);
+    if (this._authStatus() != 'authenticated') {
+      this._user.set(data);
+    }
     this._authStatus.set('authenticated');
     this._token.set(token);
     this._errorMessage.set(null); // Limpia mensaje de error
     localStorage.setItem('token', token);
-
     return true;
   }
 
   private handleAuthError(error: any) {
-    const {error:error1} = error;
-    const {data} = error1;
+    const { error: error1 } = error;
+    const { data } = error1;
     this._errorMessage.set(typeof data === 'string' ? data : 'Ocurrió un error');
     this.logout();
     return of(false);
