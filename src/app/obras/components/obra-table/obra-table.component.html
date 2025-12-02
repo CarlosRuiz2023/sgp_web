@@ -52,7 +52,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Obras', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(obra)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -92,7 +92,7 @@
                   <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, obra.id_obra)" />
                 </label>
               </li>
-              <li *ngIf ="obra.estatus">
+              <li *ngIf ="obra.estatus && authService.tienePermiso('Obras', 'Eliminar')">
                 <button class="btn btn-sm btn-error" (click)="deleteObra(obra.id_obra, obra.calle)"
                   [disabled]="isDeleting(obra.id_obra)">
                   @if (isDeleting(obra.id_obra)) {
@@ -108,7 +108,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf ="!obra.estatus">
+              <li *ngIf ="!obra.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info" (click)="reactivarObra(obra.id_obra, obra.calle)"
                   [disabled]="isDeleting(obra.id_obra)">
                   @if (isDeleting(obra.id_obra)) {

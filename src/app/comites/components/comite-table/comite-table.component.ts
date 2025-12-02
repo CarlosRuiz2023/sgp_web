@@ -2,6 +2,7 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 import { Comite } from '@comites/interfaces/comite.interface';
 import { ComitesService } from '@comites/services/comite.service';
 import { Obra, ObrasResponse } from '@obras/interfaces/obra.interface';
@@ -18,6 +19,7 @@ export class ComiteTableComponent {
   private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
+  authService = inject(AuthService);
 
   comites = input.required<Comite[]>();
 

@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Estimacion } from '@estimaciones/interfaces/estimacion.interface';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'estimacion-table',
@@ -19,6 +20,7 @@ export class EstimacionTableComponent {
   private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
+  authService = inject(AuthService);
 
   estimaciones = input.required<Estimacion[]>();
 

@@ -9,6 +9,7 @@ import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { EntregasService } from '../../services/entregas.service';
 import { Entrega } from '../../interfaces/entrega.interface';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'entrega-table',
@@ -17,13 +18,13 @@ import { Usuario } from '@usuarios/interfaces/usuario.interface';
 })
 export class EntregaTableComponent {
   private solicitudesService = inject(EntregasService);
-  private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
 
   entregas = input.required<Entrega[]>();
   fisicos = input.required<Usuario[]>();
   administrativos = input.required<Usuario[]>();
+  authService = inject(AuthService);
 
   entregaForm = this.fb.group({
     id_obra: [0, Validators.required],

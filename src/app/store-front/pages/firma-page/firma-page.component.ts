@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'firma-page',
-  imports: [PaginationComponent, FirmaTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [PaginationComponent, FirmaTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './firma-page.component.html',
 })
 export class FirmaPageComponent {
@@ -37,7 +38,7 @@ export class FirmaPageComponent {
 
   firmaForm = this.fb.group({
     id_obra: ['', Validators.required],
-    id_usuario: [0, Validators.required],
+    id_usuario: ['', Validators.required],
   });
 
   searchForm = this.fb.group({
@@ -122,6 +123,16 @@ export class FirmaPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
     this.loadFirmas(0, this.firmasPerPage());
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_firma',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadFirmas(0, this.firmasPerPage()); // recargar resultados
   }
 
 }

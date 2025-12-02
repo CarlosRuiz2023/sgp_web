@@ -9,6 +9,7 @@ import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { FirmasService } from '../../services/firmas.service';
 import { Firma } from '../../interfaces/firma.interface';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'firma-table',
@@ -22,6 +23,7 @@ export class FirmaTableComponent {
 
   firmas = input.required<Firma[]>();
   firmadores = input.required<Usuario[]>();
+  authService = inject(AuthService);
 
   firmaForm = this.fb.group({
     id_obra: [0, Validators.required],

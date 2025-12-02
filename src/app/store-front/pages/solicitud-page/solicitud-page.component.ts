@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'solicitud-page',
-  imports: [PaginationComponent, SolicitudTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [PaginationComponent, SolicitudTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './solicitud-page.component.html',
 })
 export class SolicitudPageComponent {
@@ -39,8 +40,8 @@ export class SolicitudPageComponent {
 
   solicitudForm = this.fb.group({
     id_obra: ['', Validators.required],
-    id_usuario_laboratorio: [0, Validators.required],
-    id_usuario_ms: [0, Validators.required],
+    id_usuario_laboratorio: ['', Validators.required],
+    id_usuario_ms: ['', Validators.required],
   });
 
   searchForm = this.fb.group({
@@ -132,15 +133,25 @@ export class SolicitudPageComponent {
   }
 
   onPdfSelected(event: Event) {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        const file = input.files[0];
-        if (file.type !== 'application/pdf') {
-          alert('Por favor selecciona un archivo PDF válido.');
-          return;
-        }
-        this.selectedFile = file;
-        console.log("Archivo seleccionado:", this.selectedFile);
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file.type !== 'application/pdf') {
+        alert('Por favor selecciona un archivo PDF válido.');
+        return;
       }
+      this.selectedFile = file;
+      console.log("Archivo seleccionado:", this.selectedFile);
     }
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_solicitud',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadSolicitudes(0, this.solicitudesPerPage()); // recargar resultados
+  }
 }

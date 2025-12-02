@@ -53,7 +53,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Entregas', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(entrega)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -191,7 +191,7 @@
                     (change)="onPdfSelectedActaAdministrativa($event, entrega.id_entrega)" />
                 </label>
               </li>
-              <li *ngIf="entrega.estatus">
+              <li *ngIf="entrega.estatus && authService.tienePermiso('Entregas', 'Eliminar')">
                 <button class="btn btn-sm btn-error"
                   (click)="deleteEntrega(entrega.id_entrega, entrega.obra.calle)"
                   [disabled]="isDeleting(entrega.id_entrega)">
@@ -208,7 +208,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!entrega.estatus">
+              <li *ngIf="!entrega.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info"
                   (click)="reactivarEntrega(entrega.id_entrega, entrega.obra.calle)"
                   [disabled]="isDeleting(entrega.id_entrega)">

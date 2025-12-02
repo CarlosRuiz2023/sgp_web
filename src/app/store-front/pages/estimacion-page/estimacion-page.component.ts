@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +16,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'estimacion-page',
-  imports: [PaginationComponent, EstimacionTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [PaginationComponent, EstimacionTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './estimacion-page.component.html',
 })
 export class EstimacionPageComponent {
@@ -117,6 +118,16 @@ export class EstimacionPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
     this.loadEstimaciones(0, this.estimacionesPerPage());
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_estimacion',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadEstimaciones(0, this.estimacionesPerPage()); // recargar resultados
   }
 
 }

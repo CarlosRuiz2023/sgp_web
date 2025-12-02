@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'obra-page',
-  imports: [PaginationComponent, ObraTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
+  imports: [PaginationComponent, ObraTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './obra-page.component.html',
 })
 export class ObraPageComponent {
@@ -118,4 +119,13 @@ export class ObraPageComponent {
     this.loadObras(0, this.obrasPerPage());
   }
 
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_obra',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadObras(0, this.obrasPerPage()); // recargar resultados
+  }
 }

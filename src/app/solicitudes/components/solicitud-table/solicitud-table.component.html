@@ -62,7 +62,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Solicitudes', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(solicitud)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -157,7 +157,7 @@
                     (change)="onPdfSelectedMecanicaDeSuelos($event, solicitud.id_solicitud)" />
                 </label>
               </li>
-              <li *ngIf="solicitud.estatus">
+              <li *ngIf="solicitud.estatus && authService.tienePermiso('Solicitudes', 'Eliminar')">
                 <button class="btn btn-sm btn-error"
                   (click)="deleteSolicitud(solicitud.id_solicitud, solicitud.obra.calle)"
                   [disabled]="isDeleting(solicitud.id_solicitud)">
@@ -174,7 +174,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!solicitud.estatus">
+              <li *ngIf="!solicitud.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info"
                   (click)="reactivarSolicitud(solicitud.id_solicitud, solicitud.obra.calle)"
                   [disabled]="isDeleting(solicitud.id_solicitud)">

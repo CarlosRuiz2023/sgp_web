@@ -7,47 +7,47 @@
         </svg>
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-        <li>
+        <li *ngIf="authService.permisos()['Obras']">
           <a routerLink="/obras" class="btn btn-ghost" routerLinkActive="text-secondary">
             Obras
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Usuarios']">
           <a routerLink="/usuarios" class="btn btn-ghost" routerLinkActive="text-secondary">
             Usuarios
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Comites']">
           <a routerLink="/comites" class="btn btn-ghost" routerLinkActive="text-secondary">
             Comites
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Estimaciones']">
           <a routerLink="/estimaciones" class="btn btn-ghost" routerLinkActive="text-secondary">
             Estimaciones
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Contratos']">
           <a routerLink="/contratos" class="btn btn-ghost" routerLinkActive="text-secondary">
             Contratos
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Solicitudes']">
           <a routerLink="/solicitudes" class="btn btn-ghost" routerLinkActive="text-secondary">
             Solicitudes
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Oficios-Sapal']">
           <a routerLink="/oficios-sapal" class="btn btn-ghost" routerLinkActive="text-secondary">
             Oficios->Sapal
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Entregas']">
           <a routerLink="/entregas" class="btn btn-ghost" routerLinkActive="text-secondary">
             Entregas
           </a>
         </li>
-        <li>
+        <li *ngIf="authService.permisos()['Firmas']">
           <a routerLink="/firmas" class="btn btn-ghost" routerLinkActive="text-secondary">
             Firmas
           </a>
@@ -61,47 +61,47 @@
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
-      <li>
+      <li *ngIf="authService.permisos()['Obras']">
         <a routerLink="/obras" class="btn btn-ghost" routerLinkActive="text-secondary">
           Obras
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Usuarios']">
         <a routerLink="/usuarios" class="btn btn-ghost" routerLinkActive="text-secondary">
           Usuarios
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Comites']">
         <a routerLink="/comites" class="btn btn-ghost" routerLinkActive="text-secondary">
           Comites
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Estimaciones']">
         <a routerLink="/estimaciones" class="btn btn-ghost" routerLinkActive="text-secondary">
           Estimaciones
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Contratos']">
         <a routerLink="/contratos" class="btn btn-ghost" routerLinkActive="text-secondary">
           Contratos
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Solicitudes']">
         <a routerLink="/solicitudes" class="btn btn-ghost" routerLinkActive="text-secondary">
           Solicitudes
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Oficios-Sapal']">
         <a routerLink="/oficios-sapal" class="btn btn-ghost" routerLinkActive="text-secondary">
           Oficios->Sapal
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Entregas']">
         <a routerLink="/entregas" class="btn btn-ghost" routerLinkActive="text-secondary">
           Entregas
         </a>
       </li>
-      <li>
+      <li *ngIf="authService.permisos()['Firmas']">
         <a routerLink="/firmas" class="btn btn-ghost" routerLinkActive="text-secondary">
           Firmas
         </a>

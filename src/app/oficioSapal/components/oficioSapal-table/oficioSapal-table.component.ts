@@ -9,6 +9,7 @@ import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { OficioSapalService } from '../../services/oficioSapal.service';
 import { OficiosSapal } from '../../interfaces/oficioSapal.interface';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'oficio-sapal-table',
@@ -22,6 +23,7 @@ export class OficioSapalTableComponent {
 
   oficiosSapal = input.required<OficiosSapal[]>();
   sapaleros = input.required<Usuario[]>();
+  authService = inject(AuthService);
 
   oficioSapalForm = this.fb.group({
     id_obra: [0, Validators.required],

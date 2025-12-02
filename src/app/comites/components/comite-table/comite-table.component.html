@@ -60,7 +60,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li *ngIf ="comite.estatus">
+              <li *ngIf ="comite.estatus && authService.tienePermiso('Comites', 'Eliminar')">
                 <button class="btn btn-sm btn-error" (click)="deleteObra(comite.id_comite, comite.obra.calle)"
                   [disabled]="isDeleting(comite.id_comite)">
                   @if (isDeleting(comite.id_comite)) {
@@ -76,7 +76,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf ="!comite.estatus">
+              <li *ngIf ="!comite.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info" (click)="reactivarObra(comite.id_comite, comite.obra.calle)"
                   [disabled]="isDeleting(comite.id_comite)">
                   @if (isDeleting(comite.id_comite)) {

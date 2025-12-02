@@ -9,6 +9,7 @@ import { ObrasResponse } from '@obras/interfaces/obra.interface';
 import { SolicitudesService } from '@solicitudes/services/solicitudes.service';
 import { Solicitud } from '@solicitudes/interfaces/solicitud.interface';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'solicitud-table',
@@ -23,6 +24,7 @@ export class SolicitudTableComponent {
   solicitudes = input.required<Solicitud[]>();
   laboratoristas = input.required<Usuario[]>();
   mecanicosDeSuelos = input.required<Usuario[]>();
+  authService = inject(AuthService);
 
   solicitudForm = this.fb.group({
     id_obra: [0, Validators.required],

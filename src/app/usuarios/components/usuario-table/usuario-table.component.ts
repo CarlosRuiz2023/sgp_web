@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { Usuario } from '@usuarios/interfaces/usuario.interface';
 import { RolResponse } from '@shared/interfaces/rol.interface';
 import { EmpresaResponse } from '@shared/interfaces/empresa.interface';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'usuario-table',
@@ -20,6 +21,7 @@ export class UsuarioTableComponent {
   fb = inject(FormBuilder);
   roles = signal<any[]>([]);
   empresas = signal<any[]>([]);
+  authService = inject(AuthService);
 
   usuarios = input.required<Usuario[]>();
 

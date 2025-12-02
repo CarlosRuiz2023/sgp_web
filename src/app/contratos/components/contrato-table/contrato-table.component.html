@@ -62,7 +62,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Contratos', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(contrato)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -72,7 +72,7 @@
                   Editar
                 </button>
               </li>
-              <li *ngIf="contrato.estatus">
+              <li *ngIf="contrato.estatus && authService.tienePermiso('Contratos', 'Eliminar')">
                 <button class="btn btn-sm btn-error" (click)="deleteContrato(contrato.id_contrato, contrato.obra.calle)"
                   [disabled]="isDeleting(contrato.id_contrato)">
                   @if (isDeleting(contrato.id_contrato)) {
@@ -88,7 +88,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!contrato.estatus">
+              <li *ngIf="!contrato.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info"
                   (click)="reactivarContrato(contrato.id_contrato, contrato.obra.calle)"
                   [disabled]="isDeleting(contrato.id_contrato)">

@@ -7,6 +7,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { AuthResponse, Usuario } from '@auth/interfaces/auth-response.interface';
 import { LogoutResponse } from '@auth/interfaces/logout-response.interface';
 import { Router } from '@angular/router';
+import { CheckResponse } from '@auth/interfaces/check-response.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 const baseUrl = environment.baseUrl;
@@ -18,6 +19,9 @@ export class AuthService {
   private _token = signal<string | null>(localStorage.getItem('token'));
   private _errorMessage = signal<string | null>(null);
   private router: Router = inject(Router);
+  private _permisos = signal<{ [modulo: string]: string[] }>({});
+
+  permisos = computed(() => this._permisos());
   errorMessage = computed(() => this._errorMessage());
 
   private http = inject(HttpClient);
@@ -60,13 +64,13 @@ export class AuthService {
     }
 
     return this.http
-      .get<AuthResponse>(`${baseUrl}/auth/check-status`, {
+      .get<CheckResponse>(`${baseUrl}/auth/check-status`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .pipe(
-        map((resp) => this.handleAuthSuccess(resp)),
+        map((resp) => this.handleAuthSuccessCheckStatus(resp)),
         catchError((error: any) => this.handleAuthError(error))
       );
   }
@@ -74,7 +78,7 @@ export class AuthService {
   logout() {
     const token = localStorage.getItem('token');
     this.http
-      .post<LogoutResponse>(`${baseUrl}/auth/logout`, null,{
+      .post<LogoutResponse>(`${baseUrl}/auth/logout`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -84,6 +88,7 @@ export class AuthService {
           // limpieza opcional
           this._user.set(null);
           this._token.set(null);
+          this._permisos.set({});  // ← limpiar permisos
           this._authStatus.set('not-authenticated');
           localStorage.removeItem('token');
           this.router.navigate(['/auth/login']);
@@ -95,13 +100,39 @@ export class AuthService {
   }
 
   private handleAuthSuccess({ data, success }: AuthResponse) {
-    const { token } = data;
-    if (this._authStatus() != 'authenticated') {
-      this._user.set(data);
+    const { Usuario, permisos_por_modulo } = data;
+    const { token } = Usuario;
+    console.log("Usuario");
+    console.log(Usuario);
+    console.log("Token");
+    console.log(token);
+    console.log("Permisos por modulo");
+    console.log(permisos_por_modulo);
+    // Guardar usuario
+    if (this._authStatus() !== 'authenticated') {
+      this._user.set(Usuario);
     }
+
+    // Guardar permisos (solo en RAM)
+    this._permisos.set(permisos_por_modulo);
+
+    // Estado general
     this._authStatus.set('authenticated');
     this._token.set(token);
-    this._errorMessage.set(null); // Limpia mensaje de error
+    this._errorMessage.set(null);
+
+    // Guardar token (solo esto va en localStorage)
+    localStorage.setItem('token', token);
+    return true;
+  }
+
+  private handleAuthSuccessCheckStatus({ data, success }: CheckResponse) {
+    const { token } = data;
+    // Estado general
+    this._token.set(token);
+    this._errorMessage.set(null);
+
+    // Guardar token (solo esto va en localStorage)
     localStorage.setItem('token', token);
     return true;
   }
@@ -112,5 +143,13 @@ export class AuthService {
     this._errorMessage.set(typeof data === 'string' ? data : 'Ocurrió un error');
     this.logout();
     return of(false);
+  }
+
+  tienePermiso(modulo: string, permiso: string): boolean {
+    const mod = this.permisos()[modulo];
+    return mod ? mod.includes(permiso) : false;
+  }
+  isAdmin() {
+    return this.user()?.id_rol === 1;
   }
 }

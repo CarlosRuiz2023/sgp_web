@@ -49,7 +49,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Oficios-Sapal', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(oficioSapal)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -112,7 +112,7 @@
                     (change)="onPdfSelectedRevisado($event, oficioSapal.id_oficio_sapal)" />
                 </label>
               </li>
-              <li *ngIf="oficioSapal.estatus">
+              <li *ngIf="oficioSapal.estatus && authService.tienePermiso('Oficios-Sapal', 'Eliminar')">
                 <button class="btn btn-sm btn-error"
                   (click)="deleteOficioSapal(oficioSapal.id_oficio_sapal, oficioSapal.obra.calle)"
                   [disabled]="isDeleting(oficioSapal.id_oficio_sapal)">
@@ -129,7 +129,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!oficioSapal.estatus">
+              <li *ngIf="!oficioSapal.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info"
                   (click)="reactivarOficioSapal(oficioSapal.id_oficio_sapal, oficioSapal.obra.calle)"
                   [disabled]="isDeleting(oficioSapal.id_oficio_sapal)">

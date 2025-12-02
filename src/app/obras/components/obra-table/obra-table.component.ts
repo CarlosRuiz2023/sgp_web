@@ -2,6 +2,7 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 import { Obra } from '@obras/interfaces/obra.interface';
 import { ObrasService } from '@obras/services/obras.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
@@ -19,6 +20,7 @@ export class ObraTableComponent {
   private router = inject(Router);
   fb = inject(FormBuilder);
   colonias = signal<any[]>([]);
+  authService = inject(AuthService);
 
   obras = input.required<Obra[]>();
 

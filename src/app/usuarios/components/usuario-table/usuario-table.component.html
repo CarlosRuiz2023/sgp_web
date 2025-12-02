@@ -52,7 +52,7 @@
               </svg>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-48 p-2 shadow-sm">
-              <li>
+              <li *ngIf="authService.tienePermiso('Usuarios', 'Editar')">
                 <button class="btn btn-sm btn-primary" (click)="openEditModal(usuario)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -62,7 +62,7 @@
                   Editar
                 </button>
               </li>
-              <li>
+              <li *ngIf="authService.tienePermiso('Usuarios', 'Editar')">
                 <button class="btn btn-sm btn-secondary" (click)="openCambiarContrasenia(usuario)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -72,7 +72,7 @@
                   Cambiar Contraseña
                 </button>
               </li>
-              <li *ngIf="usuario.estatus">
+              <li *ngIf="usuario.estatus && authService.tienePermiso('Usuarios', 'Eliminar')">
                 <button class="btn btn-sm btn-error" (click)="deleteUsuario(usuario.id_usuario, usuario.nombres)"
                   [disabled]="isDeleting(usuario.id_usuario)">
                   @if (isDeleting(usuario.id_usuario)) {
@@ -88,7 +88,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="!usuario.estatus">
+              <li *ngIf="!usuario.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info" (click)="reactivarUsuario(usuario.id_usuario, usuario.nombres)"
                   [disabled]="isDeleting(usuario.id_usuario)">
                   @if (isDeleting(usuario.id_usuario)) {
@@ -104,7 +104,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf="usuario.token">
+              <li *ngIf="usuario.token && authService.tienePermiso('Usuarios', 'Editar')">
                 <button class="btn btn-sm btn-info" (click)="desloguearUsuario(usuario.id_usuario, usuario.nombres)"
                   [disabled]="isDeleting(usuario.id_usuario)">
                   @if (isDeleting(usuario.id_usuario)) {

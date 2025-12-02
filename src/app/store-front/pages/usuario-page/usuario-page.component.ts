@@ -13,10 +13,11 @@ import { Usuario } from '@usuarios/interfaces/usuario.interface';
 import { UsuariosService } from '@usuarios/services/usuarios.service';
 import { RolResponse } from '@shared/interfaces/rol.interface';
 import { EmpresaResponse } from '@shared/interfaces/empresa.interface';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'obra-page',
-  imports: [PaginationComponent, UsuarioTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [PaginationComponent, UsuarioTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './usuario-page.component.html',
 })
 export class UsuarioPageComponent {
@@ -128,6 +129,16 @@ export class UsuarioPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
     this.loadUsuarios(0, this.usuariosPerPage());
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_usuario',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadUsuarios(0, this.usuariosPerPage()); // recargar resultados
   }
 
 }

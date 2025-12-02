@@ -12,10 +12,11 @@ import { PaginationService } from '@shared/components/pagination/pagination.serv
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Obra, ObrasResponse } from '@obras/interfaces/obra.interface';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'obra-page',
-  imports: [PaginationComponent, ComiteTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
+  imports: [PaginationComponent, ComiteTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './comite-page.component.html',
 })
 export class ComitePageComponent {
@@ -116,6 +117,16 @@ export class ComitePageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
     this.loadComites(0, this.comitesPerPage());
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_comite',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadComites(0, this.comitesPerPage()); // recargar resultados
   }
 
 }

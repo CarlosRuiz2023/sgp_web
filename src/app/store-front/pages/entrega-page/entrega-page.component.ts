@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'entrega-page',
-  imports: [PaginationComponent, EntregaTableComponent, ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [PaginationComponent, EntregaTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './entrega-page.component.html',
 })
 export class EntregaPageComponent {
@@ -39,8 +40,8 @@ export class EntregaPageComponent {
 
   entregaForm = this.fb.group({
     id_obra: ['', Validators.required],
-    id_usuario_fisico: [0, Validators.required],
-    id_usuario_administrativo: [0, Validators.required],
+    id_usuario_fisico: ['', Validators.required],
+    id_usuario_administrativo: ['', Validators.required],
   });
 
   searchForm = this.fb.group({
@@ -129,5 +130,15 @@ export class EntregaPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.filters.set({ filtro, busqueda });
     this.loadEntregas(0, this.entregasPerPage());
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_entrega',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadEntregas(0, this.entregasPerPage()); // recargar resultados
   }
 }

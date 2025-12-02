@@ -2,6 +2,7 @@ import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 import { Contrato } from '@contratos/interfaces/contrato.interface';
 import { ContratoService } from '@contratos/services/contrato.service';
 import { ObrasResponse } from '@obras/interfaces/obra.interface';
@@ -22,6 +23,7 @@ export class ContratoTableComponent {
   obras = signal<any[]>([]);
   supervisores = signal<any[]>([]);
   contratistas = signal<any[]>([]);
+  authService = inject(AuthService);
 
   contratos = input.required<Contrato[]>();
 

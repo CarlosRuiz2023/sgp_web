@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'obra-page',
-  imports: [PaginationComponent, ContratoTableComponent, ReactiveFormsModule, FormErrorLabelComponent,],
+  imports: [PaginationComponent, ContratoTableComponent, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
   templateUrl: './contrato-page.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA] // 👈 IMPORTANTE
 })
@@ -144,5 +145,15 @@ export class ContratoPageComponent {
   onFechaTerminoChange(event: any) {
     const selectedDate = event.target.value; // El formato que emite Cally (ej. '2025-10-09')
     this.contratoForm.patchValue({ fecha_termino: selectedDate });
+  }
+
+  clearSearch() {
+    this.searchForm.reset({
+      filtro: 'id_contrato',
+      busqueda: ''
+    });
+
+    this.filters.set({});
+    this.loadContratos(0, this.contratosPerPage()); // recargar resultados
   }
 }
