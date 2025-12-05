@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       @for (firma of firmas(); track firma.id_firma) {
-      <tr>
+      <tr [ngClass]="getColorClase(firma.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -61,8 +61,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                   </svg>
                   Subir PDF
-                  <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelected($event, firma.id_firma)" />
+                  <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, firma.id_firma)" />
                 </label>
               </li>
               <li *ngIf="firma.plano">
@@ -82,13 +81,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                   </svg>
                   Reemplazar PDF
-                  <input type="file" accept=".pdf" class="hidden"
-                    (change)="onPdfSelected($event, firma.id_firma)" />
+                  <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, firma.id_firma)" />
                 </label>
               </li>
               <li *ngIf="firma.estatus && authService.tienePermiso('Firmas', 'Eliminar')">
-                <button class="btn btn-sm btn-error"
-                  (click)="deleteFirma(firma.id_firma, firma.obra.calle)"
+                <button class="btn btn-sm btn-error" (click)="deleteFirma(firma.id_firma, firma.obra.calle)"
                   [disabled]="isDeleting(firma.id_firma)">
                   @if (isDeleting(firma.id_firma)) {
                   <span class="loading loading-spinner loading-xs"></span>
@@ -104,8 +101,7 @@
                 </button>
               </li>
               <li *ngIf="!firma.estatus && authService.isAdmin">
-                <button class="btn btn-sm btn-info"
-                  (click)="reactivarFirma(firma.id_firma, firma.obra.calle)"
+                <button class="btn btn-sm btn-info" (click)="reactivarFirma(firma.id_firma, firma.obra.calle)"
                   [disabled]="isDeleting(firma.id_firma)">
                   @if (isDeleting(firma.id_firma)) {
                   <span class="loading loading-spinner loading-xs"></span>
@@ -138,28 +134,33 @@
     <!-- Formulario real -->
     <form [formGroup]="firmaForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
       <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Obra</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Obra</span>
+        </label>
         <select formControlName="id_obra" class="select select-bordered w-full">
           <option value="">Seleccione una obra</option>
           @for (obra of obras(); track obra.id_obra) {
           <option [value]="obra.id_obra">{{ obra.calle }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="firmaForm.get('id_obra')!" />
+        <form-error-label [control]="firmaForm.get('id_obra')!" />
+      </div>
 
-      <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Firmador</span>
+      <!-- Firmador -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Firmador</span>
+        </label>
         <select formControlName="id_usuario" class="select select-bordered w-full">
-          <option value="">Seleccione una usuario firmador</option>
+          <option value="">Seleccione una usuario a firmar</option>
           @for (firmador of firmadores(); track firmador.id_usuario) {
-          <option [value]="firmador.id_usuario">{{ firmador.apellido_paterno }} {{ firmador.apellido_materno }} {{ firmador.nombres }}</option>
+          <option [value]="firmador.id_usuario">
+            {{ firmador.apellido_paterno }} {{ firmador.apellido_materno }} {{ firmador.nombres }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="firmaForm.get('id_usuario')!" />
+        <form-error-label [control]="firmaForm.get('id_usuario')!" />
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

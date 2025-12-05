@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'solicitud-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './solicitud-table.component.html',
 })
 export class SolicitudTableComponent {
@@ -327,6 +327,13 @@ export class SolicitudTableComponent {
             });
       }
     });
+  }
+
+  getColorClase(estatus: number) {
+    return {
+      0: 'bg-error/30',
+      1: 'bg-base-300',
+    }[estatus] || '';
   }
 
 }

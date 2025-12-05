@@ -21,7 +21,7 @@
     </thead>
     <tbody>
       @for (estimacion of estimaciones(); track estimacion.id_estimacion) {
-      <tr>
+      <tr [ngClass]="getColorClase(estimacion.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -157,54 +157,81 @@
 
     <!-- Formulario real -->
     <form [formGroup]="estimacionForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
-      <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Obra</span>
-        <select formControlName="id_obra" class="select select-bordered w-full">
-          <option value="">Seleccione una obra</option>
-          @for (obra of obras(); track obra.id_obra) {
-          <option [value]="obra.id_obra">{{ obra.calle }}</option>
-          }
-        </select>
-      </label>
-      <form-error-label [control]="estimacionForm.get('id_obra')!" />
+      <!-- Fila: Obra + Finiquito -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <!-- Finiquito -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Finiquito</span>
-        <input type="checkbox" class="toggle toggle-info" formControlName="finiquito" />
-      </label>
-      <form-error-label [control]="estimacionForm.get('finiquito')!" />
+        <!-- Obra -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Obra</span>
+          </label>
+          <select formControlName="id_obra" class="select select-bordered w-full">
+            <option value="">Seleccione una obra</option>
+            @for (obra of obras(); track obra.id_obra) {
+            <option [value]="obra.id_obra">{{ obra.calle }}</option>
+            }
+          </select>
+          <form-error-label [control]="estimacionForm.get('id_obra')!" />
+        </div>
 
-      <!-- avance_fisico -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Avance Fisico</span>
-        <input type="number" placeholder="Avance Fisico" class="input input-bordered w-full"
-          formControlName="avance_fisico" />
-      </label>
-      <form-error-label [control]="estimacionForm.get('avance_fisico')!" />
+        <!-- Finiquito -->
+        <div class="form-control flex justify-end">
+          <label class="cursor-pointer label">
+            <span class="label-text font-medium">Finiquito</span>
+            <input type="checkbox" class="toggle toggle-info" formControlName="finiquito" />
+          </label>
+          <form-error-label [control]="estimacionForm.get('finiquito')!" />
+        </div>
 
-      <!-- avance_financiero -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Avance Financiero</span>
-        <input type="number" placeholder="Avance Financiero" class="input input-bordered w-full"
-          formControlName="avance_financiero" />
-      </label>
-      <form-error-label [control]="estimacionForm.get('avance_financiero')!" />
+      </div>
 
-      <!-- actual -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Actual</span>
-        <input type="number" placeholder="Actual" class="input input-bordered w-full" formControlName="actual" />
-      </label>
-      <form-error-label [control]="estimacionForm.get('actual')!" />
+      <!-- Fila: Avance físico + Avance financiero -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <!-- anterior -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Anterior</span>
-        <input type="number" placeholder="Anterior" class="input input-bordered w-full" formControlName="anterior" />
-      </label>
-      <form-error-label [control]="estimacionForm.get('anterior')!" />
+        <!-- Avance físico -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Avance Físico</span>
+          </label>
+          <input type="number" placeholder="Avance Físico" class="input input-bordered w-full"
+            formControlName="avance_fisico" />
+          <form-error-label [control]="estimacionForm.get('avance_fisico')!" />
+        </div>
+
+        <!-- Avance financiero -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Avance Financiero</span>
+          </label>
+          <input type="number" placeholder="Avance Financiero" class="input input-bordered w-full"
+            formControlName="avance_financiero" />
+          <form-error-label [control]="estimacionForm.get('avance_financiero')!" />
+        </div>
+
+      </div>
+
+      <!-- Fila: Actual + Anterior -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Actual -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Actual</span>
+          </label>
+          <input type="number" placeholder="Actual" class="input input-bordered w-full" formControlName="actual" />
+          <form-error-label [control]="estimacionForm.get('actual')!" />
+        </div>
+
+        <!-- Anterior -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Anterior</span>
+          </label>
+          <input type="number" placeholder="Anterior" class="input input-bordered w-full" formControlName="anterior" />
+          <form-error-label [control]="estimacionForm.get('anterior')!" />
+        </div>
+
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

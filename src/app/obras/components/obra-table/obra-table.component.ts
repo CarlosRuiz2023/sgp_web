@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'product-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './obra-table.component.html',
 })
 export class ObraTableComponent {
@@ -252,13 +252,25 @@ export class ObraTableComponent {
       },
       error: (err) => {
         console.error('Error al obtener elPDF', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo obtener el PDF. Intenta de nuevo.'
-            });
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo obtener el PDF. Intenta de nuevo.'
+        });
       }
     });
+  }
+
+  getColorClase(estatus: number) {
+    return {
+      0: 'bg-error/30',
+      1: 'bg-base-300',
+      2: 'bg-warning/30',
+      3: 'bg-info/30',
+      4: 'bg-success/30',
+      5: 'bg-secondary/30',
+      6: 'bg-accent/30',
+    }[estatus] || '';
   }
 
 }

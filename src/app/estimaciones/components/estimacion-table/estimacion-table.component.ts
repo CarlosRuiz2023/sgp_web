@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,7 +12,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'estimacion-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './estimacion-table.component.html',
 })
 export class EstimacionTableComponent {
@@ -262,6 +262,13 @@ export class EstimacionTableComponent {
             });
       }
     });
+  }
+
+  getColorClase(estatus: number) {
+    return {
+      0: 'bg-error/30',
+      1: 'bg-base-300',
+    }[estatus] || '';
   }
 
 }

@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'contrato-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './contrato-table.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA] // 👈 IMPORTANTE
 })
@@ -227,8 +227,17 @@ export class ContratoTableComponent {
     const selectedDate = event.target.value; // El formato que emite Cally (ej. '2025-10-09')
     this.contratoForm.patchValue({ fecha_inicio: selectedDate });
   }
+
   onFechaTerminoChange(event: any) {
     const selectedDate = event.target.value; // El formato que emite Cally (ej. '2025-10-09')
     this.contratoForm.patchValue({ fecha_termino: selectedDate });
   }
+
+  getColorClase(estatus: number) {
+    return {
+      0: 'bg-error/30',
+      1: 'bg-base-300',
+    }[estatus] || '';
+  }
+
 }

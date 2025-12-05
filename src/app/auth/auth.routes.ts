@@ -1,7 +1,7 @@
 import { Routes } from "@angular/router";
 import { AuthLayoutComponent } from "./layout/auth-layout/auth-layout.component";
 import { LoginPageComponent } from "./pages/login-page/login-page.component";
-import { RegisterPageComponent } from "./pages/register-page/register-page.component";
+import { RecoverPageComponent } from "./pages/recover-page/recover-page.component";
 
 export const authRoutes:Routes = [{
     path:'',
@@ -12,8 +12,8 @@ export const authRoutes:Routes = [{
             component:LoginPageComponent
         },
         {
-            path:'register',
-            component:RegisterPageComponent
+            path:'recover',
+            component:RecoverPageComponent
         },
         {
             path:'**',

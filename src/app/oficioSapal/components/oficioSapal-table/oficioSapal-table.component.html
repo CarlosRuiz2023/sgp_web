@@ -17,7 +17,7 @@
     </thead>
     <tbody>
       @for (oficioSapal of oficiosSapal(); track oficioSapal.id_oficio_sapal) {
-      <tr>
+      <tr [ngClass]="getColorClase(oficioSapal.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -164,29 +164,33 @@
     <!-- Formulario real -->
     <form [formGroup]="oficioSapalForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
       <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Obra</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Obra</span>
+        </label>
         <select formControlName="id_obra" class="select select-bordered w-full">
           <option value="">Seleccione una obra</option>
           @for (obra of obras(); track obra.id_obra) {
           <option [value]="obra.id_obra">{{ obra.calle }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="oficioSapalForm.get('id_obra')!" />
+        <form-error-label [control]="oficioSapalForm.get('id_obra')!" />
+      </div>
 
-      <!-- Sapalista -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Sapalista</span>
+      <!-- Sapalistas -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Sapalista</span>
+        </label>
         <select formControlName="id_usuario_sapal" class="select select-bordered w-full">
           <option value="">Seleccione un laboratorista</option>
-          @for (sapalista of sapaleros(); track sapalista.id_usuario) {
-          <option [value]="sapalista.id_usuario">{{ sapalista.apellido_paterno }} {{
-            sapalista.apellido_materno }} {{ sapalista.nombres }}</option>
+          @for (sapalero of sapaleros(); track sapalero.id_usuario) {
+          <option [value]="sapalero.id_usuario">{{ sapalero.apellido_paterno }} {{
+            sapalero.apellido_materno }} {{ sapalero.nombres }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="oficioSapalForm.get('id_usuario_sapal')!" />
+        <form-error-label [control]="oficioSapalForm.get('id_usuario_sapal')!" />
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

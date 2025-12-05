@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'usuario-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf],
+  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './usuario-table.component.html',
 })
 export class UsuarioTableComponent {
@@ -24,6 +24,13 @@ export class UsuarioTableComponent {
   authService = inject(AuthService);
 
   usuarios = input.required<Usuario[]>();
+
+  // Mapa para saber qué contraseña está visible
+  passwordVisible: { [id: number]: boolean } = {};
+
+  togglePassword(id: number) {
+    this.passwordVisible[id] = !this.passwordVisible[id];
+  }
 
   usuarioForm = this.fb.group({
     nombres: ['', Validators.required],
@@ -330,13 +337,20 @@ export class UsuarioTableComponent {
       },
       error: (err) => {
         console.error('Error al obtener elPDF', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'No se pudo obtener el PDF. Intenta de nuevo.'
-            });
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo obtener el PDF. Intenta de nuevo.'
+        });
       }
     });
+  }
+
+  getColorClase(estatus: number) {
+    return {
+      0: 'bg-error/30',
+      1: 'bg-base-300',
+    }[estatus] || '';
   }
 
 }

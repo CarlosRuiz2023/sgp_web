@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       @for (obra of obras(); track obra.id_obra) {
-      <tr>
+      <tr [ngClass]="getColorClase(obra.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -92,7 +92,7 @@
                   <input type="file" accept=".pdf" class="hidden" (change)="onPdfSelected($event, obra.id_obra)" />
                 </label>
               </li>
-              <li *ngIf ="obra.estatus && authService.tienePermiso('Obras', 'Eliminar')">
+              <li *ngIf="obra.estatus && authService.tienePermiso('Obras', 'Eliminar')">
                 <button class="btn btn-sm btn-error" (click)="deleteObra(obra.id_obra, obra.calle)"
                   [disabled]="isDeleting(obra.id_obra)">
                   @if (isDeleting(obra.id_obra)) {
@@ -108,7 +108,7 @@
                   }
                 </button>
               </li>
-              <li *ngIf ="!obra.estatus && authService.isAdmin">
+              <li *ngIf="!obra.estatus && authService.isAdmin">
                 <button class="btn btn-sm btn-info" (click)="reactivarObra(obra.id_obra, obra.calle)"
                   [disabled]="isDeleting(obra.id_obra)">
                   @if (isDeleting(obra.id_obra)) {
@@ -141,22 +141,39 @@
 
     <!-- Formulario real -->
     <form [formGroup]="obraForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
+
       <!-- Calle -->
-      <input type="text" placeholder="Calle" class="input input-bordered w-full" formControlName="calle" />
-      <form-error-label [control]="obraForm.get('calle')!" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Calle</span>
+        </label>
+        <input type="text" placeholder="Calle" class="input input-bordered w-full" formControlName="calle" />
+        <form-error-label [control]="obraForm.get('calle')!" />
+
+      </div>
 
       <!-- Colonia -->
-      <select formControlName="id_colonia" class="select select-bordered w-full">
-        <option value="">Seleccione una colonia</option>
-        @for (colonia of colonias(); track colonia.id_colonia) {
-        <option [value]="colonia.id_colonia">{{ colonia.colonia }}</option>
-        }
-      </select>
-      <form-error-label [control]="obraForm.get('id_colonia')!" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Colonia</span>
+        </label>
+        <select formControlName="id_colonia" class="select select-bordered w-full">
+          <option value="">Seleccione una colonia</option>
+          @for (colonia of colonias(); track colonia.id_colonia) {
+          <option [value]="colonia.id_colonia">{{ colonia.colonia }}</option>
+          }
+        </select>
+        <form-error-label [control]="obraForm.get('id_colonia')!" />
+      </div>
 
       <!-- Tramo -->
-      <input type="text" placeholder="Tramo" class="input input-bordered w-full" formControlName="tramo" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Tramo</span>
+        </label>
+        <input type="text" placeholder="Tramo" class="input input-bordered w-full" formControlName="tramo" />
       <form-error-label [control]="obraForm.get('tramo')!" />
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

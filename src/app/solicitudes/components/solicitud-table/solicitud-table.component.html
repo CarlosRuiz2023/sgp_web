@@ -20,7 +20,7 @@
     </thead>
     <tbody>
       @for (solicitud of solicitudes(); track solicitud.id_solicitud) {
-      <tr>
+      <tr [ngClass]="getColorClase(solicitud.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -209,20 +209,24 @@
     <!-- Formulario real -->
     <form [formGroup]="solicitudForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
       <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Obra</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Obra</span>
+        </label>
         <select formControlName="id_obra" class="select select-bordered w-full">
           <option value="">Seleccione una obra</option>
           @for (obra of obras(); track obra.id_obra) {
           <option [value]="obra.id_obra">{{ obra.calle }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="solicitudForm.get('id_obra')!" />
+        <form-error-label [control]="solicitudForm.get('id_obra')!" />
+      </div>
 
       <!-- Laboratorista -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Laboratorista</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Laboratorista</span>
+        </label>
         <select formControlName="id_usuario_laboratorio" class="select select-bordered w-full">
           <option value="">Seleccione un laboratorista</option>
           @for (laboratorista of laboratoristas(); track laboratorista.id_usuario) {
@@ -230,12 +234,14 @@
             laboratorista.apellido_materno }} {{ laboratorista.nombres }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="solicitudForm.get('id_usuario_laboratorio')!" />
+        <form-error-label [control]="solicitudForm.get('id_usuario_laboratorio')!" />
+      </div>
 
       <!-- Mecanico de Suelos -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Mecanico de Suelos</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Mecanica de Suelos</span>
+        </label>
         <select formControlName="id_usuario_ms" class="select select-bordered w-full">
           <option value="">Seleccione un mecanico de suelos</option>
           @for (mecanicoDeSuelos of mecanicosDeSuelos(); track mecanicoDeSuelos.id_usuario) {
@@ -243,8 +249,8 @@
             mecanicoDeSuelos.apellido_materno}} {{ mecanicoDeSuelos.nombres}}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="solicitudForm.get('id_usuario_ms')!" />
+        <form-error-label [control]="solicitudForm.get('id_usuario_ms')!" />
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

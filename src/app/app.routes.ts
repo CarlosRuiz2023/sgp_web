@@ -6,13 +6,13 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.routes'),
-    canMatch: [
+    /* canMatch: [
       // () => {
       //   console.log('hola Mundo');
       //   return true;
       // },
       NotAuthenticatedGuard,
-    ],
+    ], */
   },
   {
     path: '',

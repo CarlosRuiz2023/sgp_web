@@ -8,6 +8,8 @@ import { AuthResponse, Usuario } from '@auth/interfaces/auth-response.interface'
 import { LogoutResponse } from '@auth/interfaces/logout-response.interface';
 import { Router } from '@angular/router';
 import { CheckResponse } from '@auth/interfaces/check-response.interface';
+import Swal from 'sweetalert2';
+import { RecoverResponse } from '@auth/interfaces/recover-response.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 const baseUrl = environment.baseUrl;
@@ -26,9 +28,9 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-  checkStatusResource = rxResource({
+  /* checkStatusResource = rxResource({
     loader: () => this.checkStatus(),
-  });
+  }); */
 
   authStatus = computed<AuthStatus>(() => {
     if (this._authStatus() === 'checking') return 'checking';
@@ -52,6 +54,17 @@ export class AuthService {
       })
       .pipe(
         map((resp) => this.handleAuthSuccess(resp)),
+        catchError((error: any) => this.handleAuthError(error))
+      );
+  }
+
+  recover(email: string): Observable<boolean> {
+    return this.http
+      .post<RecoverResponse>(`${baseUrl}/auth/recuperar`, {
+        correo: email,
+      })
+      .pipe(
+        map((resp) => this.handleAuthRecover(resp)),
         catchError((error: any) => this.handleAuthError(error))
       );
   }
@@ -102,12 +115,6 @@ export class AuthService {
   private handleAuthSuccess({ data, success }: AuthResponse) {
     const { Usuario, permisos_por_modulo } = data;
     const { token } = Usuario;
-    console.log("Usuario");
-    console.log(Usuario);
-    console.log("Token");
-    console.log(token);
-    console.log("Permisos por modulo");
-    console.log(permisos_por_modulo);
     // Guardar usuario
     if (this._authStatus() !== 'authenticated') {
       this._user.set(Usuario);
@@ -123,6 +130,31 @@ export class AuthService {
 
     // Guardar token (solo esto va en localStorage)
     localStorage.setItem('token', token);
+    // Obtener primer módulo accesible
+    const primerModulo = this.getPrimerModulo(permisos_por_modulo);
+
+    // Navegar según permisos
+    if (primerModulo) {
+      this.router.navigateByUrl('/' + primerModulo.toLowerCase());
+    } else {
+      // En caso de que no tenga acceso a nada
+      this.router.navigateByUrl('/sin-permisos');
+    }
+    return true;
+  }
+
+  private handleAuthRecover({ data, success }: RecoverResponse) {
+    Swal.fire({
+      title: '¡Correo Enviado!',
+      text: 'Se ha enviado un correo para restablecimiento de contraseña al correo proporcionado',
+      icon: 'success',
+      showConfirmButton: false,   // 🔹 Oculta el botón
+      timer: 4000,                // 🔹 Se cierra a los 2 segundos
+      timerProgressBar: true      // (opcional) barra de progreso
+    }).then(() => {
+      // recargar la página después de cerrar el alert
+      window.location.href = '/';
+    });
     return true;
   }
 
@@ -149,6 +181,18 @@ export class AuthService {
     const mod = this.permisos()[modulo];
     return mod ? mod.includes(permiso) : false;
   }
+
+  getPrimerModulo(permisos: any): string | null {
+    const modulos = Object.keys(permisos);
+
+    for (const modulo of modulos) {
+      if (permisos[modulo]?.includes('Consultar')) {
+        return modulo;
+      }
+    }
+    return null;
+  }
+
   isAdmin() {
     return this.user()?.id_rol === 1;
   }

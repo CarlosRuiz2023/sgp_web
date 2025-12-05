@@ -21,7 +21,7 @@
     </thead>
     <tbody>
       @for (comite of comites(); track comite.id_comite) {
-      <tr>
+      <tr [ngClass]="getColorClase(comite.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />

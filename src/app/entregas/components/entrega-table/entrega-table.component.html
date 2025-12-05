@@ -18,7 +18,7 @@
     </thead>
     <tbody>
       @for (entrega of entregas(); track entrega.id_entrega) {
-      <tr>
+      <tr [ngClass]="getColorClase(entrega.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -192,8 +192,7 @@
                 </label>
               </li>
               <li *ngIf="entrega.estatus && authService.tienePermiso('Entregas', 'Eliminar')">
-                <button class="btn btn-sm btn-error"
-                  (click)="deleteEntrega(entrega.id_entrega, entrega.obra.calle)"
+                <button class="btn btn-sm btn-error" (click)="deleteEntrega(entrega.id_entrega, entrega.obra.calle)"
                   [disabled]="isDeleting(entrega.id_entrega)">
                   @if (isDeleting(entrega.id_entrega)) {
                   <span class="loading loading-spinner loading-xs"></span>
@@ -209,8 +208,7 @@
                 </button>
               </li>
               <li *ngIf="!entrega.estatus && authService.isAdmin">
-                <button class="btn btn-sm btn-info"
-                  (click)="reactivarEntrega(entrega.id_entrega, entrega.obra.calle)"
+                <button class="btn btn-sm btn-info" (click)="reactivarEntrega(entrega.id_entrega, entrega.obra.calle)"
                   [disabled]="isDeleting(entrega.id_entrega)">
                   @if (isDeleting(entrega.id_entrega)) {
                   <span class="loading loading-spinner loading-xs"></span>
@@ -243,20 +241,24 @@
     <!-- Formulario real -->
     <form [formGroup]="entregaForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
       <!-- Obra -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Obra</span>
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Obra</span>
+        </label>
         <select formControlName="id_obra" class="select select-bordered w-full">
           <option value="">Seleccione una obra</option>
           @for (obra of obras(); track obra.id_obra) {
           <option [value]="obra.id_obra">{{ obra.calle }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="entregaForm.get('id_obra')!" />
+        <form-error-label [control]="entregaForm.get('id_obra')!" />
+      </div>
 
-      <!-- Fisico -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Fisico</span>
+      <!-- Usuario Fisico -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Usuario Fisico</span>
+        </label>
         <select formControlName="id_usuario_fisico" class="select select-bordered w-full">
           <option value="">Seleccione un Fisico</option>
           @for (fisico of fisicos(); track fisico.id_usuario) {
@@ -264,21 +266,23 @@
             fisico.apellido_materno }} {{ fisico.nombres }}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="entregaForm.get('id_usuario_fisico')!" />
+        <form-error-label [control]="entregaForm.get('id_usuario_fisico')!" />
+      </div>
 
-      <!-- Administrativo -->
-      <label class="cursor-pointer label">
-        <span class="label-text">Administrativo</span>
+      <!-- Usuario Administrativo -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Usuario Administrativo</span>
+        </label>
         <select formControlName="id_usuario_administrativo" class="select select-bordered w-full">
-          <option value="">Seleccione un mecanico de suelos</option>
+          <option value="">Seleccione un administrativo</option>
           @for (administrativo of administrativos(); track administrativo.id_usuario) {
           <option [value]="administrativo.id_usuario">{{ administrativo.apellido_paterno}} {{
             administrativo.apellido_materno}} {{ administrativo.nombres}}</option>
           }
         </select>
-      </label>
-      <form-error-label [control]="entregaForm.get('id_usuario_administrativo')!" />
+        <form-error-label [control]="entregaForm.get('id_usuario_administrativo')!" />
+      </div>
 
       <!-- Botones -->
       <div class="modal-action">

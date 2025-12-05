@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       @for (usuario of usuarios(); track usuario.id_usuario) {
-      <tr>
+      <tr [ngClass]="getColorClase(usuario.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -40,8 +40,16 @@
         <th>
           {{ usuario.correo }}
         </th>
-        <th>
-          {{ usuario.contrasenia_visible }}
+        <th class="flex items-center gap-2">
+          <span>
+            {{ passwordVisible[usuario.id_usuario] ? usuario.contrasenia_visible : '********' }}
+          </span>
+
+          <button class="btn btn-ghost btn-xs" (click)="togglePassword(usuario.id_usuario)">
+            <span class="material-icons">
+              {{ passwordVisible[usuario.id_usuario] ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
         </th>
         <th>
           <div class="dropdown dropdown-hover dropdown-left">

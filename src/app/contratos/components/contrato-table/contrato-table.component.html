@@ -21,7 +21,7 @@
     </thead>
     <tbody>
       @for (contrato of contratos(); track contrato.id_contrato) {
-      <tr>
+      <tr [ngClass]="getColorClase(contrato.estatus)">
         <!-- <th>
           <label>
             <input type="checkbox" class="checkbox" />
@@ -124,49 +124,57 @@
     <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
 
       <!-- Contratista -->
-      <select formControlName="id_usuario_contratista" class="select select-bordered w-full">
-        <option value="">Seleccione un contratista</option>
-
-        @for (contratista of contratistas(); track contratista.id_usuario) {
-        <option [value]="contratista.id_usuario">{{ contratista.nombres }} {{ contratista.apellido_paterno }} {{
-          contratista.apellido_materno }}</option>
-        }
-      </select>
-      <form-error-label [control]="contratoForm.get('id_usuario_contratista')!" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Contratista</span>
+        </label>
+        <select formControlName="id_usuario_contratista" class="select select-bordered w-full">
+          <option value="">Seleccione a un Contratista</option>
+          @for (contratista of contratistas(); track contratista.id_usuario) {
+          <option [value]="contratista.id_usuario">{{ contratista.nombres }} {{ contratista.apellido_paterno }} {{
+            contratista.apellido_materno }}</option>
+          }
+        </select>
+        <form-error-label [control]="contratoForm.get('id_usuario_contratista')!" />
+      </div>
 
       <!-- Supervisor -->
-      <select formControlName="id_usuario_supervisor" class="select select-bordered w-full">
-        <option value="">Seleccione un supervisor</option>
-
-        @for (supervisor of supervisores(); track supervisor.id_usuario) {
-        <option [value]="supervisor.id_usuario">{{ supervisor.nombres }} {{ supervisor.apellido_paterno }} {{
-          supervisor.apellido_materno }}</option>
-        }
-      </select>
-      <form-error-label [control]="contratoForm.get('id_usuario_supervisor')!" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Supervisor</span>
+        </label>
+        <select formControlName="id_usuario_supervisor" class="select select-bordered w-full">
+          <option value="">Seleccione a un Supervisor</option>
+          @for (supervisor of supervisores(); track supervisor.id_usuario) {
+          <option [value]="supervisor.id_usuario">{{ supervisor.nombres }} {{ supervisor.apellido_paterno }} {{
+            supervisor.apellido_materno }}</option>
+          }
+        </select>
+        <form-error-label [control]="contratoForm.get('id_usuario_supervisor')!" />
+      </div>
 
       <!-- Obra -->
-      <select formControlName="id_obra" class="select select-bordered w-full">
-        <option value="">Seleccione una obra</option>
-        @for (obra of obras(); track obra.id_obra) {
-        <option [value]="obra.id_obra">{{ obra.calle }}</option>
-        }
-      </select>
-      <form-error-label [control]="contratoForm.get('id_obra')!" />
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Obra</span>
+        </label>
+        <select formControlName="id_obra" class="select select-bordered w-full">
+          <option value="">Seleccione una Obra</option>
+          @for (obra of obras(); track obra.id_obra) {
+          <option [value]="obra.id_obra">{{ obra.calle }} </option>
+          }
+        </select>
+        <form-error-label [control]="contratoForm.get('id_obra')!" />
+      </div>
 
       <!-- Costo Real -->
-      <input type="numer" placeholder="Costo Real" class="input input-bordered w-full" formControlName="costo_real" />
-      <form-error-label [control]="contratoForm.get('costo_real')!" />
-
-      <!-- Fecha Inicio -->
-      <!-- <input type="date" placeholder="Fecha Inicio" class="input input-bordered w-full"
-        formControlName="fecha_inicio" />
-      <form-error-label [control]="contratoForm.get('fecha_inicio')!" /> -->
-
-      <!-- Fecha Termino -->
-      <!-- <input type="date" placeholder="Fecha Termino" class="input input-bordered w-full"
-        formControlName="fecha_termino" />
-      <form-error-label [control]="contratoForm.get('fecha_termino')!" /> -->
+      <div class="form-control md:col-span-2">
+        <label class="label">
+          <span class="label-text font-medium">Costo Real</span>
+        </label>
+        <input type="number" class="input input-bordered w-full" formControlName="costo_real" />
+        <form-error-label [control]="contratoForm.get('costo_real')!" />
+      </div>
 
       <div class="flex gap-6">
         <!-- Fecha Inicio -->
