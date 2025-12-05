@@ -10,6 +10,7 @@ import { SolicitudPageComponent } from "./pages/solicitud-page/solicitud-page.co
 import { OficioSapalPageComponent } from "./pages/oficio-sapal-page/oficio-sapal-page.component";
 import { EntregaPageComponent } from "./pages/entrega-page/entrega-page.component";
 import { FirmaPageComponent } from "./pages/firma-page/firma-page.component";
+import { PermissionGuard } from "@auth/guards/permission.guard";
 
 export const storeFrontRoutes: Routes = [
     {
@@ -18,43 +19,63 @@ export const storeFrontRoutes: Routes = [
         children: [
             {
                 path: '',
-                component: ObraPageComponent
+                component: ObraPageComponent,
+                /* canMatch: [PermissionGuard],
+                data: { modulo: 'Obras' , permiso: 'Consultar' } */
             },
             {
                 path: 'obras',
-                component: ObraPageComponent
+                component: ObraPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Obras' , permiso: 'Consultar' }
             },
             {
                 path: 'usuarios',
-                component: UsuarioPageComponent
+                component: UsuarioPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Usuarios' , permiso: 'Consultar' }
             },
             {
                 path: 'comites',
-                component: ComitePageComponent
+                component: ComitePageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Comites' , permiso: 'Consultar' }
             },
             {
                 path: 'estimaciones',
-                component: EstimacionPageComponent
+                component: EstimacionPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Estimaciones' , permiso: 'Consultar' }
             },
             {
                 path: 'contratos',
-                component: ContratoPageComponent
+                component: ContratoPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Contratos' , permiso: 'Consultar' }
             },
             {
                 path: 'solicitudes',
-                component: SolicitudPageComponent
+                component: SolicitudPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Solicitudes' , permiso: 'Consultar' }
             },
             {
                 path: 'oficios-sapal',
-                component: OficioSapalPageComponent
+                component: OficioSapalPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Oficios-Sapal' , permiso: 'Consultar' }
             },
             {
                 path: 'entregas',
-                component: EntregaPageComponent
+                component: EntregaPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Entregas' , permiso: 'Consultar' }
             },
             {
                 path: 'firmas',
-                component: FirmaPageComponent
+                component: FirmaPageComponent,
+                canMatch: [PermissionGuard],
+                data: { modulo: 'Firmas' , permiso: 'Consultar' }
             },
             {
                 path: '**',

@@ -229,7 +229,8 @@ export class ObraTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/?page=1';
+            //window.location.href = '/?page=1';
+            
           });
         },
         error: (err) => {

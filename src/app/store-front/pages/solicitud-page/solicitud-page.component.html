@@ -69,7 +69,7 @@
 
 <!-- Listado -->
 <solicitud-table [solicitudes]="solicitudes() ?? []" [laboratoristas]="laboratoristas() ?? []"
-  [mecanicosDeSuelos]="mecanicosDeSuelos() ?? []" *ngIf="authService.tienePermiso('Solicitudes', 'Agregar')" />
+  [mecanicosDeSuelos]="mecanicosDeSuelos() ?? []" *ngIf="authService.tienePermiso('Solicitudes', 'Consultar')" />
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Solicitudes', 'Consultar')">
   <div class="flex gap-2 items-center h-20">
