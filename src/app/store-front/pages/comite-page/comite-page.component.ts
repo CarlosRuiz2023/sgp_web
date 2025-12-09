@@ -66,7 +66,6 @@ export class ComitePageComponent {
 
   loadComites(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
-    console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
     this.comitesService.getComites({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
         this.comites.set(resp.data.comites);
@@ -100,7 +99,7 @@ export class ComitePageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/comites?page=1';
+        this.loadComites(0, this.comitesPerPage());
       });
     } catch (error) {
       console.error("Error al guardar comite:", error);

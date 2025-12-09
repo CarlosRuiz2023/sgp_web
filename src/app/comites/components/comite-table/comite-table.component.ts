@@ -1,7 +1,6 @@
 import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, input, output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
 import { Comite } from '@comites/interfaces/comite.interface';
 import { ComitesService } from '@comites/services/comite.service';
@@ -11,15 +10,15 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'comite-table',
-  imports: [RouterLink, CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
+  imports: [CurrencyPipe, DatePipe, ReactiveFormsModule, FormErrorLabelComponent, NgIf, NgClass],
   templateUrl: './comite-table.component.html',
 })
 export class ComiteTableComponent {
   private ComitesService = inject(ComitesService);
-  private router = inject(Router);
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
   authService = inject(AuthService);
+  loadComites = output<void>();
 
   comites = input.required<Comite[]>();
 
@@ -29,20 +28,6 @@ export class ComiteTableComponent {
     tramo: ['', Validators.required],
   });
   id_obra = 0;
-
-  openEditModal(obra: Obra) {
-    this.id_obra = obra.id_obra;
-    // Poblamos el formulario con los valores de la obra
-    this.comiteForm.patchValue({
-      calle: obra.calle,
-      id_colonia: obra.id_colonia, // asegúrate de que tu interface tenga este campo
-      tramo: obra.tramo,
-    });
-
-    // Abrimos el modal con JS nativo
-    const modal = document.getElementById('editar_obra_model') as HTMLDialogElement;
-    modal?.showModal();
-  }
 
   ngOnInit(): void {
     this.ComitesService.getObras().subscribe({
@@ -54,20 +39,16 @@ export class ComiteTableComponent {
   }
 
   // Output para notificar al componente padre sobre cambios
-  onObraDeleted = output<string>();
-  onObraUpdated = output<Obra>();
+  onComiteDeleted = output<string>();
+  onComiteUpdated = output<Obra>();
 
   // Estado para manejar operaciones en progreso
   deletingIds = new Set<string>();
 
-  editObra(obraId: number) {
-    this.router.navigate(['/admin/products', obraId]);
-  }
-
-  deleteObra(obraId: number, obraNombre: string) {
+  deleteComite(comiteId: number, comiteNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se eliminará la obra "${obraNombre}". Esta acción no se puede deshacer.`,
+      text: `Se eliminará el comite de la obra "${comiteNombre}". Esta acción no se puede deshacer.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -76,34 +57,34 @@ export class ComiteTableComponent {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const id = obraId.toString();
+        const id = comiteId.toString();
         this.deletingIds.add(id);
 
         this.ComitesService.deleteComite(id).subscribe({
           next: (success) => {
             if (success) {
-              this.onObraDeleted.emit(id);
+              this.onComiteDeleted.emit(id);
 
               Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Obra eliminada correctamente',
+                title: 'Comite eliminado correctamente',
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/comites?page=1';
+                this.loadComites.emit();
               });
             }
           },
           error: (error) => {
-            console.error('Error al eliminar la obra:', error);
+            console.error('Error al eliminar el comite:', error);
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'No se pudo eliminar la obra. Intenta de nuevo.'
+              text: 'No se pudo eliminar el comite. Intenta de nuevo.'
             });
           },
           complete: () => {
@@ -114,10 +95,10 @@ export class ComiteTableComponent {
     });
   }
 
-  reactivarObra(obraId: number, obraNombre: string) {
+  reactivarComite(comiteId: number, comiteNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se reactivara la obra "${obraNombre}".`,
+      text: `Se reactivara el comite de la obra "${comiteNombre}".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -126,36 +107,39 @@ export class ComiteTableComponent {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const id = obraId.toString();
+        const id = comiteId.toString();
         this.deletingIds.add(id);
 
         this.ComitesService.reactivarComite(id).subscribe({
           next: (success) => {
             if (success) {
-              this.onObraDeleted.emit(id);
+              this.onComiteDeleted.emit(id);
 
               Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Obra reactivada correctamente',
+                title: 'Comite reactivado correctamente',
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/comites?page=1';
+                this.loadComites.emit();
               });
             }
           },
           error: (error) => {
-            console.error('Error al reactivar la obra:', error);
+            console.error('Error al reactivar el comite:', error);
 
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'No se pudo reactivar la obra. Intenta de nuevo.'
+              text: 'No se pudo reactivar el comite. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }

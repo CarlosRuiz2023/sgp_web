@@ -21,6 +21,7 @@ export class EstimacionTableComponent {
   fb = inject(FormBuilder);
   obras = signal<any[]>([]);
   authService = inject(AuthService);
+  loadEstimaciones = output<void>();
 
   estimaciones = input.required<Estimacion[]>();
 
@@ -101,7 +102,7 @@ export class EstimacionTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/estimaciones?page=1';
+                this.loadEstimaciones.emit();
               });
             }
           },
@@ -151,7 +152,7 @@ export class EstimacionTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/estimaciones?page=1';
+                this.loadEstimaciones.emit();
               });
             }
           },
@@ -163,6 +164,9 @@ export class EstimacionTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar la estimacion. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -199,7 +203,7 @@ export class EstimacionTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/estimaciones?page=1';
+        this.loadEstimaciones.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la estimacion:', error);
@@ -232,7 +236,7 @@ export class EstimacionTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/estimaciones?page=1';
+            this.loadEstimaciones.emit();
           });
         },
         error: (err) => {

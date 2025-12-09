@@ -67,7 +67,7 @@
 </button>
 
 <!-- Listado -->
-<estimacion-table [estimaciones]="estimaciones() ?? []" *ngIf="authService.tienePermiso('Estimaciones', 'Consultar')" />
+<estimacion-table [estimaciones]="estimaciones() ?? []" *ngIf="authService.tienePermiso('Estimaciones', 'Consultar')" (loadEstimaciones)="loadEstimaciones(0,estimacionesPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Estimaciones', 'Consultar')">
   <div class="flex gap-2 items-center h-20">

@@ -78,7 +78,6 @@ export class UsuarioPageComponent {
 
   loadUsuarios(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
-    console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
     this.usuariosService.getUsuarios({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp:any) => {
         this.usuarios.set(resp.data.usuarios);
@@ -112,7 +111,7 @@ export class UsuarioPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/usuarios?page=1';
+        this.loadUsuarios(0, this.usuariosPerPage());
       });
     } catch (error) {
       console.error("Error al guardar usuario:", error);

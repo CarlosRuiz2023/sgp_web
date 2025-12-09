@@ -70,7 +70,7 @@
 </button>
 
 <!-- Listado -->
-<usuario-table [usuarios]="usuarios() ?? []" *ngIf="authService.tienePermiso('Usuarios', 'Consultar')" />
+<usuario-table [usuarios]="usuarios() ?? []" *ngIf="authService.tienePermiso('Usuarios', 'Consultar')" (loadUsuarios)="loadUsuarios(0, usuariosPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Usuarios', 'Consultar')">
   <div class="flex gap-2 items-center h-20">

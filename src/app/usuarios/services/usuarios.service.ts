@@ -45,6 +45,7 @@ export class UsuariosService {
             busqueda
           },
         })
+
         .pipe(
           //tap((resp) => console.log(resp)),
           tap((resp) => this.usuariosCache.set(key, resp))
@@ -82,13 +83,19 @@ export class UsuariosService {
 
   updateUsuario(id: string, usuario: Partial<Usuario>): Observable<Usuario> {
     return this.http.put<Usuario>(`${baseUrl}/usuario/${id}`, usuario).pipe(
-      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
+      tap((updatedUsuario) => {
+        this.updateUsuarioCache(updatedUsuario)
+        this.clearUsuariosListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
   updatePassword(id: string, usuario: Partial<Usuario>): Observable<Usuario> {
     return this.http.put<Usuario>(`${baseUrl}/usuario/actualizarContrasenia/${id}`, usuario).pipe(
-      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
+      tap((updatedUsuario) => {
+        this.updateUsuarioCache(updatedUsuario);
+        this.clearUsuariosListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -97,7 +104,10 @@ export class UsuariosService {
     formData.append('archivo', file); // 👈 clave 'archivo'
 
     return this.http.post<any>(`${baseUrl}/upload/obras/${id}`, formData).pipe(
-      tap((updatedUsuario) => this.updateUsuarioCache(updatedUsuario))
+      tap((updatedUsuario) => {
+        this.updateUsuarioCache(updatedUsuario);
+        this.clearUsuariosListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -112,7 +122,10 @@ export class UsuariosService {
   ): Observable<Usuario> {
     return this.http
       .post<Usuario>(`${baseUrl}/usuario`, obraLike)
-      .pipe(tap((usuario) => this.updateUsuarioCache(usuario)));
+      .pipe(tap((usuario) => {
+        this.updateUsuarioCache(usuario);
+        this.clearUsuariosListCache(); // 👈 Limpia el caché de listados
+      }));
   }
 
   // NUEVO MÉTODO PARA ELIMINAR USUARIO
@@ -121,7 +134,10 @@ export class UsuariosService {
       .delete<any>(`${baseUrl}/usuario/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeUsuarioFromCache(id))
+        tap(() => {
+          this.removeUsuarioFromCache(id)
+          this.clearUsuariosListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -131,6 +147,7 @@ export class UsuariosService {
       .put<any>(`${baseUrl}/usuario/activar/${id}`,{})
       .pipe(
         map(() => true),
+        tap(() => this.clearUsuariosListCache()) // 👈 Limpia el caché de listados
       );
   }
 
@@ -140,39 +157,33 @@ export class UsuariosService {
       .put<any>(`${baseUrl}/auth/${id}`,{})
       .pipe(
         map(() => true),
+        tap(() => this.clearUsuariosListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateUsuarioCache(usuario: Usuario) {
     const usuarioId = usuario.id_usuario;
-
     this.usuarioCache.set("" + usuarioId, usuario);
-
-    this.usuariosCache.forEach((usuariosResponse) => {
-      usuariosResponse.data.usuarios = usuariosResponse.data.usuarios.map(
-        (currentUsuario: any) =>
-          currentUsuario.id_usuario === usuarioId ? usuario : currentUsuario
-      );
-    });
-
-    console.log('Caché actualizado');
+    //console.log('Caché de usuario individual actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeUsuarioFromCache(id: string) {
     // Remover de caché individual
     this.usuarioCache.delete(id);
+    //console.log('Usuario eliminado del caché individual');
+  }
 
-    // Remover de caché de listas
-    this.usuariosCache.forEach((usuariosResponse, key) => {
-      usuariosResponse.data.usuarios = usuariosResponse.data.usuarios.filter(
-        (currentUsuario: any) => currentUsuario.id_usuario.toString() !== id
-      );
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearUsuariosListCache() {
+    this.usuariosCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
 
-      // Actualizar el total
-      usuariosResponse.data.total = usuariosResponse.data.usuarios.length;
-    });
-
-    console.log('Usuario eliminada del caché');
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.usuariosCache.clear();
+    this.usuarioCache.clear();
+    console.log('Todo el caché ha sido limpiado');
   }
 }

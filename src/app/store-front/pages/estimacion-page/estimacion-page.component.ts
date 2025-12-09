@@ -101,7 +101,7 @@ export class EstimacionPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/estimaciones?page=1';
+        this.loadEstimaciones(0, this.estimacionesPerPage());
       });
     } catch (error) {
       console.error("Error al guardar estimacion:", error);

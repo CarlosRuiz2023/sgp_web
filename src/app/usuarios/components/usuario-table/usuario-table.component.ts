@@ -22,6 +22,7 @@ export class UsuarioTableComponent {
   roles = signal<any[]>([]);
   empresas = signal<any[]>([]);
   authService = inject(AuthService);
+  loadUsuarios = output<void>(); // 👈 Ya existe onObraDeleted, agregamos este
 
   usuarios = input.required<Usuario[]>();
 
@@ -131,7 +132,7 @@ export class UsuarioTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/usuarios?page=1';
+                this.loadUsuarios.emit();
               });
             }
           },
@@ -181,7 +182,7 @@ export class UsuarioTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/usuarios?page=1';
+                this.loadUsuarios.emit();
               });
             }
           },
@@ -193,6 +194,9 @@ export class UsuarioTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar la usuario. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -241,7 +245,7 @@ export class UsuarioTableComponent {
               title: 'Error',
               text: 'No se pudo desloguear al usuario. Intenta de nuevo.'
             });
-          }
+          },
         });
       }
     });
@@ -271,13 +275,13 @@ export class UsuarioTableComponent {
 
       Swal.fire({
         title: '¡Éxito!',
-        text: 'La Obra se actualizo de forma exitosa',
+        text: 'El Usuario se actualizo de forma exitosa',
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/?page=1';
+        this.loadUsuarios.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la obra:', error);
@@ -316,7 +320,7 @@ export class UsuarioTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/usuarios?page=1';
+        this.loadUsuarios.emit();
       });
     } catch (error) {
       console.error('Error al actualizar al usuario:', error);

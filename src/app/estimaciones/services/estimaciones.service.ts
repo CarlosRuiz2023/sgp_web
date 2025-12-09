@@ -73,23 +73,16 @@ export class EstimacionesService {
     );
   }
 
-  getEstimacionByIdSlug(idSlug: string): Observable<Estimacion> {
-    if (this.estimacionCache.has(idSlug)) {
-      return of(this.estimacionCache.get(idSlug)!);
-    }
-
-    return this.http
-      .get<Estimacion>(`${baseUrl}/estimacion/${idSlug}`)
-      .pipe(tap((comite) => this.estimacionCache.set(idSlug, comite)));
-  }
-
   updateEstimacion(id: string, estimacion: Partial<Estimacion>): Observable<Estimacion> {
     const token = localStorage.getItem('token'); // O el nombre que uses para guardar el token
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
     return this.http.put<Estimacion>(`${baseUrl}/estimacion/${id}`, estimacion, { headers }).pipe(
-      tap((updatedEstimacion) => this.updateEstimacionCache(updatedEstimacion))
+      tap((updatedEstimacion) => {
+        this.updateEstimacionCache(updatedEstimacion);
+        this.clearEstimacionesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -97,10 +90,11 @@ export class EstimacionesService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
 
-    console.log("ID: "+id);
-
     return this.http.post<any>(`${baseUrl}/upload/estimaciones/${id}`, formData).pipe(
-      tap((updatedObra) => this.updateEstimacionCache(updatedObra))
+      tap((updatedObra) => {
+        this.updateEstimacionCache(updatedObra);
+        this.clearEstimacionesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -119,7 +113,10 @@ export class EstimacionesService {
     });
     return this.http
       .post<Estimacion>(`${baseUrl}/estimacion`, estimacionLike, { headers })
-      .pipe(tap((estimacion) => this.updateEstimacionCache(estimacion)));
+      .pipe(tap((estimacion) => {
+        this.updateEstimacionCache(estimacion);
+        this.clearEstimacionesListCache(); // 👈 Limpia el caché de listados
+      }));
   }
 
   // NUEVO MÉTODO PARA ELIMINAR OBRA
@@ -128,7 +125,10 @@ export class EstimacionesService {
       .delete<any>(`${baseUrl}/estimacion/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeEstimacionFromCache(id))
+        tap(() => {
+          this.removeEstimacionFromCache(id);
+          this.clearEstimacionesListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -138,58 +138,31 @@ export class EstimacionesService {
       .put<any>(`${baseUrl}/estimacion/activar/${id}`, {})
       .pipe(
         map(() => true),
+        tap(() => this.clearEstimacionesListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateEstimacionCache(estimacion: Estimacion) {
     const estimacionId = estimacion.id_estimacion;
     this.estimacionCache.set("" + estimacionId, estimacion);
-    this.estimacionesCache.forEach((estimacionResponse) => {
-      estimacionResponse.data.estimaciones = estimacionResponse.data.estimaciones.map(
-        (currentEstimacion: any) =>
-          currentEstimacion.id_estimacion === estimacionId ? estimacion : currentEstimacion
-      );
-    });
-    console.log('Caché actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeEstimacionFromCache(id: string) {
     // Remover de caché individual
     this.estimacionesCache.delete(id);
-
-    // Remover de caché de listas
-    this.estimacionesCache.forEach((estimacionResponse, key) => {
-      estimacionResponse.data.estimaciones = estimacionResponse.data.estimaciones.filter(
-        (currentEstimacion: any) => currentEstimacion.id_estimacion.toString() !== id
-      );
-
-      // Actualizar el total
-      estimacionResponse.data.total = estimacionResponse.data.estimaciones.length;
-    });
-
-    console.log('Obra eliminada del caché');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
   
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearEstimacionesListCache() {
+    this.estimacionesCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.estimacionesCache.clear();
+    this.estimacionCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

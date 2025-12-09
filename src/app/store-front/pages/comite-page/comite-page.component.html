@@ -67,7 +67,7 @@
 </button>
 
 <!-- Listado -->
-<comite-table [comites]="comites() ?? []" *ngIf="authService.tienePermiso('Comites', 'Consultar')" />
+<comite-table [comites]="comites() ?? []" *ngIf="authService.tienePermiso('Comites', 'Consultar')" (loadComites)="loadComites(0,comitesPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Comites', 'Consultar')">
   <div class="flex gap-2 items-center h-20">
