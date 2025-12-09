@@ -3,7 +3,6 @@ import {
   computed,
   input,
   linkedSignal,
-  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 

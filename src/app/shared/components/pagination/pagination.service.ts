@@ -1,5 +1,4 @@
-import { inject, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { inject, Injectable, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
@@ -7,13 +6,16 @@ import { map } from 'rxjs';
 export class PaginationService {
   private activatedRoute = inject(ActivatedRoute);
 
-  currentPage = toSignal(
-    this.activatedRoute.queryParamMap.pipe(
-      map((params) => (params.get('page') ? +params.get('page')! : 1)),
-      map((page) => (isNaN(page) ? 1 : page))
-    ),
-    {
-      initialValue: 1,
-    }
-  );
+  currentPage = signal(1);
+
+  constructor() {
+    this.activatedRoute.queryParamMap.subscribe((params) => {
+      const page = +(params.get('page') || 1);
+      this.currentPage.set(isNaN(page) ? 1 : page);
+    });
+  }
+
+  setPage(page: number) {
+    this.currentPage.set(page);
+  }
 }

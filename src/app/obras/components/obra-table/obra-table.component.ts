@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass, NgIf } from '@angular/common';
-import { Component, input, output, inject, signal } from '@angular/core';
+import { Component, input, output, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
@@ -21,6 +21,8 @@ export class ObraTableComponent {
   fb = inject(FormBuilder);
   colonias = signal<any[]>([]);
   authService = inject(AuthService);
+  loadObras = output<void>(); // 👈 Ya existe onObraDeleted, agregamos este
+
 
   obras = input.required<Obra[]>();
 
@@ -95,7 +97,7 @@ export class ObraTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                this.loadObras.emit();
               });
             }
           },
@@ -145,7 +147,7 @@ export class ObraTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/?page=1';
+                this.loadObras.emit();
               });
             }
           },
@@ -157,6 +159,9 @@ export class ObraTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar la obra. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id); // 👈 YA ESTABA, PERO SE EJECUTA SOLO SI NO HAY ERROR
           }
         });
       }
@@ -193,7 +198,7 @@ export class ObraTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/?page=1';
+        this.loadObras.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la obra:', error);
@@ -230,7 +235,7 @@ export class ObraTableComponent {
           }).then(() => {
             // recargar la página después de cerrar el alert
             //window.location.href = '/?page=1';
-            
+
           });
         },
         error: (err) => {

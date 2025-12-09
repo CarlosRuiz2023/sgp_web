@@ -48,7 +48,6 @@ export class ObrasService {
           },
         })
         .pipe(
-          //tap((resp) => console.log(resp)),
           tap((resp) => this.obrasCache.set(key, resp))
         );
     } else {
@@ -60,7 +59,6 @@ export class ObrasService {
           },
         })
         .pipe(
-          //tap((resp) => console.log(resp)),
           tap((resp) => this.obrasCache.set(key, resp))
         );
     }
@@ -69,12 +67,10 @@ export class ObrasService {
   getColonias(): Observable<ColoniasResponse> {
     return this.http
       .get<ColoniasResponse>(`${baseUrl}/colonia`)
-      .pipe(
-      //tap((resp) => console.log(resp)),
-    );
+      .pipe();
   }
 
-   getObraByIdSlug(idSlug: string): Observable<Obra> {
+  getObraByIdSlug(idSlug: string): Observable<Obra> {
     if (this.obraCache.has(idSlug)) {
       return of(this.obraCache.get(idSlug)!);
     }
@@ -86,104 +82,84 @@ export class ObrasService {
 
   updateObra(id: string, obra: Partial<Obra>): Observable<Obra> {
     return this.http.put<Obra>(`${baseUrl}/obra/${id}`, obra).pipe(
-      tap((updatedObra) => this.updateObraCache(updatedObra))
+      tap((updatedObra) => {
+        this.updateObraCache(updatedObra);
+        this.clearObrasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
   uploadPdf(id: number, file: File): Observable<any> {
     const formData = new FormData();
-    formData.append('archivo', file); // 👈 clave 'archivo'
+    formData.append('archivo', file);
 
     return this.http.post<any>(`${baseUrl}/upload/obras/${id}`, formData).pipe(
-      tap((updatedObra) => this.updateObraCache(updatedObra))
+      tap((updatedObra) => {
+        this.updateObraCache(updatedObra);
+        this.clearObrasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
   getPdf(id: number): Observable<Blob> {
     return this.http.get(`${baseUrl}/upload/obras/${id}`, {
-      responseType: 'blob' // 👈 importante para recibir el archivo
+      responseType: 'blob'
     });
   }
 
-  createObra(
-    obraLike: Partial<Obra>
-  ): Observable<Obra> {
+  createObra(obraLike: Partial<Obra>): Observable<Obra> {
     return this.http
       .post<Obra>(`${baseUrl}/obra`, obraLike)
-      .pipe(tap((obra) => this.updateObraCache(obra)));
+      .pipe(
+        tap((obra) => {
+          this.updateObraCache(obra);
+          this.clearObrasListCache(); // 👈 Limpia el caché de listados
+        })
+      );
   }
 
-  // NUEVO MÉTODO PARA ELIMINAR OBRA
   deleteObra(id: string): Observable<boolean> {
     return this.http
       .delete<any>(`${baseUrl}/obra/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeObraFromCache(id))
+        tap(() => {
+          this.removeObraFromCache(id);
+          this.clearObrasListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
-  // NUEVO MÉTODO PARA ELIMINAR OBRA
   reactivarObra(id: string): Observable<boolean> {
     return this.http
-      .put<any>(`${baseUrl}/obra/activar/${id}`,{})
+      .put<any>(`${baseUrl}/obra/activar/${id}`, {})
       .pipe(
         map(() => true),
+        tap(() => this.clearObrasListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateObraCache(obra: Obra) {
     const obraId = obra.id_obra;
-
     this.obraCache.set("" + obraId, obra);
-
-    this.obrasCache.forEach((obrasResponse) => {
-      obrasResponse.data.obras = obrasResponse.data.obras.map(
-        (currentObra: any) =>
-          currentObra.id_obra === obraId ? obra : currentObra
-      );
-    });
-
-    console.log('Caché actualizado');
+    console.log('Caché de obra individual actualizado');
   }
 
-  // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeObraFromCache(id: string) {
-    // Remover de caché individual
     this.obraCache.delete(id);
-
-    // Remover de caché de listas
-    this.obrasCache.forEach((obrasResponse, key) => {
-      obrasResponse.data.obras = obrasResponse.data.obras.filter(
-        (currentObra: any) => currentObra.id_obra.toString() !== id
-      );
-
-      // Actualizar el total
-      obrasResponse.data.total = obrasResponse.data.obras.length;
-    });
-
-    console.log('Obra eliminada del caché');
+    console.log('Obra eliminada del caché individual');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
-  
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearObrasListCache() {
+    this.obrasCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.obrasCache.clear();
+    this.obraCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

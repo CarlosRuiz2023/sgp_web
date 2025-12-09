@@ -69,10 +69,10 @@
 </button>
 
 <!-- Listado -->
-<product-table *ngIf="authService.tienePermiso('Obras', 'Consultar')" [obras]="obras() ?? []" />
+<product-table *ngIf="authService.tienePermiso('Obras', 'Consultar')" [obras]="obras() ?? []" (loadObras)="loadObras(0, obrasPerPage())"/>
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Obras', 'Consultar')">
   <div class="flex gap-2 items-center h-20">
-    <app-pagination [pages]="totalPaginas() ?? 0" [currentPage]="paginationService.currentPage()" />
+    <app-pagination [pages]="totalPaginas() ?? 0" [currentPage]="paginationService.currentPage()"/>
 
     <select class="select select-bordered w-32" (change)="obrasPerPage.set(+selectPerPage.value)" #selectPerPage>
       <option value="10">10</option>

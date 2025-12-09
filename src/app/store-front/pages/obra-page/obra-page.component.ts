@@ -64,7 +64,7 @@ export class ObraPageComponent {
     this.loadObras(offset, this.obrasPerPage());
   });
 
-  loadObras(offset: number = 0, limit: number = 10) {
+  loadObras(offset: number = 0, limit: number = 10):void {
     const { filtro, busqueda } = this.searchForm.value;
     this.obrasService.getObras({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
@@ -99,12 +99,12 @@ export class ObraPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        this.loadObras();
+        //this.obrasPerPage.set(this.obrasPerPage());
+        this.loadObras(0, this.obrasPerPage());
       });
     } catch (error) {
       console.error("Error al guardar obra:", error);
     }
-
   }
 
   async onSearch() {
