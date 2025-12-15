@@ -56,25 +56,31 @@ export class ContratoPageComponent {
   ngOnInit(): void {
     this.contratoService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
     this.contratoService.getUsuariosContratistas().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.contratistas.set(resp.data.usuarios); // ajusta según tu estructura
+        const contratistasActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.contratistas.set(contratistasActivos);
       },
       error: (err) => console.error(err)
     });
     this.contratoService.getUsuariosSupervisores().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.supervisores.set(resp.data.usuarios); // ajusta según tu estructura
+        const supervisoresActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.supervisores.set(supervisoresActivos);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -87,8 +93,14 @@ export class ContratoPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.contratoService.getContratos({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.contratos.set(resp.data.contratos);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.contratos.set(resp.data.contratos);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const contratosActivos = resp.data.contratos.filter((contrato: Contrato) => contrato.estatus != 0);
+          this.contratos.set(contratosActivos);
+          this.totalPaginas.set(Math.ceil(contratosActivos.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar contratos:', err),
     });

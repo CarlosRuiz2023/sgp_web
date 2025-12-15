@@ -54,20 +54,23 @@ export class UsuarioPageComponent {
   ngOnInit(): void {
     this.usuariosService.getRoles().subscribe({
       next: (resp: RolResponse) => {
-        this.roles.set(resp.data.roles.rows); // ajusta según tu estructura
+        const rolesActivos = resp.data.roles.rows.filter(
+          (rol: any) => rol.estatus === 1
+        );
+        this.roles.set(rolesActivos);
       },
       error: (err) => console.error(err)
     });
 
     this.usuariosService.getEmpresas().subscribe({
       next: (resp: EmpresaResponse) => {
-        this.empresas.set(resp.data.empresas.rows); // ajusta según tu estructura
+        const empresasActivas = resp.data.empresas.rows.filter(
+          (empresa: any) => empresa.estatus === 1
+        );
+        this.empresas.set(empresasActivas);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -79,9 +82,16 @@ export class UsuarioPageComponent {
   loadUsuarios(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
     this.usuariosService.getUsuarios({ limit, offset, filtro, busqueda }).subscribe({
-      next: (resp:any) => {
-        this.usuarios.set(resp.data.usuarios);
-        this.totalPaginas.set(resp.data.totalPaginas);
+      next: (resp: any) => {
+        if (this.authService.isAdmin()) {
+          this.usuarios.set(resp.data.usuarios);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const usuariosActivos = resp.data.usuarios.filter((usuario: Usuario) => usuario.estatus != 0);
+          this.usuarios.set(usuariosActivos);
+          this.totalPaginas.set(Math.ceil(usuariosActivos.length / limit));
+        }
+
       },
       error: (err) => console.error('Error al cargar obras:', err),
     });

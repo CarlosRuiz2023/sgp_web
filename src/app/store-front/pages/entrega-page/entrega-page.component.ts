@@ -52,24 +52,31 @@ export class EntregaPageComponent {
   ngOnInit(): void {
     this.entregasService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
     this.entregasService.getUsuariosFisicos().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.fisicos.set(resp.data.usuarios); // ajusta según tu estructura
+        const fisicosActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.fisicos.set(fisicosActivos);
       },
       error: (err) => console.error(err)
     });
     this.entregasService.getUsuariosAdministrativos().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.administrativos.set(resp.data.usuarios); // ajusta según tu estructura
+        const administrativosActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.administrativos.set(administrativosActivos);
       },
       error: (err) => console.error(err)
     });
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -82,8 +89,14 @@ export class EntregaPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.entregasService.getEntregas({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.entregas.set(resp.data.entregas);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.entregas.set(resp.data.entregas);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const entregasActivas = resp.data.entregas.filter((entrega: Entrega) => entrega.estatus != 0);
+          this.entregas.set(entregasActivas);
+          this.totalPaginas.set(Math.ceil(entregasActivas.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar entregas:', err),
     });

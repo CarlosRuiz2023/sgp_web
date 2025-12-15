@@ -51,13 +51,13 @@ export class EstimacionPageComponent {
   ngOnInit(): void {
     this.estimacionesService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -70,8 +70,15 @@ export class EstimacionPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.estimacionesService.getEstimaciones({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.estimaciones.set(resp.data.estimaciones);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.estimaciones.set(resp.data.estimaciones);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const estimacionesActivas = resp.data.estimaciones.filter((estimacion: Estimacion) => estimacion.estatus != 0);
+          this.estimaciones.set(estimacionesActivas);
+          this.totalPaginas.set(Math.ceil(estimacionesActivas.length / limit));
+        }
+
       },
       error: (err) => console.error('Error al cargar obras:', err),
     });

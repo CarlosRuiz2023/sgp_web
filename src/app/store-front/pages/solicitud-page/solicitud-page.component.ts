@@ -52,24 +52,31 @@ export class SolicitudPageComponent {
   ngOnInit(): void {
     this.solicitudesService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
     this.solicitudesService.getUsuariosLaboratoristas().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.laboratoristas.set(resp.data.usuarios); // ajusta según tu estructura
+        const laboratoristasActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.laboratoristas.set(laboratoristasActivos);
       },
       error: (err) => console.error(err)
     });
     this.solicitudesService.getUsuariosMecanicosDeSuelos().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.mecanicosDeSuelos.set(resp.data.usuarios); // ajusta según tu estructura
+        const mecanicosDeSuelosActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.mecanicosDeSuelos.set(mecanicosDeSuelosActivos);
       },
       error: (err) => console.error(err)
     });
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -82,8 +89,14 @@ export class SolicitudPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.solicitudesService.getSolicitudes({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.solicitudes.set(resp.data.solicitudes);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.solicitudes.set(resp.data.solicitudes);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const solicitudesActivas = resp.data.solicitudes.filter((solicitud: Solicitud) => solicitud.estatus != 0);
+          this.solicitudes.set(solicitudesActivas);
+          this.totalPaginas.set(Math.ceil(solicitudesActivas.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar obras:', err),
     });

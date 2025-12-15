@@ -50,18 +50,22 @@ export class OficioSapalPageComponent {
   ngOnInit(): void {
     this.oficioSapalService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
     this.oficioSapalService.getUsuariosSapal().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.sapaleros.set(resp.data.usuarios); // ajusta según tu estructura
+        const sapalerosActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.sapaleros.set(sapalerosActivos);
       },
       error: (err) => console.error(err)
     });
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -74,8 +78,14 @@ export class OficioSapalPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.oficioSapalService.getOficiosSapal({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.oficiosSapal.set(resp.data.oficios_sapal);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.oficiosSapal.set(resp.data.oficios_sapal);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const oficiosSapalActivos = resp.data.oficios_sapal.filter((oficioSapal: OficiosSapal) => oficioSapal.estatus != 0);
+          this.oficiosSapal.set(oficiosSapalActivos);
+          this.totalPaginas.set(Math.ceil(oficiosSapalActivos.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar oficios de sapal:', err),
     });

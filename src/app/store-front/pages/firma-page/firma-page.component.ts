@@ -49,20 +49,22 @@ export class FirmaPageComponent {
   ngOnInit(): void {
     this.firmasService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
-
     this.firmasService.getUsuariosFirmadores().subscribe({
       next: (resp: UsuariosResponse) => {
-        this.firmadores.set(resp.data.usuarios); // ajusta según tu estructura
+        const firmadoresActivos = resp.data.usuarios.filter(
+          (usuario: any) => usuario.estatus === 1
+        );
+        this.firmadores.set(firmadoresActivos);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -75,8 +77,14 @@ export class FirmaPageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.firmasService.getFirmas({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.firmas.set(resp.data.firmas);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.firmas.set(resp.data.firmas);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const firmasActivas = resp.data.firmas.filter((firma: Firma) => firma.estatus != 0);
+          this.firmas.set(firmasActivas);
+          this.totalPaginas.set(Math.ceil(firmasActivas.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar firmas:', err),
     });

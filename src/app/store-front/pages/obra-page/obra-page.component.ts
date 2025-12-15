@@ -49,13 +49,13 @@ export class ObraPageComponent {
   ngOnInit(): void {
     this.obrasService.getColonias().subscribe({
       next: (resp: ColoniasResponse) => {
-        this.colonias.set(resp.data.colonias.rows); // ajusta según tu estructura
+        const coloniasActivas = resp.data.colonias.rows.filter(
+          (colonia: any) => colonia.estatus === 1
+        );
+        this.colonias.set(coloniasActivas);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -64,12 +64,18 @@ export class ObraPageComponent {
     this.loadObras(offset, this.obrasPerPage());
   });
 
-  loadObras(offset: number = 0, limit: number = 10):void {
+  loadObras(offset: number = 0, limit: number = 10): void {
     const { filtro, busqueda } = this.searchForm.value;
     this.obrasService.getObras({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.obras.set(resp.data.obras);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if(this.authService.isAdmin()){
+          this.obras.set(resp.data.obras);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        }else{
+          const obrasActivas = resp.data.obras.filter((obra: Obra) => obra.estatus != 0);
+          this.obras.set(obrasActivas);
+          this.totalPaginas.set(Math.ceil(obrasActivas.length / limit));
+        }
       },
       error: (err) => console.error('Error al cargar obras:', err),
     });

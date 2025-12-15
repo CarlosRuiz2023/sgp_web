@@ -49,13 +49,13 @@ export class ComitePageComponent {
   ngOnInit(): void {
     this.comitesService.getObras().subscribe({
       next: (resp: ObrasResponse) => {
-        this.obras.set(resp.data.obras); // ajusta según tu estructura
+        const obrasActivas = resp.data.obras.filter(
+          (obra: any) => obra.estatus === 1
+        );
+        this.obras.set(obrasActivas);
       },
       error: (err) => console.error(err)
     });
-
-    // carga inicial de obras si quieres
-    //this.loadObras(0, this.obrasPerPage());
   }
 
   paginationEffect = effect(() => {
@@ -68,8 +68,15 @@ export class ComitePageComponent {
     const { filtro, busqueda } = this.searchForm.value;
     this.comitesService.getComites({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
-        this.comites.set(resp.data.comites);
-        this.totalPaginas.set(resp.data.totalPaginas);
+        if (this.authService.isAdmin()) {
+          this.comites.set(resp.data.comites);
+          this.totalPaginas.set(resp.data.totalPaginas);
+        } else {
+          const comitesActivos = resp.data.comites.filter((comite: Comite) => comite.estatus != 0);
+          this.comites.set(comitesActivos);
+          this.totalPaginas.set(Math.ceil(comitesActivos.length / limit));
+        }
+
       },
       error: (err) => console.error('Error al cargar obras:', err),
     });
