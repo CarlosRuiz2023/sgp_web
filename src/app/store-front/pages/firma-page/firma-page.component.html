@@ -69,11 +69,11 @@
 
 <!-- Listado -->
 <firma-table [firmas]="firmas() ?? []" [firmadores]="firmadores() ?? []"
-  *ngIf="authService.tienePermiso('Firmas', 'Consultar')" />
+  *ngIf="authService.tienePermiso('Firmas', 'Consultar')" (loadFirmas)="loadFirmas(0,this.firmasPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Firmas', 'Consultar')">
   <div class="flex gap-2 items-center h-20">
-    <app-pagination [pages]="totalPaginas() ?? 0" [currentPage]="paginationService.currentPage()" />
+    <app-pagination [pages]="totalPaginas() ?? 0" [currentPage]="paginationService.currentPage()"/>
 
     <select class="select select-bordered w-32" (change)="firmasPerPage.set(+selectPerPage.value)" #selectPerPage>
       <option value="10">10</option>

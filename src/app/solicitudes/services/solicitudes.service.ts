@@ -97,7 +97,10 @@ export class SolicitudesService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.put<Solicitud>(`${baseUrl}/solicitud/${id}`, solicitud, { headers }).pipe(
-      tap((updatedSolicitud) => this.updateSolicitudCache(updatedSolicitud))
+      tap((updatedSolicitud) => {
+        this.updateSolicitudCache(updatedSolicitud);
+        this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -105,21 +108,30 @@ export class SolicitudesService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/solicitudes/${id}?campo=solicitud`, formData).pipe(
-      tap((updatedSolicitud) => this.updateSolicitudCache(updatedSolicitud))
+      tap((updatedSolicitud) => {
+        this.updateSolicitudCache(updatedSolicitud);
+        this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
   uploadPdfLaboratorio(id: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/solicitudes/${id}?campo=laboratorio`, formData).pipe(
-      tap((updatedSolicitud) => this.updateSolicitudCache(updatedSolicitud))
+      tap((updatedSolicitud) => {
+        this.updateSolicitudCache(updatedSolicitud);
+        this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
   uploadPdfMecanicaDeSuelos(id: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/solicitudes/${id}?campo=mecanica_de_suelos`, formData).pipe(
-      tap((updatedSolicitud) => this.updateSolicitudCache(updatedSolicitud))
+      tap((updatedSolicitud) => {
+        this.updateSolicitudCache(updatedSolicitud);
+        this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -150,7 +162,10 @@ export class SolicitudesService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.post<Solicitud>(`${baseUrl}/solicitud`, solicitudLike, { headers }).pipe(
-      tap((solicitud) => this.updateSolicitudCache(solicitud)),
+      tap((solicitud) => {
+        this.updateSolicitudCache(solicitud);
+        this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+      }),
       switchMap((solicitud:any) =>
         this.uploadPdfSolicitud(solicitud.data.id_solicitud, file).pipe(map(() => solicitud))
       )
@@ -163,7 +178,10 @@ export class SolicitudesService {
       .delete<any>(`${baseUrl}/solicitud/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeSolicitudFromCache(id))
+        tap(() => {
+          this.removeSolicitudFromCache(id);
+          this.clearSolicitudesListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -173,58 +191,31 @@ export class SolicitudesService {
       .put<any>(`${baseUrl}/solicitud/activar/${id}`, {})
       .pipe(
         map(() => true),
+        tap(() => this.clearSolicitudesListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateSolicitudCache(solicitud: Solicitud) {
     const solicitudId = solicitud.id_solicitud;
     this.solicitudCache.set("" + solicitudId, solicitud);
-    this.solicitudesCache.forEach((solicitudResponse) => {
-      solicitudResponse.data.solicitudes = solicitudResponse.data.solicitudes.map(
-        (currentSolicitud: any) =>
-          currentSolicitud.id_solicitud === solicitudId ? solicitud : currentSolicitud
-      );
-    });
-    console.log('Caché actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeSolicitudFromCache(id: string) {
     // Remover de caché individual
     this.solicitudesCache.delete(id);
-
-    // Remover de caché de listas
-    this.solicitudesCache.forEach((solicitudResponse, key) => {
-      solicitudResponse.data.solicitudes = solicitudResponse.data.solicitudes.filter(
-        (currentSolicitud: any) => currentSolicitud.id_solicitud.toString() !== id
-      );
-
-      // Actualizar el total
-      solicitudResponse.data.total = solicitudResponse.data.solicitudes.length;
-    });
-
-    console.log('Solicitud eliminada del caché');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
-  
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearSolicitudesListCache() {
+    this.solicitudesCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.solicitudesCache.clear();
+    this.solicitudCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

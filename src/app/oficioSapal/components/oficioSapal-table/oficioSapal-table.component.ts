@@ -24,6 +24,7 @@ export class OficioSapalTableComponent {
   oficiosSapal = input.required<OficiosSapal[]>();
   sapaleros = input.required<Usuario[]>();
   authService = inject(AuthService);
+  loadOficiosSapal = output<void>();
 
   oficioSapalForm = this.fb.group({
     id_obra: [0, Validators.required],
@@ -98,7 +99,7 @@ export class OficioSapalTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/oficios-sapal?page=1';
+                this.loadOficiosSapal.emit();
               });
             }
           },
@@ -148,18 +149,20 @@ export class OficioSapalTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/oficios-sapal?page=1';
+                this.loadOficiosSapal.emit();
               });
             }
           },
           error: (error) => {
             console.error('Error al reactivar el oficio sapal:', error);
-
             Swal.fire({
               icon: 'error',
               title: 'Error',
               text: 'No se pudo reactivar el oficio sapal. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -196,7 +199,7 @@ export class OficioSapalTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/oficios-sapal?page=1';
+        this.loadOficiosSapal.emit();
       });
     } catch (error) {
       console.error('Error al actualizar el oficio sapal:', error);
@@ -229,7 +232,7 @@ export class OficioSapalTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/oficios-sapal?page=1';
+            this.loadOficiosSapal.emit();
           });
         },
         error: (err) => {
@@ -264,7 +267,7 @@ export class OficioSapalTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/oficios-sapal?page=1';
+            this.loadOficiosSapal.emit();
           });
         },
         error: (err) => {

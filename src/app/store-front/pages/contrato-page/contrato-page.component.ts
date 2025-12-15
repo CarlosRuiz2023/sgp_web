@@ -85,7 +85,6 @@ export class ContratoPageComponent {
 
   loadContratos(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
-    console.log("Cargando obras con:", { offset, limit, filtro, busqueda });
     this.contratoService.getContratos({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
         this.contratos.set(resp.data.contratos);
@@ -119,7 +118,7 @@ export class ContratoPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/contratos?page=1';
+        this.loadContratos(0, this.contratosPerPage());
       });
     } catch (error) {
       console.error("Error al guardar contrato:", error);

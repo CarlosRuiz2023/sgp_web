@@ -25,6 +25,7 @@ export class SolicitudTableComponent {
   laboratoristas = input.required<Usuario[]>();
   mecanicosDeSuelos = input.required<Usuario[]>();
   authService = inject(AuthService);
+  loadSolicitudes = output<void>(); // 👈 Ya existe onSolicitudDeleted, agregamos este
 
   solicitudForm = this.fb.group({
     id_obra: [0, Validators.required],
@@ -97,7 +98,7 @@ export class SolicitudTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/solicitudes?page=1';
+                this.loadSolicitudes.emit();
               });
             }
           },
@@ -147,18 +148,20 @@ export class SolicitudTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/solicitudes?page=1';
+                this.loadSolicitudes.emit();
               });
             }
           },
           error: (error) => {
             console.error('Error al reactivar la solicitud:', error);
-
             Swal.fire({
               icon: 'error',
               title: 'Error',
               text: 'No se pudo reactivar la solicitud. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -195,7 +198,7 @@ export class SolicitudTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/solicitudes?page=1';
+        this.loadSolicitudes.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la solicitud:', error);
@@ -228,7 +231,7 @@ export class SolicitudTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/solicitudes?page=1';
+            this.loadSolicitudes.emit();
           });
         },
         error: (err) => {
@@ -263,7 +266,7 @@ export class SolicitudTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/solicitudes?page=1';
+            this.loadSolicitudes.emit();
           });
         },
         error: (err) => {

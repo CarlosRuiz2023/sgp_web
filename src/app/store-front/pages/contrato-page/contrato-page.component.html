@@ -68,7 +68,7 @@
 </button>
 
 <!-- Listado -->
-<contrato-table [contratos]="contratos() ?? []" *ngIf="authService.tienePermiso('Contratos', 'Consultar')" />
+<contrato-table [contratos]="contratos() ?? []" *ngIf="authService.tienePermiso('Contratos', 'Consultar')" (loadContratos)="loadContratos(0,contratosPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Contratos', 'Consultar')">
   <div class="flex gap-2 items-center h-20">

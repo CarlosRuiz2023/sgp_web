@@ -68,7 +68,7 @@
 </button>
 
 <!-- Listado -->
-<oficio-sapal-table [oficiosSapal]="oficiosSapal() ?? []" [sapaleros]="sapaleros() ?? []" *ngIf="authService.tienePermiso('Oficios-Sapal', 'Consultar')"/>
+<oficio-sapal-table [oficiosSapal]="oficiosSapal() ?? []" [sapaleros]="sapaleros() ?? []" *ngIf="authService.tienePermiso('Oficios-Sapal', 'Consultar')" (loadOficiosSapal)="loadOficiosSapal(0,this.oficiosSapalPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Oficios-Sapal', 'Consultar')">
   <div class="flex gap-2 items-center h-20">

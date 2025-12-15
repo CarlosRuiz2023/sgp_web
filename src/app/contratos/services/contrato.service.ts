@@ -90,12 +90,14 @@ export class ContratoService {
 
   updateContrato(id: string, contrato: Partial<Contrato>): Observable<Contrato> {
     const token = localStorage.getItem('token'); // O el nombre que uses para guardar el token
-    console.log(token);
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
     return this.http.put<Contrato>(`${baseUrl}/contrato/${id}`, contrato, { headers }).pipe(
-      tap((updatedContrato) => this.updateContratoCache(updatedContrato))
+      tap((updatedContrato) => {
+        this.updateContratoCache(updatedContrato);
+        this.clearContratosListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -109,7 +111,10 @@ export class ContratoService {
     });
     return this.http
       .post<Contrato>(`${baseUrl}/contrato`, contratoLike, { headers })
-      .pipe(tap((contrato) => this.updateContratoCache(contrato)));
+      .pipe(tap((contrato) => {
+        this.updateContratoCache(contrato);
+        this.clearContratosListCache(); // 👈 Limpia el caché de listados
+      }));
   }
 
   // NUEVO MÉTODO PARA ELIMINAR OBRA
@@ -118,7 +123,10 @@ export class ContratoService {
       .delete<any>(`${baseUrl}/contrato/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeContratoFromCache(id))
+        tap(() => {
+          this.removeContratoFromCache(id);
+          this.clearContratosListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -128,61 +136,31 @@ export class ContratoService {
       .put<any>(`${baseUrl}/contrato/activar/${id}`,{})
       .pipe(
         map(() => true),
+        tap(() => this.clearContratosListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateContratoCache(contrato: Contrato) {
     const contratoId = contrato.id_contrato;
-
     this.contratoCache.set("" + contratoId, contrato);
-
-    this.contratosCache.forEach((contratosResponse) => {
-      contratosResponse.data.contratos = contratosResponse.data.contratos.map(
-        (currentContrato: any) =>
-          currentContrato.id_contrato === contratoId ? contrato : currentContrato
-      );
-    });
-
-    console.log('Caché actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeContratoFromCache(id: string) {
     // Remover de caché individual
     this.contratoCache.delete(id);
-
-    // Remover de caché de listas
-    this.contratosCache.forEach((ContratosResponse, key) => {
-      ContratosResponse.data.contratos = ContratosResponse.data.contratos.filter(
-        (currentContrato: any) => currentContrato.id_contrato.toString() !== id
-      );
-
-      // Actualizar el total
-      ContratosResponse.data.total = ContratosResponse.data.contratos.length;
-    });
-
-    console.log('Contrato eliminado del caché');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
   
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearContratosListCache() {
+    this.contratosCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.contratosCache.clear();
+    this.contratoCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

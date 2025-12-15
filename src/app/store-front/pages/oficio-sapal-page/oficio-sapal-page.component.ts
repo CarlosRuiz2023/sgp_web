@@ -105,7 +105,7 @@ export class OficioSapalPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/oficios-sapal?page=1';
+        this.loadOficiosSapal(0, this.oficiosSapalPerPage());
       });
     } catch (error) {
       console.error("Error al guardar oficio sapal:", error);

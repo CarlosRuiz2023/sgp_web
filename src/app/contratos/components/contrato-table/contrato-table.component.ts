@@ -24,6 +24,7 @@ export class ContratoTableComponent {
   supervisores = signal<any[]>([]);
   contratistas = signal<any[]>([]);
   authService = inject(AuthService);
+  loadContratos = output<void>();
 
   contratos = input.required<Contrato[]>();
 
@@ -85,7 +86,7 @@ export class ContratoTableComponent {
   deleteContrato(contratoId: number, obraNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se eliminará la obra "${obraNombre}". Esta acción no se puede deshacer.`,
+      text: `Se eliminará el contrato de la obra "${obraNombre}". Esta acción no se puede deshacer.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -112,7 +113,7 @@ export class ContratoTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/contratos?page=1';
+                this.loadContratos.emit();
               });
             }
           },
@@ -135,7 +136,7 @@ export class ContratoTableComponent {
   reactivarContrato(contratoId: number, obraNombre: string) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Se reactivara la obra "${obraNombre}".`,
+      text: `Se reactivara el contrato de la obra "${obraNombre}".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -162,7 +163,7 @@ export class ContratoTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/contratos?page=1';
+                this.loadContratos.emit();
               });
             }
           },
@@ -174,6 +175,9 @@ export class ContratoTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar el contrato. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -210,7 +214,7 @@ export class ContratoTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/contratos?page=1';
+        this.loadContratos.emit();
       });
     } catch (error) {
       console.error('Error al actualizar el contrato:', error);

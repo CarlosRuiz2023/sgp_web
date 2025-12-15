@@ -73,7 +73,7 @@ export class FirmaPageComponent {
 
   loadFirmas(offset: number = 0, limit: number = 10) {
     const { filtro, busqueda } = this.searchForm.value;
-    this.firmasService.getEstimaciones({ limit, offset, filtro, busqueda }).subscribe({
+    this.firmasService.getFirmas({ limit, offset, filtro, busqueda }).subscribe({
       next: (resp) => {
         this.firmas.set(resp.data.firmas);
         this.totalPaginas.set(resp.data.totalPaginas);
@@ -106,7 +106,7 @@ export class FirmaPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/firmas?page=1';
+        this.loadFirmas(0, this.firmasPerPage());
       });
     } catch (error) {
       console.error("Error al guardar firma:", error);

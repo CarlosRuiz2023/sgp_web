@@ -24,6 +24,7 @@ export class FirmaTableComponent {
   firmas = input.required<Firma[]>();
   firmadores = input.required<Usuario[]>();
   authService = inject(AuthService);
+  loadFirmas = output<void>();
 
   firmaForm = this.fb.group({
     id_obra: [0, Validators.required],
@@ -94,7 +95,7 @@ export class FirmaTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/firmas?page=1';
+                this.loadFirmas.emit();
               });
             }
           },
@@ -144,18 +145,20 @@ export class FirmaTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/firmas?page=1';
+                this.loadFirmas.emit();
               });
             }
           },
           error: (error) => {
             console.error('Error al reactivar la firma:', error);
-
             Swal.fire({
               icon: 'error',
               title: 'Error',
               text: 'No se pudo reactivar la firma. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -192,7 +195,7 @@ export class FirmaTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/firmas?page=1';
+        this.loadFirmas.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la firma:', error);
@@ -225,7 +228,7 @@ export class FirmaTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/firmas?page=1';
+            this.loadFirmas.emit();
           });
         },
         error: (err) => {

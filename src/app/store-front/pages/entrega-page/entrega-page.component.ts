@@ -101,7 +101,7 @@ export class EntregaPageComponent {
     };
 
     try {
-      await firstValueFrom(this.entregasService.createEntrega(entregaLike, this.selectedFile!));
+      await firstValueFrom(this.entregasService.createEntrega(entregaLike));
       // cerrar modal
       (document.getElementById("agregar_entrega_modal") as HTMLDialogElement)?.close();
       // alerta bonita con SweetAlert2
@@ -113,7 +113,7 @@ export class EntregaPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/entregas?page=1';
+        this.loadEntregas(0, this.entregasPerPage());
       });
     } catch (error) {
       console.error("Error al guardar entrega:", error);

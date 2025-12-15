@@ -25,6 +25,7 @@ export class EntregaTableComponent {
   fisicos = input.required<Usuario[]>();
   administrativos = input.required<Usuario[]>();
   authService = inject(AuthService);
+  loadEntregas = output<void>();
 
   entregaForm = this.fb.group({
     id_obra: [0, Validators.required],
@@ -97,7 +98,7 @@ export class EntregaTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/entregas?page=1';
+                this.loadEntregas.emit();
               });
             }
           },
@@ -147,7 +148,7 @@ export class EntregaTableComponent {
                 timerProgressBar: true
               }).then(() => {
                 // recargar la página después de cerrar el alert
-                window.location.href = '/entregas?page=1';
+                this.loadEntregas.emit();
               });
             }
           },
@@ -159,6 +160,9 @@ export class EntregaTableComponent {
               title: 'Error',
               text: 'No se pudo reactivar la entrega. Intenta de nuevo.'
             });
+          },
+          complete: () => {
+            this.deletingIds.delete(id);
           }
         });
       }
@@ -195,7 +199,7 @@ export class EntregaTableComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/entregas?page=1';
+        this.loadEntregas.emit();
       });
     } catch (error) {
       console.error('Error al actualizar la entrega:', error);
@@ -228,7 +232,7 @@ export class EntregaTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/entregas?page=1';
+            this.loadEntregas.emit();
           });
         },
         error: (err) => {
@@ -263,7 +267,7 @@ export class EntregaTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/entregas?page=1';
+            this.loadEntregas.emit();
           });
         },
         error: (err) => {
@@ -298,7 +302,7 @@ export class EntregaTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/entregas?page=1';
+            this.loadEntregas.emit();
           });
         },
         error: (err) => {
@@ -333,7 +337,7 @@ export class EntregaTableComponent {
             confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
           }).then(() => {
             // recargar la página después de cerrar el alert
-            window.location.href = '/entregas?page=1';
+            this.loadEntregas.emit();
           });
         },
         error: (err) => {

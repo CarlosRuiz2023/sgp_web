@@ -93,7 +93,10 @@ export class EntregasService {
 
   updateEntrega(id: string, entrega: Partial<Entrega>): Observable<Entrega> {
     return this.http.put<Entrega>(`${baseUrl}/entrega/${id}`, entrega).pipe(
-      tap((updatedEntrega) => this.updateEntregaCache(updatedEntrega))
+      tap((updatedEntrega) => {
+        this.updateEntregaCache(updatedEntrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -101,7 +104,10 @@ export class EntregasService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/entregas/${id}?campo=oficio-fisico`, formData).pipe(
-      tap((updatedEntrega) => this.updateEntregaCache(updatedEntrega))
+      tap((updatedEntrega) => {
+        this.updateEntregaCache(updatedEntrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -109,7 +115,10 @@ export class EntregasService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/entregas/${id}?campo=oficio-administrativo`, formData).pipe(
-      tap((updatedEntrega) => this.updateEntregaCache(updatedEntrega))
+      tap((updatedEntrega) => {
+        this.updateEntregaCache(updatedEntrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -117,7 +126,10 @@ export class EntregasService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/entregas/${id}?campo=acta-fisica`, formData).pipe(
-      tap((updatedEntrega) => this.updateEntregaCache(updatedEntrega))
+      tap((updatedEntrega) => {
+        this.updateEntregaCache(updatedEntrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -125,7 +137,10 @@ export class EntregasService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/entregas/${id}?campo=acta-administrativa`, formData).pipe(
-      tap((updatedEntrega) => this.updateEntregaCache(updatedEntrega))
+      tap((updatedEntrega) => {
+        this.updateEntregaCache(updatedEntrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -155,10 +170,12 @@ export class EntregasService {
 
   createEntrega(
     entregaLike: Partial<Entrega>,
-    file: File
   ): Observable<Entrega> {
     return this.http.post<Entrega>(`${baseUrl}/entrega`, entregaLike).pipe(
-      tap((entrega) => this.updateEntregaCache(entrega))
+      tap((entrega) => {
+        this.updateEntregaCache(entrega);
+        this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -168,7 +185,10 @@ export class EntregasService {
       .delete<any>(`${baseUrl}/entrega/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeEntregaFromCache(id))
+        tap(() => {
+          this.removeEntregaFromCache(id);
+          this.clearEntregasListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -178,58 +198,31 @@ export class EntregasService {
       .put<any>(`${baseUrl}/entrega/activar/${id}`, {})
       .pipe(
         map(() => true),
+        tap(() => this.clearEntregasListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateEntregaCache(entrega: Entrega) {
     const entregaId = entrega.id_entrega;
     this.entregaCache.set("" + entregaId, entrega);
-    this.entregasCache.forEach((entregaResponse) => {
-      entregaResponse.data.entregas = entregaResponse.data.entregas.map(
-        (currentEntrega: any) =>
-          currentEntrega.id_entrega === entregaId ? entrega : currentEntrega
-      );
-    });
-    console.log('Caché actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeEntregaFromCache(id: string) {
     // Remover de caché individual
     this.entregasCache.delete(id);
-
-    // Remover de caché de listas
-    this.entregasCache.forEach((entregaResponse, key) => {
-      entregaResponse.data.entregas = entregaResponse.data.entregas.filter(
-        (currentEntrega: any) => currentEntrega.id_entrega.toString() !== id
-      );
-
-      // Actualizar el total
-      entregaResponse.data.total = entregaResponse.data.entregas.length;
-    });
-
-    console.log('Entrega eliminada del caché');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
   
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearEntregasListCache() {
+    this.entregasCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.entregasCache.clear();
+    this.entregaCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

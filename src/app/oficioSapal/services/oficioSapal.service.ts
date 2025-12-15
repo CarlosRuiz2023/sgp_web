@@ -84,8 +84,15 @@ export class OficioSapalService {
   }
 
   updateOficioSapal(id: string, oficioSapal: Partial<OficiosSapal>): Observable<OficiosSapal> {
-    return this.http.put<OficiosSapal>(`${baseUrl}/oficio-sapal/${id}`, oficioSapal).pipe(
-      tap((updatedOficioSapal) => this.updateOficioSapalCache(updatedOficioSapal))
+    const token = localStorage.getItem('token'); // O el nombre que uses para guardar el token
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put<OficiosSapal>(`${baseUrl}/oficio-sapal/${id}`, oficioSapal,{headers}).pipe(
+      tap((updatedOficioSapal) => {
+        this.updateOficioSapalCache(updatedOficioSapal);
+        this.clearOficiosSapalListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -93,14 +100,20 @@ export class OficioSapalService {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/oficioSapal/${id}?campo=recibido`, formData).pipe(
-      tap((updatedOficioSapal) => this.updateOficioSapalCache(updatedOficioSapal))
+      tap((updatedOficioSapal) => {
+        this.updateOficioSapalCache(updatedOficioSapal);
+        this.clearOficiosSapalListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
   uploadPdfRevisado(id: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('archivo', file); // 👈 clave 'archivo'
     return this.http.post<any>(`${baseUrl}/upload/oficioSapal/${id}?campo=revisado`, formData).pipe(
-      tap((updatedOficioSapal) => this.updateOficioSapalCache(updatedOficioSapal))
+      tap((updatedOficioSapal) => {
+        this.updateOficioSapalCache(updatedOficioSapal);
+        this.clearOficiosSapalListCache(); // 👈 Limpia el caché de listados
+      })
     );
   }
 
@@ -125,7 +138,10 @@ export class OficioSapalService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.post<OficiosSapal>(`${baseUrl}/oficio-sapal`, oficioSapalLike, { headers }).pipe(
-      tap((oficioSapal) => this.updateOficioSapalCache(oficioSapal)),
+      tap((oficioSapal) =>{
+         this.updateOficioSapalCache(oficioSapal);
+         this.clearOficiosSapalListCache(); // 👈 Limpia el caché de listados
+      }),
       switchMap((oficioSapal:any) =>
         this.uploadPdfRecibido(oficioSapal.data.id_oficio_sapal, file).pipe(map(() => oficioSapal))
       )
@@ -138,7 +154,10 @@ export class OficioSapalService {
       .delete<any>(`${baseUrl}/oficio-sapal/${id}`)
       .pipe(
         map(() => true),
-        tap(() => this.removeOficioSapalFromCache(id))
+        tap(() => {
+          this.removeOficioSapalFromCache(id);
+          this.clearOficiosSapalListCache(); // 👈 Limpia el caché de listados
+        })
       );
   }
 
@@ -148,58 +167,31 @@ export class OficioSapalService {
       .put<any>(`${baseUrl}/oficio-sapal/activar/${id}`, {})
       .pipe(
         map(() => true),
+        tap(() => this.clearOficiosSapalListCache()) // 👈 Limpia el caché de listados
       );
   }
 
   updateOficioSapalCache(oficioSapal: OficiosSapal) {
     const oficioSapalId = oficioSapal.id_oficio_sapal;
     this.oficioSapalCache.set("" + oficioSapalId, oficioSapal);
-    this.oficiosSapalCache.forEach((oficioSapalResponse) => {
-      oficioSapalResponse.data.oficios_sapal = oficioSapalResponse.data.oficios_sapal.map(
-        (currentOficioSapal: any) =>
-          currentOficioSapal.id_oficio_sapal === oficioSapalId ? oficioSapal : currentOficioSapal
-      );
-    });
-    console.log('Caché actualizado');
   }
 
   // NUEVO MÉTODO PARA REMOVER DEL CACHÉ
   removeOficioSapalFromCache(id: string) {
     // Remover de caché individual
     this.oficiosSapalCache.delete(id);
-
-    // Remover de caché de listas
-    this.oficiosSapalCache.forEach((oficioSapalResponse, key) => {
-      oficioSapalResponse.data.oficios_sapal = oficioSapalResponse.data.oficios_sapal.filter(
-        (currentOficioSapal: any) => currentOficioSapal.id_oficio_sapal.toString() !== id
-      );
-
-      // Actualizar el total
-      oficioSapalResponse.data.total = oficioSapalResponse.data.oficios_sapal.length;
-    });
-
-    console.log('Oficio Sapal eliminado del caché');
   }
-  /* 
-    // Tome un FileList y lo suba
-    uploadImages(images?: FileList): Observable<string[]> {
-      if (!images) return of([]);
-  
-      const uploadObservables = Array.from(images).map((imageFile) =>
-        this.uploadImage(imageFile)
-      );
-  
-      return forkJoin(uploadObservables).pipe(
-        tap((imageNames) => console.log({ imageNames }))
-      );
-    }
-  
-    uploadImage(imageFile: File): Observable<string> {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-  
-      return this.http
-        .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
-        .pipe(map((resp) => resp.fileName));
-    } */
+
+  // 🔥 NUEVO MÉTODO: Limpia TODO el caché de listados
+  clearOficiosSapalListCache() {
+    this.oficiosSapalCache.clear();
+    console.log('Caché de listados limpiado completamente');
+  }
+
+  // 🔥 MÉTODO OPCIONAL: Limpia TODO el caché (listados + individuales)
+  clearAllCache() {
+    this.oficiosSapalCache.clear();
+    this.oficioSapalCache.clear();
+    console.log('Todo el caché ha sido limpiado');
+  }
 }

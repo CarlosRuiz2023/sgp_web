@@ -113,7 +113,7 @@ export class SolicitudPageComponent {
         confirmButtonColor: '#3b82f6' // azul Tailwind (opcional)
       }).then(() => {
         // recargar la página después de cerrar el alert
-        window.location.href = '/solicitudes?page=1';
+        this.loadSolicitudes(0, this.solicitudesPerPage());
       });
     } catch (error) {
       console.error("Error al guardar solicitud:", error);

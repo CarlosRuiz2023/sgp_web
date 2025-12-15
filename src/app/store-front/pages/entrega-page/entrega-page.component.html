@@ -68,7 +68,7 @@
 </button>
 
 <!-- Listado -->
-<entrega-table [entregas]="entregas() ?? []" [fisicos]="fisicos() ?? []" [administrativos]="administrativos() ?? []" *ngIf="authService.tienePermiso('Entregas', 'Consultar')"/>
+<entrega-table [entregas]="entregas() ?? []" [fisicos]="fisicos() ?? []" [administrativos]="administrativos() ?? []" *ngIf="authService.tienePermiso('Entregas', 'Consultar')" (loadEntregas)="loadEntregas(0,this.entregasPerPage())"/>
 
 <div class="w-full h-10 flex justify-center items-center" *ngIf="authService.tienePermiso('Entregas', 'Consultar')">
   <div class="flex gap-2 items-center h-20">
