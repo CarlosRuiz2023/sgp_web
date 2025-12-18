@@ -1,3 +1,3 @@
 export const environment = {
-  baseUrl:'http://localhost:3500/api',
+  baseUrl:'https://sgp-ws-2025.onrender.com/api',
 };
