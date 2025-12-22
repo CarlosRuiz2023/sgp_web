@@ -130,6 +130,24 @@ export class AuthService {
 
     // Guardar token (solo esto va en localStorage)
     localStorage.setItem('token', token);
+
+    Swal.fire({
+      title: 'Bienvenido '+Usuario.nombres+'!',
+      text: 'Sesión iniciada correctamente',
+      imageUrl: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXBvaXl5YXJhMWNnMjFnMjh3N3huaDgydzUwaGh6MmNoMXltdXJibyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7lsw8RenVcjCM/giphy.gif',
+      imageWidth: 160,
+      imageAlt: 'Sesión iniciada',
+      showConfirmButton: false,
+      timer: 5500,
+      timerProgressBar: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      width: 480,
+      padding: '2em'
+    });
+
+
+
     // Obtener primer módulo accesible
     const primerModulo = this.getPrimerModulo(permisos_por_modulo);
 
@@ -172,6 +190,12 @@ export class AuthService {
   private handleAuthError(error: any) {
     const { error: error1 } = error;
     const { data } = error1;
+    if (!data) {
+      const { message } = error1;
+      this._errorMessage.set(typeof message === 'string' ? message : 'Ocurrió un error');
+      this.logout();
+      return of(false);
+    }
     this._errorMessage.set(typeof data === 'string' ? data : 'Ocurrió un error');
     this.logout();
     return of(false);
